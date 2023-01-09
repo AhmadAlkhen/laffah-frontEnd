@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import axios from "@axios";
+import axios from "axios";
 import FilterCard from "@/views/laffah/components/products/filterCard.vue";
 import { useProductStore } from "@/views/apps/products/useProductStore";
 const productsData = ref("");

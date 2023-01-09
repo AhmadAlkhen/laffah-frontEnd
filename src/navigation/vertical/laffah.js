@@ -17,6 +17,12 @@ export default [
       to: 'laffah-orders-cart',
       
     },
+    {
+      title: 'Orders',
+      icon: { icon: 'tabler-chart-donut' },
+      to: 'laffah-orders-MyOrders',
+      
+    },
 
   ]
   

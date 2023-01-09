@@ -7,10 +7,10 @@ export const useProductStore = defineStore('ProductStore', {
 
   getters: {
     getItemLocalStarage(state) {
-      const myCart = JSON.parse(localStorage.getItem("cart"));
+      const myCart = localStorage.getItem("cart")? JSON.parse(localStorage.getItem("cart")) :[];
 
       state.myItems = myCart;
-      console.log(state.myItems);
+      // console.log(state.myItems);
       return state.myItems
     },
   },
@@ -23,7 +23,8 @@ export const useProductStore = defineStore('ProductStore', {
     addItem(item){
       this.myItems.push(item);
 
-      localStorage.removeItem("cart");
+      // console.log(this.myItems);
+      // localStorage.removeItem("cart");
 
       localStorage.setItem('cart',JSON.stringify(this.myItems));
     },
@@ -34,7 +35,7 @@ export const useProductStore = defineStore('ProductStore', {
       this.myItems = this.myItems.filter((el) =>{ return el.id != itemId});
     
     // console.log(this.myItems)
-      localStorage.removeItem("cart");
+      // localStorage.removeItem("cart");
 
       localStorage.setItem('cart',JSON.stringify(this.myItems))
     },
@@ -42,6 +43,10 @@ export const useProductStore = defineStore('ProductStore', {
       return this.myItems;
     },
 
+    resetCart(){
+      localStorage.removeItem("cart");
+      this.myItems=[];
+    }
 
   },
 })
