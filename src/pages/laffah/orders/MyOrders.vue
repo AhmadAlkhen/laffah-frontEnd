@@ -5,6 +5,8 @@ import { avatarText } from "@core/utils/formatters";
 import { computed } from "@vue/runtime-core";
 import moment from "moment";
 
+import { ref, onMounted } from "vue";
+
 const userStore = useUserStore();
 const orderListStore = useOrderListStore();
 const searchQuery = ref("");
@@ -16,6 +18,7 @@ const currentPage = ref(1);
 const totalPage = ref(1);
 const totalOrders = ref(0);
 const orders = ref([]);
+const userRole = ref("");
 
 // 👉 Fetching orders
 const fetchOrders = () => {
@@ -41,8 +44,16 @@ const convertCreated = (value) => {
 };
 
 const getUserRole = computed(() => {
-  return userStore.userRole;
+  return userStore;
 });
+// const getUserRole = mounted(() => {
+//   console.log("sd");
+//   return userStore;
+// });
+
+// onMounted(() => {
+//   useUserStore();
+// });
 
 watchEffect(fetchOrders);
 
@@ -144,8 +155,8 @@ const resolveUserRoleVariant = (role) => {
 
 const resolveUserStatusVariant = (stat) => {
   if (stat === "pending") return "warning";
-  if (stat === "closed") return "success";
-  if (stat === "inactive") return "secondary";
+  if (stat === "processing") return "success";
+  if (stat === "closed") return "secondary";
 
   return "primary";
 };
@@ -169,6 +180,12 @@ const paginationData = computed(() => {
 // const userRole = computed(() => {
 //   return userStore.getUserData;
 // });
+
+onMounted(() => {
+  useUserStore();
+});
+
+// onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <template>
@@ -177,55 +194,25 @@ const paginationData = computed(() => {
       <VCol cols="12">
         <VCard title="Search Filter">
           <!-- 👉 Filters -->
-          <VCardText>
-            <VRow>
-              <!-- 👉 Select Role -->
-              <!-- <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedRole"
-                  label="Select Role"
-                  :items="roles"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol> -->
-              <!-- 👉 Select Plan -->
-              <!-- <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedPlan"
-                  label="Select Plan"
-                  :items="plans"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol> -->
-              <!-- 👉 Select Status -->
-              <!-- <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedStatus"
-                  label="Select Status"
-                  :items="status"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol> -->
-            </VRow>
-          </VCardText>
 
           <!-- <VDivider /> -->
+          {{ userStore.userRole }}
 
-          <VCardText class="d-flex flex-wrap py-4 gap-4">
-            <div class="me-3" style="width: 80px">
-              <VSelect
-                v-model="rowPerPage"
-                density="compact"
-                variant="outlined"
-                :items="[10, 20, 30, 50]"
-              />
-            </div>
-
-            <VSpacer />
-            <div class="me-3" style="width: 250px">
+          <!-- <VCardText class="d-flex flex-wrap py-4 gap-4"> -->
+          <VSpacer />
+          <VRow class="py-2 px-2">
+            <VCol md="3">
+              <div class="me-3" style="width: 80px">
+                <VSelect
+                  v-model="rowPerPage"
+                  density="compact"
+                  variant="outlined"
+                  :items="[10, 20, 30, 50]"
+                />
+              </div>
+            </VCol>
+            <VCol md="6"> </VCol>
+            <VCol md="3">
               <VSelect
                 v-model="selectedStatus"
                 label="Select Status"
@@ -233,11 +220,14 @@ const paginationData = computed(() => {
                 clearable
                 clear-icon="tabler-x"
               />
-            </div>
+            </VCol>
+            <!-- <VCol md="3"> </VCol> -->
+          </VRow>
+          <!-- <div class="me-3" style="width: 250px"></div>
             <div
               class="app-user-search-filter d-flex align-center flex-wrap gap-4"
             >
-              <!-- 👉 Search  -->
+               👉 Search  
               <div style="width: 10rem">
                 <VTextField
                   v-model="searchQuery"
@@ -246,7 +236,7 @@ const paginationData = computed(() => {
                 />
               </div>
 
-              <!-- 👉 Export button -->
+               👉 Export button 
               <VBtn
                 variant="tonal"
                 color="secondary"
@@ -254,8 +244,8 @@ const paginationData = computed(() => {
               >
                 Export
               </VBtn>
-            </div>
-          </VCardText>
+            </div> -->
+          <!-- </VCardText> -->
 
           <VDivider />
 
@@ -264,8 +254,8 @@ const paginationData = computed(() => {
             <thead>
               <tr>
                 <th scope="col">#ID</th>
-                <th scope="col" v-if="getUserRole == 'admin'">User</th>
-                <th scope="col" v-if="getUserRole == 'admin'">Branch</th>
+                <th scope="col" v-if="userStore.getRole == 'admin'">User</th>
+                <th scope="col" v-if="userStore.getRole == 'admin'">Branch</th>
                 <th scope="col">Products Count</th>
                 <th scope="col">STATUS</th>
                 <th scope="col">Created at</th>
@@ -283,13 +273,13 @@ const paginationData = computed(() => {
                 <td>#{{ order.id }}</td>
 
                 <!-- 👉 User name  if admin -->
-                <td v-if="getUserRole == 'admin'">
+                <td v-if="userStore.getRole == 'admin'">
                   <span class="text-capitalize text-base">{{
                     order.user.name
                   }}</span>
                 </td>
                 <!-- 👉 Branch name  if admin -->
-                <td v-if="getUserRole == 'admin'">
+                <td v-if="userStore.getRole == 'admin'">
                   <span class="text-capitalize text-base">{{
                     order.user.branch.name
                   }}</span>

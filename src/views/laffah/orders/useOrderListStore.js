@@ -20,10 +20,10 @@ export const useOrderListStore = defineStore('OrderListStore', {
 
 
     // 👉 fetch single user
-    // fetchUser(id) {
-    //   return new Promise((resolve, reject) => {
-    //     axios.get(`/apps/users/${id}`).then(response => resolve(response)).catch(error => reject(error))
-    //   })
-    // },
+    fetchOrder(id) {
+      return new Promise((resolve, reject) => {
+        axios.get(`/order/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
   },
 })

@@ -35,6 +35,7 @@ const aliases = {
   file: 'tabler-paperclip',
   plus: 'tabler-plus',
   minus: 'tabler-minus',
+  send:'ic:baseline-send'
 }
 
 export const iconify = {

@@ -16,6 +16,8 @@ import { createApp } from 'vue'
 
 loadFonts()
 
+const pinia = createPinia()
+
 
 // Create vue app
 const app = createApp(App)
@@ -23,7 +25,7 @@ const app = createApp(App)
 
 // Use plugins
 app.use(vuetify)
-app.use(createPinia())
+app.use(pinia)
 app.use(router)
 app.use(layoutsPlugin)
 app.use(i18n)

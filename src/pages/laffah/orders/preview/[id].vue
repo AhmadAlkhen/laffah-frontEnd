@@ -1,122 +1,152 @@
 <script setup>
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
+import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
+import { themeConfig } from "@themeConfig";
+import moment from "moment";
 
+import {
+  alphaDashValidator,
+  alphaValidator,
+  betweenValidator,
+  confirmedValidator,
+  emailValidator,
+  integerValidator,
+  lengthValidator,
+  passwordValidator,
+  regexValidator,
+  requiredValidator,
+  urlValidator,
+} from "@validators";
 // Components
-import InvoiceAddPaymentDrawer from '@/views/apps/invoice/InvoiceAddPaymentDrawer.vue'
-import InvoiceSendInvoiceDrawer from '@/views/apps/invoice/InvoiceSendInvoiceDrawer.vue'
 
 // Store
-import { useInvoiceStore } from '@/views/apps/invoice/useInvoiceStore'
+import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
+import axios from "axios";
 
-const invoiceListStore = useInvoiceStore()
-const route = useRoute()
-const invoiceData = ref()
-const paymentDetails = ref()
-const isAddPaymentSidebarVisible = ref(false)
-const isSendPaymentSidebarVisible = ref(false)
+const orderListStore = useOrderListStore();
+const route = useRoute();
+const orderData = ref([]);
+const orderDetails = ref();
+const quantitySent = ref([]);
+const quantityCount = ref();
+const comment = ref("");
 
 // 👉 fetchInvoice
-invoiceListStore.fetchInvoice(Number(route.params.id)).then(response => {
-  invoiceData.value = response.data.invoice
-  paymentDetails.value = response.data.paymentDetails
-}).catch(error => {
-  console.log(error)
-})
+orderListStore
+  .fetchOrder(Number(route.params.id))
+  .then((response) => {
+    orderData.value = response.data.data;
+    orderDetails.value = response.data.order[0];
+    quantityCount.value = response.data.data.length;
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
-// ℹ️ Your real data will contain this information
-const purchasedProducts = [
-  {
-    name: 'Premium Branding Package',
-    description: 'Branding & Promotion',
-    qty: 1,
-    hours: 15,
-    price: 32,
-  },
-  {
-    name: 'SMM',
-    description: 'Social media templates',
-    qty: 1,
-    hours: 14,
-    price: 28,
-  },
-  {
-    name: 'Web Design',
-    description: 'Web designing package',
-    qty: 1,
-    hours: 12,
-    price: 24,
-  },
-  {
-    name: 'SEO',
-    description: 'Search engine optimization',
-    qty: 1,
-    hours: 5,
-    price: 22,
-  },
-]
+const fetchOrders = () => {
+  orderListStore
+    .fetchOrder(Number(route.params.id))
+    .then((response) => {
+      orderData.value = response.data.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 
 // 👉 Print Invoice
 const printInvoice = () => {
-  window.print()
-}
+  window.print();
+};
+
+const storeQuantitySent = (item, quaSent, index) => {
+  const id = item.id;
+  const quantity_sent = quaSent;
+
+  axios
+    .post("/order/quantity/sent", { id, quantity_sent })
+    .then(() => {
+      alert("added successfuly");
+      fetchOrders();
+      quantitySent.value[index] = "";
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+const isDisabled = () => {
+  let result = false;
+  for (let index = 0; index < quantityCount.value; index++) {
+    if (quantitySent.value[index] === undefined) {
+      result = true;
+    }
+  }
+  return result;
+};
+const convertCreated = (value) => {
+  return moment(value).format("YYYY-MM-DD");
+};
+
+const isProcessing = () => {
+  const status = "processing";
+  const orderId = orderDetails.value.id;
+  axios
+    .post("/order/status/processing", { status, orderId })
+    .then(() => {
+      alert("Done successfuly");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
 </script>
 
 <template>
-  <section v-if="invoiceData">
+  <section v-if="orderData && orderDetails">
     <VRow>
-      <VCol
-        cols="12"
-        md="9"
-      >
+      <VCol cols="12" md="12">
         <VCard>
           <!-- SECTION Header -->
-          <VCardText class="d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row">
+          <VCardText
+            class="d-flex flex-wrap justify-space-between flex-column flex-sm-row print-row"
+          >
             <!-- 👉 Left Content -->
             <div class="ma-sm-4">
               <div class="d-flex align-center mb-6">
                 <!-- 👉 Logo -->
-                <VNodeRenderer
-                  :nodes="themeConfig.app.logo"
-                  class="me-3"
-                />
+                <VNodeRenderer :nodes="themeConfig.app.logo" class="me-3" />
 
                 <!-- 👉 Title -->
                 <h6 class="font-weight-bold text-xl">
                   {{ themeConfig.app.title }}
                 </h6>
               </div>
-
               <!-- 👉 Address -->
-              <p class="mb-0">
-                Office 149, 450 South Brand Brooklyn
-              </p>
-              <p class="mb-0">
-                San Diego County, CA 91905, USA
-              </p>
-              <p class="mb-0">
-                +1 (123) 456 7891, +44 (876) 543 2198
-              </p>
+              <p class="mb-0">User: {{ orderDetails.user.name }}</p>
+              <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
             </div>
 
             <!-- 👉 Right Content -->
             <div class="mt-4 ma-sm-4">
               <!-- 👉 Invoice ID -->
               <h6 class="font-weight-medium text-xl mb-6">
-                Invoice #{{ invoiceData.id }}
+                Order #{{ orderDetails.id }}
               </h6>
 
               <!-- 👉 Issue Date -->
               <p class="mb-2">
                 <span>Date Issued: </span>
-                <span class="font-weight-semibold">{{ invoiceData.issuedDate }}</span>
+                <span class="font-weight-semibold">{{
+                  convertCreated(orderDetails.created_at)
+                }}</span>
               </p>
 
               <!-- 👉 Due Date -->
-              <p class="mb-2">
+              <!-- <p class="mb-2">
                 <span>Due Date: </span>
-                <span class="font-weight-semibold">{{ invoiceData.dueDate }}</span>
-              </p>
+                <span class="font-weight-semibold">{{
+                  orderDetails.created_at
+                }}</span>
+              </p> -->
             </div>
           </VCardText>
           <!-- !SECTION -->
@@ -124,7 +154,7 @@ const printInvoice = () => {
           <VDivider />
 
           <!-- 👉 Payment Details -->
-          <VCardText class="d-flex justify-space-between flex-wrap flex-column flex-sm-row print-row">
+          <!-- <VCardText class="d-flex justify-space-between flex-wrap flex-column flex-sm-row print-row">
             <div class="ma-sm-4">
               <h6 class="text-sm font-weight-semibold mb-3">
                 Invoice To:
@@ -193,7 +223,7 @@ const printInvoice = () => {
                 </tr>
               </table>
             </div>
-          </VCardText>
+          </VCardText> -->
 
           <!-- 👉 Table -->
           <VDivider />
@@ -201,66 +231,93 @@ const printInvoice = () => {
           <VTable>
             <thead>
               <tr>
-                <th scope="col">
-                  ITEM
-                </th>
-                <th scope="col">
-                  DESCRIPTION
-                </th>
-                <th
-                  scope="col"
-                  class="text-center"
-                >
-                  HOURS
-                </th>
-                <th
-                  scope="col"
-                  class="text-center"
-                >
-                  QTY
-                </th>
-                <th
-                  scope="col"
-                  class="text-center"
-                >
-                  TOTAL
-                </th>
+                <th scope="col">ITEM</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Sent</th>
+                <th scope="col">Quantity Sent</th>
+                <th scope="col">Action</th>
+                <!-- <th scope="col" class="text-center">HOURS</th>
+                <th scope="col" class="text-center">QTY</th>
+                <th scope="col" class="text-center">TOTAL</th> -->
               </tr>
             </thead>
 
             <tbody>
-              <tr
-                v-for="item in purchasedProducts"
-                :key="item.name"
-              >
+              <tr v-for="(item, index) in orderData" :key="item.id">
                 <td class="text-no-wrap">
-                  {{ item.name }}
+                  <!-- <VAvatar
+                    variant="tonal"
+                    color="success"
+                    class="me-3"
+                    size="80"
+                  > -->
+                  <!-- <VImg v-if="user.avatar" :src="user.avatar" /> -->
+                  <!-- <span v-else>{{ avatarText(user.name) }}</span> -->
+
+                  <VImg
+                    src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                    class="mt-1"
+                    width="80px"
+                  />
+                  <!-- </VAvatar> -->
                 </td>
                 <td class="text-no-wrap">
-                  {{ item.description }}
+                  {{ item.product.name }}
+                </td>
+                <td class="text-no-wrap">
+                  {{ item.quantity }}
+                </td>
+                <td class="text-no-wrap">
+                  {{ item.quantity_sent }}
                 </td>
                 <td class="text-center">
-                  {{ item.hours }}
+                  <VTextField
+                    v-model="quantitySent[index]"
+                    persistent-placeholder
+                    placeholder="Quantity Sent"
+                    type="number"
+                    class=""
+                  />
                 </td>
                 <td class="text-center">
-                  {{ item.qty }}
+                  <VIcon
+                    size="24"
+                    class="me-3"
+                    icon="ic:baseline-send"
+                    @click="storeQuantitySent(item, quantitySent[index], index)"
+                  />
                 </td>
-                <td class="text-center">
-                  ${{ item.price }}
-                </td>
+
+                <!--
+                    :rules="[requiredValidator]"
+                   <td class="text-center">${{ item.price }}</td> -->
               </tr>
             </tbody>
           </VTable>
 
-          <VDivider class="my-2" />
+          <VDivider class="my-5" />
+          <VRow>
+            <VCol cols="12" md="8" class="d-print-none"> </VCol>
+            <VCol cols="12" md="2" class="d-print-none">
+              <VBtn
+                block
+                prepend-icon="tabler-send"
+                class="mb-2"
+                @click="isProcessing()"
+              >
+                Proccess
+              </VBtn>
+            </VCol>
+          </VRow>
 
           <!-- Total -->
-          <VCardText class="d-flex justify-space-between flex-column flex-sm-row print-row">
+          <!-- <VCardText
+            class="d-flex justify-space-between flex-column flex-sm-row print-row"
+          >
             <div class="my-2 mx-sm-4">
               <div class="d-flex align-center mb-1">
-                <h6 class="text-sm font-weight-semibold me-1">
-                  Salesperson:
-                </h6>
+                <h6 class="text-sm font-weight-semibold me-1">Salesperson:</h6>
                 <span>Jenny Parker</span>
               </div>
               <p>Thanks for your business</p>
@@ -271,61 +328,58 @@ const printInvoice = () => {
                 <tr>
                   <td class="text-end">
                     <div class="me-5">
-                      <p class="mb-2">
-                        Subtotal:
-                      </p>
-                      <p class="mb-2">
-                        Discount:
-                      </p>
-                      <p class="mb-2">
-                        Tax:
-                      </p>
-                      <p class="mb-2">
-                        Total:
-                      </p>
+                      <p class="mb-2">Subtotal:</p>
+                      <p class="mb-2">Discount:</p>
+                      <p class="mb-2">Tax:</p>
+                      <p class="mb-2">Total:</p>
                     </div>
                   </td>
 
                   <td class="font-weight-semibold">
-                    <p class="mb-2">
-                      $154.25
-                    </p>
-                    <p class="mb-2">
-                      $00.00
-                    </p>
-                    <p class="mb-2">
-                      $50.00
-                    </p>
-                    <p class="mb-2">
-                      $204.25
-                    </p>
+                    <p class="mb-2">$154.25</p>
+                    <p class="mb-2">$00.00</p>
+                    <p class="mb-2">$50.00</p>
+                    <p class="mb-2">$204.25</p>
                   </td>
                 </tr>
               </table>
             </div>
-          </VCardText>
+          </VCardText> -->
+          <VDivider class="my-5" />
 
-          <VDivider />
+          <VRow>
+            <VCol cols="12" md="7" class="ml-2">
+              <VTextarea label="Comment" v-model="comment" rows="2" />
+            </VCol>
+            <VCol cols="12" md="3" class="">
+              <VBtn
+                block
+                prepend-icon="tabler-send"
+                class="mb-2"
+                :disabled="!comment"
+              >
+                Send
+              </VBtn>
+            </VCol>
+          </VRow>
 
           <VCardText>
             <div class="d-flex mx-sm-4">
-              <h6 class="text-sm font-weight-semibold me-1">
-                Note:
-              </h6>
-              <span>It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance projects. Thank You!</span>
+              <h6 class="text-sm font-weight-semibold me-1">Note:</h6>
+              <span
+                >It was a pleasure working with you and your team. We hope you
+                will keep us in mind for future freelance projects. Thank
+                You!</span
+              >
             </div>
           </VCardText>
         </VCard>
       </VCol>
 
-      <VCol
-        cols="12"
-        md="3"
-        class="d-print-none"
-      >
+      <!-- <VCol cols="12" md="3" class="d-print-none">
         <VCard>
           <VCardText>
-            <!-- 👉 Send Invoice Trigger button -->
+            👉 Send Invoice Trigger button
             <VBtn
               block
               prepend-icon="tabler-send"
@@ -340,48 +394,14 @@ const printInvoice = () => {
               variant="tonal"
               color="secondary"
               class="mb-2"
-            >
-              Download
-            </VBtn>
-
-            <VBtn
-              block
-              variant="tonal"
-              color="secondary"
-              class="mb-2"
               @click="printInvoice"
             >
               Print
             </VBtn>
-
-            <VBtn
-              block
-              color="secondary"
-              variant="tonal"
-              class="mb-2"
-              :to="{ name: 'apps-invoice-edit-id', params: { id: route.params.id } }"
-            >
-              Edit Invoice
-            </VBtn>
-
-            <!-- 👉  Add Payment trigger button  -->
-            <VBtn
-              block
-              prepend-icon="tabler-currency-dollar"
-              @click="isAddPaymentSidebarVisible = true"
-            >
-              Add Payment
-            </VBtn>
           </VCardText>
         </VCard>
-      </VCol>
+      </VCol> -->
     </VRow>
-
-    <!-- 👉 Add Payment Sidebar -->
-    <InvoiceAddPaymentDrawer v-model:isDrawerOpen="isAddPaymentSidebarVisible" />
-
-    <!-- 👉 Send Invoice Sidebar -->
-    <InvoiceSendInvoiceDrawer v-model:isDrawerOpen="isSendPaymentSidebarVisible" />
   </section>
 </template>
 
@@ -391,7 +411,10 @@ const printInvoice = () => {
     background: none !important;
   }
 
-  @page { margin: 0; size: auto; }
+  @page {
+    margin: 0;
+    size: auto;
+  }
 
   .layout-page-content,
   .v-row,
@@ -425,4 +448,9 @@ const printInvoice = () => {
     padding-inline-start: 0 !important;
   }
 }
+</style>
+<style scoped>
+/* .v-text-field {
+  width: 175px;
+} */
 </style>

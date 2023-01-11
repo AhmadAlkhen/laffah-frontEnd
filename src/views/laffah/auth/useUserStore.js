@@ -5,7 +5,7 @@ export const useUserStore = defineStore('userStore', {
   state: () => {
     return {
       // all these properties will have their type inferred automatically
-      userData: {},
+      userData: null,
       accessToken:"",
       authenticated:false,
       userRole:""
@@ -15,9 +15,7 @@ export const useUserStore = defineStore('userStore', {
     // getUserData(state) {
     //   return state.userData 
     // },
-    // getRole(state) {
-    //   return state.userRole 
-    // },
+ 
     // getAccessToken(state) {
     //   return state.accessToken 
     // },
@@ -35,19 +33,22 @@ export const useUserStore = defineStore('userStore', {
       state.accessToken = token;
   
       return state.userData
-    }
+    },
+    getRole(state) {
+      return state.userRole 
+    },
 
   },
-  // actions: {
-  //   // 👉 Fetch Clients
-  //   fetchUserData() {
+  actions: {
+    // 👉 Fetch Clients
+    fetchUserData() {
 
-  //     const data =localStorage.getItem('userData')
-  //     console.log('fetchUserData')
-  //     this.user=data
-  //     this.userRole=data.role
-  //     return data
-  //   },
-  // },
+      const user = JSON.parse(localStorage.getItem("userData"));
+      this.userData=user;
+      this.userRole=user.role;
+      console.log(userRole);
+      return user;
+    },
+  },
 
 })
