@@ -1,6 +1,6 @@
 <script setup>
 import { useUserStore } from "@/views/laffah/auth/useUserStore";
-import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
+import { useProductOrderStore } from "@/views/laffah/orders/useProductOrderStore";
 import { avatarText } from "@core/utils/formatters";
 import { computed } from "@vue/runtime-core";
 import moment from "moment";
@@ -9,7 +9,7 @@ import moment from "moment";
 import { ref, onMounted } from "vue";
 
 const userStore = useUserStore();
-const orderListStore = useOrderListStore();
+const productOrderStore = useProductOrderStore();
 // const authStore = auth();
 
 let cart = computed(function () {
@@ -23,22 +23,22 @@ const selectedStatus = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
-const totalOrders = ref(0);
-const orders = ref([]);
+const totalOrderProducts = ref(0);
+const orderProducts = ref([]);
 
 // 👉 Fetching orders
-const fetchOrders = () => {
-  orderListStore
-    .fetchOrders({
+const fetchProductsOrder = () => {
+  productOrderStore
+    .fetchProductsOrder({
       q: searchQuery.value,
       status: selectedStatus.value,
       perPage: rowPerPage.value,
       page: currentPage.value,
     })
     .then((response) => {
-      orders.value = response.data.data.data;
+      orderProducts.value = response.data.data.data;
       totalPage.value = response.data.data.last_page;
-      totalOrders.value = response.data.data.total;
+      totalOrderProducts.value = response.data.data.total;
       // totalPage.value = Math.round(totalOrders.value / rowPerPage.value);
     })
     .catch((error) => {
@@ -57,7 +57,7 @@ const getUserRole = computed(() => {
 //   useUserStore();
 // });
 
-watchEffect(fetchOrders);
+watchEffect(fetchProductsOrder);
 
 // 👉 watching current page
 watchEffect(() => {
@@ -174,13 +174,13 @@ watchEffect(() => {
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = orders.value.length
+  const firstIndex = orderProducts.value.length
     ? (currentPage.value - 1) * rowPerPage.value + 1
     : 0;
   const lastIndex =
-    orders.value.length + (currentPage.value - 1) * rowPerPage.value;
+    orderProducts.value.length + (currentPage.value - 1) * rowPerPage.value;
 
-  return `Showing ${firstIndex} to ${lastIndex} of ${totalOrders.value} entries`;
+  return `Showing ${firstIndex} to ${lastIndex} of ${totalOrderProducts.value} entries`;
 });
 
 const userRole = computed(() => {
@@ -190,6 +190,11 @@ const userRole = computed(() => {
   return data;
 });
 
+const subQty = (q1, q2) => {
+  if (q2) {
+    return q1 - q2;
+  } else return "n/a";
+};
 // onMounted(() => {
 //   // console.log(store.state.auth.userRole);
 //   // localStorage.getItem("userRole");
@@ -257,16 +262,16 @@ const userRole = computed(() => {
           <!-- </VCardText> -->
 
           <VDivider />
-
           <VTable class="text-no-wrap">
             <!-- 👉 table head -->
             <thead>
               <tr>
-                <th scope="col">#ID</th>
-                <th scope="col" v-if="userRole == 'admin'">User</th>
-                <th scope="col" v-if="userRole == 'admin'">Branch</th>
-                <th scope="col">Products Count</th>
-                <th scope="col">STATUS</th>
+                <th scope="col">#</th>
+                <th scope="col">Product</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Sent</th>
+                <th scope="col">Div</th>
+                <th scope="col">order Id</th>
                 <th scope="col">Created at</th>
                 <th scope="col">ACTIONS</th>
               </tr>
@@ -274,62 +279,52 @@ const userRole = computed(() => {
             <!-- 👉 table body -->
             <tbody>
               <tr
-                v-for="order in orders"
-                :key="order.id"
+                v-for="ordProduct in orderProducts"
+                :key="ordProduct.id"
                 style="height: 3.75rem"
               >
-                <!-- 👉 Order ID -->
-                <td>#{{ order.id }}</td>
+                <!-- 👉  ID -->
+                <td>#{{ ordProduct.id }}</td>
 
-                <!-- 👉 User name  if admin -->
-                <td v-if="userRole == 'admin'">
-                  <span class="text-capitalize text-base">{{
-                    order.user.name
-                  }}</span>
-                </td>
-                <!-- 👉 Branch name  if admin -->
-                <td v-if="userRole == 'admin'">
-                  <span class="text-capitalize text-base">{{
-                    order.user.branch.name
-                  }}</span>
-                </td>
-
-                <!-- 👉 Products Count -->
+                <!-- 👉 Products name -->
                 <td>
                   <span class="text-capitalize text-base">{{
-                    order.productsCount
+                    ordProduct.product.name
                   }}</span>
                 </td>
 
-                <!-- 👉 Plan -->
-                <!-- <td>
-                  <span
-                    class="text-capitalize text-base font-weight-semibold"
-                    >{{ user.currentPlan }}</span
-                  >
-                </td> -->
-
-                <!-- 👉 Billing -->
-                <!-- <td>
-                  <span class="text-base">{{ user.billing }}</span>
-                </td> -->
-
-                <!-- 👉 Status -->
+                <!-- 👉 Quantity order -->
                 <td>
-                  <VChip
-                    label
-                    :color="resolveUserStatusVariant(order.status)"
-                    size="small"
-                    class="text-capitalize"
-                  >
-                    {{ order.status }}
-                  </VChip>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.quantity
+                  }}</span>
+                </td>
+
+                <!-- 👉 Quantity sent -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.quantity_sent
+                  }}</span>
+                </td>
+
+                <!-- 👉 sub sent -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    subQty(ordProduct.quantity, ordProduct.quantity_sent)
+                  }}</span>
+                </td>
+
+                <!-- 👉 order ID -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.order_id
+                  }}</span>
                 </td>
 
                 <!-- 👉 Created at -->
                 <td>
                   <span class="text-base">{{
-                    convertCreated(order.created_at)
+                    convertCreated(ordProduct.created_at)
                   }}</span>
                 </td>
 
@@ -342,7 +337,7 @@ const userRole = computed(() => {
                   <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
-                  <VBtn
+                  <!-- <VBtn
                     icon
                     variant="text"
                     color="default"
@@ -353,7 +348,7 @@ const userRole = computed(() => {
                     }"
                   >
                     <VIcon :size="22" icon="tabler-eye" />
-                  </VBtn>
+                  </VBtn> -->
                   <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />
 
@@ -375,7 +370,7 @@ const userRole = computed(() => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!orders.length">
+            <tfoot v-show="!orderProducts.length">
               <tr>
                 <td colspan="7" class="text-center">No data available</td>
               </tr>

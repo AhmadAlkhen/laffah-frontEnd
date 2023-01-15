@@ -14,7 +14,8 @@ import authV2LoginIllustrationLight from "@images/pages/auth-v2-login-illustrati
 import authV2MaskDark from "@images/pages/misc-mask-dark.png";
 import authV2MaskLight from "@images/pages/misc-mask-light.png";
 
-// import { useUserStore } from "@/views/laffah/auth/useUserStore";
+import { useUserStore } from "@/views/laffah/auth/useUserStore";
+// import { useAuthStore } from "@/store/auth";
 
 const authThemeImg = useGenerateImageVariant(
   authV2LoginIllustrationLight,
@@ -29,7 +30,8 @@ const route = useRoute();
 const router = useRouter();
 const ability = useAppAbility();
 
-// const userStore = useUserStore();
+const userStore = useUserStore();
+// const authStore = useAuthStore();
 
 const errors = ref({
   email: undefined,
@@ -53,7 +55,7 @@ const login = () => {
     formData.append("password", password.value);
 
     axios
-      .post("http://localhost:8000/api/auth/login", formData)
+      .post("auth/login", formData)
       .then((response) => {
         // console.log(response.data);
         // const { accessToken, userData, userAbilities } = response.data;
@@ -108,7 +110,15 @@ const loginCSRF = async () => {
 
 const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
-    if (isValid) login();
+    // if (isValid) login();
+    if (isValid) {
+      const formData = new FormData();
+      formData.append("email", email.value);
+      formData.append("password", password.value);
+      userStore.login(formData).then(() => {
+        router.replace(route.query.to ? String(route.query.to) : "/");
+      });
+    }
   });
 };
 </script>
@@ -128,7 +138,6 @@ const onSubmit = () => {
         <VImg :src="authThemeMask" class="auth-footer-mask" />
       </div>
     </VCol>
-
     <VCol cols="12" lg="4" class="d-flex align-center justify-center">
       <VCard flat :max-width="500" class="mt-12 mt-sm-0 pa-4">
         <VCardText>

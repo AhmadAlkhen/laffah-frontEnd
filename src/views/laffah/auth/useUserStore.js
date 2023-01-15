@@ -1,17 +1,25 @@
+// import { router } from '@/router';
+import axios from 'axios';
 import { defineStore } from 'pinia';
 
+// const router = router();
 export const useUserStore = defineStore('userStore', {
   // arrow function recommended for full type inference
   state: () => {
     return {
       // all these properties will have their type inferred automatically
-      userData: null,
+      userData: localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')):null,
       accessToken:"",
       authenticated:false,
-      userRole:""
+      userRole:"",
+      userAbilities:[{
+        action: "manage",
+        subject: "all",
+      }]
     }
   },
   getters:{
+
     // getUserData(state) {
     //   return state.userData 
     // },
@@ -49,6 +57,35 @@ export const useUserStore = defineStore('userStore', {
       console.log(userRole);
       return user;
     },
+    async login(formData) {
+      try {
+          const user = await axios.post("auth/login", formData);    
+
+          console.log(user.data.userData);
+          // update pinia state
+          this.userData = user.data.userData;
+
+
+          
+          // store user details and jwt in local storage to keep user logged in between page refreshes
+          localStorage.setItem('userData', JSON.stringify(user.data.userData));
+          var userRole = user.data.userData.role.split('"').join('');
+          localStorage.setItem('userRole', userRole);
+
+          localStorage.setItem(
+            "userAbilities",
+            JSON.stringify(this.userAbilities)
+          );
+          // ability.update(userAbilities);
+          localStorage.setItem("accessToken", user.data.accessToken);
+          // redirect to previous url or default to home page
+          
+         
+      } catch (error) {
+        console.log(error);
+        
+      }
+  },
   },
 
 })

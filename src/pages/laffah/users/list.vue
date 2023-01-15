@@ -1,8 +1,12 @@
 <script setup>
+import { ref, onMounted } from "vue";
+
 import AddNewUserDrawer from "@/views/laffah/users/AddNewUserDrawer.vue";
 import { useUserListStore } from "@/views/laffah/users/useUserListStore";
 import { avatarText } from "@core/utils/formatters";
-
+import axios from "axios";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const userListStore = useUserListStore();
 const searchQuery = ref("");
 const selectedRole = ref();
@@ -13,7 +17,7 @@ const currentPage = ref(1);
 const totalPage = ref(1);
 const totalUsers = ref(0);
 const users = ref([]);
-
+const branchesAll = ref([]);
 // 👉 Fetching users
 const fetchUsers = () => {
   userListStore
@@ -53,31 +57,26 @@ const status = [
     value: 0,
   },
 ];
+const roles = [
+  {
+    title: "branch",
+    value: "branch",
+  },
+  {
+    title: "warehouse",
+    value: "warehouse",
+  },
+];
 
 const resolveUserRoleVariant = (role) => {
-  if (role === "user")
+  if (role === "branch")
     return {
       color: "success",
       icon: "tabler-user",
     };
-  if (role === "author")
+  if (role === "warehouse")
     return {
       color: "success",
-      icon: "tabler-circle-check",
-    };
-  if (role === "maintainer")
-    return {
-      color: "primary",
-      icon: "tabler-chart-pie-2",
-    };
-  if (role === "editor")
-    return {
-      color: "info",
-      icon: "tabler-pencil",
-    };
-  if (role === "admin")
-    return {
-      color: "secondary",
       icon: "tabler-device-laptop",
     };
 
@@ -115,11 +114,57 @@ const paginationData = computed(() => {
 });
 
 const addNewUser = (userData) => {
-  userListStore.addUser(userData);
+  userListStore.addUser(userData).then(() => {
+    toast.success("User added successfully", {
+      timeout: 2000,
+    });
+  });
 
   // refetch Branchs
   fetchUsers();
 };
+
+const branches = computed(() => {
+  let allBranches = [];
+  let branchesItem = [];
+  axios
+    .get("/branch/index")
+    .then((res) => {
+      allBranches = res.data.data.data;
+      allBranches.forEach((branch) => {
+        branchesItem.push({
+          title: branch.name,
+          value: branch.id,
+        });
+      });
+      branchesAll.value = branchesItem;
+      return branchesItem;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+onMounted(() => {
+  let allBranches = [];
+  let branchesItem = [];
+  axios
+    .get("/branch/index")
+    .then((res) => {
+      allBranches = res.data.data.data;
+      allBranches.forEach((branch) => {
+        branchesItem.push({
+          title: branch.name,
+          value: branch.id,
+        });
+      });
+      branchesAll.value = branchesItem;
+      return branchesItem;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 </script>
 
 <template>
@@ -159,6 +204,15 @@ const addNewUser = (userData) => {
               v-model="selectedStatus"
               label="Select Status"
               :items="status"
+              clearable
+              clear-icon="tabler-x"
+            />
+
+            <!-- 👉 Select Role -->
+            <VSelect
+              v-model="selectedRole"
+              label="Select Role"
+              :items="roles"
               clearable
               clear-icon="tabler-x"
             />
@@ -326,7 +380,7 @@ const addNewUser = (userData) => {
     <!-- 👉 Add New Branch -->
     <AddNewUserDrawer
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      :branches="userListStore.branches"
+      :branches="branchesAll"
       @user-data="addNewUser"
     />
   </section>

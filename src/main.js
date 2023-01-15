@@ -12,7 +12,13 @@ import { abilitiesPlugin } from '@casl/vue'
 import '@core/scss/template/index.scss'
 import '@styles/styles.scss'
 import { createPinia } from 'pinia'
+import 'sweetalert2/dist/sweetalert2.min.css'
 import { createApp } from 'vue'
+import VueSweetalert2 from 'vue-sweetalert2'
+import Toast from "vue-toastification"
+import "vue-toastification/dist/index.css"
+import store from './store'
+
 
 loadFonts()
 
@@ -29,6 +35,10 @@ app.use(pinia)
 app.use(router)
 app.use(layoutsPlugin)
 app.use(i18n)
+app.use(store)
+app.use(Toast);
+app.use(VueSweetalert2);
+
 app.use(abilitiesPlugin, ability, {
   useGlobalProperties: true,
 })

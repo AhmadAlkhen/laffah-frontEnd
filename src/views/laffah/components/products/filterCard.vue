@@ -22,6 +22,8 @@
 </template>
 <script setup>
 import { useProductStore } from "@/views/apps/products/useProductStore";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 const ProductStore = useProductStore();
 
@@ -34,5 +36,8 @@ const props = defineProps({
 
 const reserve = (product) => {
   ProductStore.addItem(product);
+  toast.success("Product added successfully", {
+    timeout: 2000,
+  });
 };
 </script>

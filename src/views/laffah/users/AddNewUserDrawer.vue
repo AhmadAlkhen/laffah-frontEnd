@@ -124,7 +124,10 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="role"
                   label="Select Role"
                   :rules="[requiredValidator]"
-                  :items="[{ title: 'User', value: user }]"
+                  :items="[
+                    { title: 'Branch', value: branch },
+                    { title: 'Warehouse', value: warehouse },
+                  ]"
                 />
               </VCol>
               <!-- 👉 Branch -->

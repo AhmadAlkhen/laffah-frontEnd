@@ -1,7 +1,6 @@
 import axios from '@axios';
 import { defineStore } from 'pinia';
 
-
 export const useProductStore = defineStore('ProductStore', {
 
   state: () => ({ myItems: []  }),
@@ -28,7 +27,6 @@ export const useProductStore = defineStore('ProductStore', {
       // localStorage.removeItem("cart");
 
       localStorage.setItem('cart',JSON.stringify(this.myItems));
-      return true
     },
 
     deleteItem(itemId){

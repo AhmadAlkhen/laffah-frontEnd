@@ -2,7 +2,8 @@
 import AddNewBranchDrawer from "@/views/laffah/branchs/AddNewBranchDrawer.vue";
 import { useBranchListStore } from "@/views/laffah/branchs/useBranchListStore";
 import { avatarText } from "@core/utils/formatters";
-
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const branchListStore = useBranchListStore();
 const searchQuery = ref("");
 const selectedStatus = ref();
@@ -79,7 +80,11 @@ const paginationData = computed(() => {
 });
 
 const addNewBranch = (branchData) => {
-  branchListStore.addBranch(branchData);
+  branchListStore.addBranch(branchData).then(() => {
+    toast.success("Branch added successfully", {
+      timeout: 2000,
+    });
+  });
 
   // refetch Branchs
   fetchBranchs();
