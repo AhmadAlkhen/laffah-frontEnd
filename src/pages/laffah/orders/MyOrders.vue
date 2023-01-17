@@ -263,8 +263,18 @@ const userRole = computed(() => {
             <thead>
               <tr>
                 <th scope="col">#ID</th>
-                <th scope="col" v-if="userRole == 'admin'">User</th>
-                <th scope="col" v-if="userRole == 'admin'">Branch</th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  User
+                </th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  Branch
+                </th>
                 <th scope="col">Products Count</th>
                 <th scope="col">STATUS</th>
                 <th scope="col">Created at</th>
@@ -282,13 +292,13 @@ const userRole = computed(() => {
                 <td>#{{ order.id }}</td>
 
                 <!-- 👉 User name  if admin -->
-                <td v-if="userRole == 'admin'">
+                <td v-if="userRole == 'admin' || userRole == 'warehouse'">
                   <span class="text-capitalize text-base">{{
                     order.user.name
                   }}</span>
                 </td>
                 <!-- 👉 Branch name  if admin -->
-                <td v-if="userRole == 'admin'">
+                <td v-if="userRole == 'admin' || userRole == 'warehouse'">
                   <span class="text-capitalize text-base">{{
                     order.user.branch.name
                   }}</span>

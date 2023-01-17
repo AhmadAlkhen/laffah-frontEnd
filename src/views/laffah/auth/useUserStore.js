@@ -79,7 +79,7 @@ export const useUserStore = defineStore('userStore', {
           // ability.update(userAbilities);
           localStorage.setItem("accessToken", user.data.accessToken);
           // redirect to previous url or default to home page
-          
+          return userRole
          
       } catch (error) {
         console.log(error);

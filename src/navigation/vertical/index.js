@@ -4,7 +4,9 @@ import warehouse from "./warehouse";
 
 
 const routesArray = [];
-const userRole = localStorage.getItem('userRole');
+
+
+const userRole =  localStorage.getItem('userRole');
 
 
 if(userRole=='admin'){

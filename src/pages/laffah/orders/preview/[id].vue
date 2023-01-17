@@ -98,6 +98,10 @@ const isProcessing = () => {
       console.log(err);
     });
 };
+const userRole = computed(() => {
+  let data = localStorage.getItem("userRole");
+  return data;
+});
 </script>
 
 <template>
@@ -141,12 +145,12 @@ const isProcessing = () => {
               </p>
 
               <!-- 👉 Due Date -->
-              <!-- <p class="mb-2">
-                <span>Due Date: </span>
+              <p class="mb-2">
+                <span>status: </span>
                 <span class="font-weight-semibold">{{
-                  orderDetails.created_at
+                  orderDetails.status
                 }}</span>
-              </p> -->
+              </p>
             </div>
           </VCardText>
           <!-- !SECTION -->
@@ -233,10 +237,21 @@ const isProcessing = () => {
               <tr>
                 <th scope="col">ITEM</th>
                 <th scope="col">Product</th>
+                <th scope="col">Unit</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Sent</th>
-                <th scope="col">Quantity Sent</th>
-                <th scope="col">Action</th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  Quantity Sent
+                </th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  Action
+                </th>
                 <!-- <th scope="col" class="text-center">HOURS</th>
                 <th scope="col" class="text-center">QTY</th>
                 <th scope="col" class="text-center">TOTAL</th> -->
@@ -266,12 +281,18 @@ const isProcessing = () => {
                   {{ item.product.name }}
                 </td>
                 <td class="text-no-wrap">
+                  {{ item.product.unit }}
+                </td>
+                <td class="text-no-wrap">
                   {{ item.quantity }}
                 </td>
                 <td class="text-no-wrap">
                   {{ item.quantity_sent }}
                 </td>
-                <td class="text-center">
+                <td
+                  class="text-center"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
                   <VTextField
                     v-model="quantitySent[index]"
                     persistent-placeholder
@@ -280,7 +301,10 @@ const isProcessing = () => {
                     class=""
                   />
                 </td>
-                <td class="text-center">
+                <td
+                  class="text-center"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
                   <VIcon
                     size="24"
                     class="me-3"
@@ -297,8 +321,8 @@ const isProcessing = () => {
           </VTable>
 
           <VDivider class="my-5" />
-          <VRow>
-            <VCol cols="12" md="8" class="d-print-none"> </VCol>
+          <VRow v-if="userRole == 'admin' || userRole == 'warehouse'">
+            <VCol cols="12" md="9" class="d-print-none"> </VCol>
             <VCol cols="12" md="2" class="d-print-none">
               <VBtn
                 block
@@ -309,6 +333,7 @@ const isProcessing = () => {
                 Proccess
               </VBtn>
             </VCol>
+            <VDivider class="my-5" />
           </VRow>
 
           <!-- Total -->
@@ -345,9 +370,8 @@ const isProcessing = () => {
               </table>
             </div>
           </VCardText> -->
-          <VDivider class="my-5" />
 
-          <VRow>
+          <VRow class="my-7">
             <VCol cols="12" md="7" class="ml-2">
               <VTextarea label="Comment" v-model="comment" rows="2" />
             </VCol>

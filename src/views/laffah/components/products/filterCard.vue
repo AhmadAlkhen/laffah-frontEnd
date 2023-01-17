@@ -1,10 +1,11 @@
 <template>
-  <VCard :loading="loading" class="mx-auto" max-width="374">
+  <VCard :loading="loading" class="px-0" max-width="374">
     <template #progress>
       <VProgressLinear color="deep-purple" height="10" indeterminate />
     </template>
     <VImg
       height="250"
+      class="p-0 mb-2"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     />
     <VCardTitle>{{ product.name }}</VCardTitle>

@@ -115,7 +115,8 @@ const onSubmit = () => {
       const formData = new FormData();
       formData.append("email", email.value);
       formData.append("password", password.value);
-      userStore.login(formData).then(() => {
+      userStore.login(formData).then((res) => {
+        console.log(res);
         router.replace(route.query.to ? String(route.query.to) : "/");
       });
     }

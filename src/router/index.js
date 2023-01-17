@@ -72,4 +72,14 @@ router.beforeEach(to => {
       return { name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }
   }
 })
+
+// router.beforeEach((to, from, next) => {
+//   const isLoggedIn = isUserLoggedIn()
+// if (isLoggedIn) {
+//   return next()
+// }else{
+//   return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
+// }
+
+// })
 export default router

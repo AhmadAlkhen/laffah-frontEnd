@@ -36,7 +36,7 @@ const { width: windowWidth } = useWindowSize();
           <VIcon icon="tabler-menu-2" size="24" />
         </VBtn>
 
-        <NavSearchBar class="ms-lg-n3" />
+        <!-- <NavSearchBar class="ms-lg-n3" /> -->
 
         <VSpacer />
 
