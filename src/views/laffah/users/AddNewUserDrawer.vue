@@ -127,6 +127,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   :items="[
                     { title: 'Branch', value: branch },
                     { title: 'Warehouse', value: warehouse },
+                    { title: 'Carrier', value: carrier },
                   ]"
                 />
               </VCol>

@@ -18,6 +18,9 @@ export const useOrderListStore = defineStore('OrderListStore', {
     },
 
 
+    fetchCarriers(){
+      return axios.get('/users/carriers');
+    },
 
     // 👉 fetch single user
     fetchOrder(id) {

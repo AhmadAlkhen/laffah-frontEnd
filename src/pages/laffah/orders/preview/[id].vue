@@ -2,20 +2,9 @@
 import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
 import { themeConfig } from "@themeConfig";
 import moment from "moment";
-
-import {
-  alphaDashValidator,
-  alphaValidator,
-  betweenValidator,
-  confirmedValidator,
-  emailValidator,
-  integerValidator,
-  lengthValidator,
-  passwordValidator,
-  regexValidator,
-  requiredValidator,
-  urlValidator,
-} from "@validators";
+import { requiredValidator } from "@validators";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 // Components
 
 // Store
@@ -29,6 +18,12 @@ const orderDetails = ref();
 const quantitySent = ref([]);
 const quantityCount = ref();
 const comment = ref("");
+const selectedCarrier = ref({ name: "", id: "" });
+const carriers = ref([]);
+const isCarrierSelected = ref(false);
+const isDialogVisible = ref(false);
+
+const isAllQtySentFilled = ref(false);
 
 // 👉 fetchInvoice
 orderListStore
@@ -41,6 +36,10 @@ orderListStore
   .catch((error) => {
     console.log(error);
   });
+
+orderListStore.fetchCarriers().then((res) => {
+  carriers.value = res.data.data;
+});
 
 const fetchOrders = () => {
   orderListStore
@@ -87,17 +86,48 @@ const convertCreated = (value) => {
 };
 
 const isProcessing = () => {
-  const status = "processing";
-  const orderId = orderDetails.value.id;
-  axios
-    .post("/order/status/processing", { status, orderId })
-    .then(() => {
-      alert("Done successfuly");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const carrierId = selectedCarrier.value.id;
+  if (carrierId == "") {
+    isCarrierSelected.value = true;
+    // isDialogVisible.value = false;
+  } else {
+    isCarrierSelected.value = false;
+
+    const status = "processing";
+    const orderId = orderDetails.value.id;
+    const carrier_id = carrierId;
+    axios
+      .post("/order/status/processing", { status, orderId, carrier_id })
+      .then(() => {
+        isDialogVisible.value = false;
+        toast.success("Done successfully", {
+          timeout: 2000,
+        });
+        // router.push({ name: "laffah-orders-MyOrders" });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 };
+
+const isAllFilled = () => {
+  const allFilled = orderData.value.every(
+    (element) => element.quantity_sent !== null
+  );
+  return allFilled;
+
+  // const qtysLength = orderData.value.length;
+  // for (let qty in orderData.value) {
+  //   // console.log(orderData.value[qty].quantity_sent);
+  //   if (orderData.value[qty].quantity_sent == null) {
+  //     console.log("there is null");
+  //     break;
+  //   }
+  // }
+  // console.log(orderData.value);
+};
+
 const userRole = computed(() => {
   let data = localStorage.getItem("userRole");
   return data;
@@ -127,6 +157,9 @@ const userRole = computed(() => {
               <!-- 👉 Address -->
               <p class="mb-0">User: {{ orderDetails.user.name }}</p>
               <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
+              <p class="mb-0" v-if="orderDetails.carrier != null">
+                Carrier: # {{ orderDetails.carrier.name }}
+              </p>
             </div>
 
             <!-- 👉 Right Content -->
@@ -319,10 +352,89 @@ const userRole = computed(() => {
               </tr>
             </tbody>
           </VTable>
+          <VRow
+            class="flex-row-reverse mr-2 my-5"
+            v-if="userRole == 'admin' || userRole == 'warehouse'"
+          >
+            <VDialog v-model="isDialogVisible" max-width="600">
+              <!-- Dialog Activator -->
+              <template #activator="{ props }">
+                <VBtn
+                  v-bind="props"
+                  prepend-icon="tabler-send"
+                  class="mr-3"
+                  :disabled="!isAllFilled()"
+                >
+                  Proccess
+                </VBtn>
+              </template>
 
-          <VDivider class="my-5" />
-          <VRow v-if="userRole == 'admin' || userRole == 'warehouse'">
-            <VCol cols="12" md="9" class="d-print-none"> </VCol>
+              <!-- Dialog close btn -->
+              <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
+
+              <!-- Dialog Content -->
+              <VCard title="Select Carrier">
+                <VCardText>
+                  <VRow>
+                    <VCol cols="12" sm="6">
+                      <VAutocomplete
+                        v-model="selectedCarrier"
+                        :items="carriers"
+                        item-title="name"
+                        item-value="id"
+                        label="Select"
+                        persistent-hint
+                        return-object
+                        single-line
+                        rounded
+                        filled
+                        solo-inverted
+                        class="ml-2"
+                        :rules="[requiredValidator]"
+                      />
+                      <span
+                        v-if="isCarrierSelected"
+                        class="text-danger ml-2"
+                        type="error"
+                      >
+                        Please choose a carrier</span
+                      >
+                    </VCol>
+                  </VRow>
+                </VCardText>
+
+                <VCardText class="d-flex justify-end flex-wrap gap-3">
+                  <VBtn
+                    variant="tonal"
+                    color="secondary"
+                    @click="isDialogVisible = false"
+                  >
+                    Close
+                  </VBtn>
+                  <VBtn @click="isProcessing()"> Save </VBtn>
+                </VCardText>
+              </VCard>
+            </VDialog>
+          </VRow>
+          <!-- <VRow v-if="userRole == 'admin' || userRole == 'warehouse'">
+            <VCol cols="12" md="3" class="d-print-none">
+              <v-autocomplete
+                v-model="selectedCarrier"
+                :items="carriers"
+                item-title="name"
+                item-value="id"
+                label="Select"
+                persistent-hint
+                return-object
+                single-line
+                rounded
+                filled
+                solo-inverted
+                class="ml-2"
+              />
+            </VCol>
+
+            <VCol cols="12" md="6" class="d-print-none"></VCol>
             <VCol cols="12" md="2" class="d-print-none">
               <VBtn
                 block
@@ -334,7 +446,7 @@ const userRole = computed(() => {
               </VBtn>
             </VCol>
             <VDivider class="my-5" />
-          </VRow>
+          </VRow> -->
 
           <!-- Total -->
           <!-- <VCardText
@@ -370,6 +482,7 @@ const userRole = computed(() => {
               </table>
             </div>
           </VCardText> -->
+          <VDivider class="my-5" />
 
           <VRow class="my-7">
             <VCol cols="12" md="7" class="ml-2">
@@ -477,4 +590,7 @@ const userRole = computed(() => {
 /* .v-text-field {
   width: 175px;
 } */
+.text-danger {
+  color: red;
+}
 </style>

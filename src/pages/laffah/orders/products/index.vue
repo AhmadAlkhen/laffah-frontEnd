@@ -17,6 +17,7 @@ let cart = computed(function () {
 });
 
 const searchQuery = ref("");
+const startFrom = ref("");
 const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref();
@@ -225,7 +226,16 @@ const subQty = (q1, q2) => {
                 />
               </div>
             </VCol>
-            <VCol md="6"> </VCol>
+            <VCol md="3">
+              <AppDateTimePicker v-model="startFrom" label="Default" />
+            </VCol>
+            <VCol md="3">
+              <VTextField
+                v-model="searchQuery"
+                placeholder="Search"
+                density="compact"
+              />
+            </VCol>
             <VCol md="3">
               <VSelect
                 v-model="selectedStatus"
@@ -272,6 +282,7 @@ const subQty = (q1, q2) => {
                 <th scope="col">Sent</th>
                 <th scope="col">Div</th>
                 <th scope="col">order Id</th>
+                <th scope="col">Branch</th>
                 <th scope="col">Created at</th>
                 <th scope="col">ACTIONS</th>
               </tr>
@@ -319,6 +330,15 @@ const subQty = (q1, q2) => {
                   <span class="text-capitalize text-base">{{
                     ordProduct.order_id
                   }}</span>
+                </td>
+
+                <!-- 👉 Branch -->
+                <td>
+                  <span
+                    class="text-capitalize text-base"
+                    v-if="ordProduct.order.user.branch.name != undefined"
+                    >{{ ordProduct.order.user.branch.name }}</span
+                  >
                 </td>
 
                 <!-- 👉 Created at -->

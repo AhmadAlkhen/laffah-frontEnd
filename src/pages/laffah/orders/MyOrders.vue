@@ -276,6 +276,7 @@ const userRole = computed(() => {
                   Branch
                 </th>
                 <th scope="col">Products Count</th>
+                <th scope="col">Carrier</th>
                 <th scope="col">STATUS</th>
                 <th scope="col">Created at</th>
                 <th scope="col">ACTIONS</th>
@@ -319,10 +320,21 @@ const userRole = computed(() => {
                   >
                 </td> -->
 
-                <!-- 👉 Billing -->
-                <!-- <td>
-                  <span class="text-base">{{ user.billing }}</span>
-                </td> -->
+                <!-- 👉 carrierId -->
+                <td>
+                  <span class="text-base" v-if="order.carrier">{{
+                    order.carrier.name
+                  }}</span>
+                  <VChip
+                    v-else
+                    label
+                    color="warning"
+                    size="small"
+                    class="text-capitalize"
+                  >
+                    Not assigned Yet
+                  </VChip>
+                </td>
 
                 <!-- 👉 Status -->
                 <td>
