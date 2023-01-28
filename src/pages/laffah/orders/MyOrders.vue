@@ -4,6 +4,10 @@ import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
 import { avatarText } from "@core/utils/formatters";
 import { computed } from "@vue/runtime-core";
 import moment from "moment";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 // import { auth } from "@/store/auth/index";
 import { ref, onMounted } from "vue";
@@ -121,8 +125,12 @@ const status = [
     value: "completed",
   },
   {
-    title: "Closed",
-    value: "closed",
+    title: "Returned",
+    value: "returned",
+  },
+  {
+    title: "Canceled",
+    value: "Canceled",
   },
 ];
 
@@ -162,6 +170,8 @@ const resolveUserRoleVariant = (role) => {
 const resolveUserStatusVariant = (stat) => {
   if (stat === "pending") return "warning";
   if (stat === "processing") return "success";
+  if (stat === "completed") return "info";
+  if (stat === "canceled") return "secondary";
   if (stat === "closed") return "secondary";
 
   return "primary";
@@ -190,13 +200,41 @@ const userRole = computed(() => {
   return data;
 });
 
-// onMounted(() => {
-//   // console.log(store.state.auth.userRole);
-//   // localStorage.getItem("userRole");
-//   userRole.value = console.log(localStorage.getItem("userRole"));
-// });
+const canceledOrder = (order_id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you really want to cancel this order?!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, confirm!",
+  }).then((res) => {
+    if (res.isConfirmed) {
+      const status = "canceled";
+      const orderId = order_id;
+      axios
+        .post("/order/status/canceled", { status, orderId })
+        .then((res) => {
+          // if (res.data.OrderStatus > 0) {
+          //   Swal.fire(
+          //     "Done successfully!",
+          //     "Your order has been completed.",
+          //     "success"
+          //   );
+          // }
 
-// onUnmounted(() => clearInterval(intervalId));
+          toast.success(res.data.message, {
+            timeout: 2000,
+          });
+          // router.push({ name: "laffah-orders-MyOrders" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  });
+};
 </script>
 
 <template>
@@ -361,7 +399,15 @@ const userRole = computed(() => {
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    v-if="userRole == 'branch'"
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="canceledOrder(order.id)"
+                    :disabled="order.status != 'pending' ? true : false"
+                  >
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
                   <VBtn

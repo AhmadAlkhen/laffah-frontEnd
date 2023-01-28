@@ -18,10 +18,16 @@ export default [
       
     },
     {
+      title: 'Categories',
+      icon: { icon: 'tabler-lifebuoy' },
+      to: {name:'laffah-categories-list'},
+      
+    },
+    {
       title: 'Products',
       icon: { icon: 'tabler-archive' },
       children: [
-        { title: 'All products', to: '' },
+        { title: 'All products', to: 'laffah-products-list' },
         { title: 'products', to: 'laffah-materials-filter-List' },
 
       ],

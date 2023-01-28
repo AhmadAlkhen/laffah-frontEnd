@@ -59,12 +59,16 @@ const status = [
 ];
 const roles = [
   {
-    title: "branch",
+    title: "Branch",
     value: "branch",
   },
   {
-    title: "warehouse",
+    title: "Warehouse",
     value: "warehouse",
+  },
+  {
+    title: "Carrier",
+    value: "carrier",
   },
 ];
 
@@ -220,10 +224,10 @@ onMounted(() => {
             <VSpacer />
 
             <div
-              class="app-user-search-filter d-flex align-center flex-wrap gap-4"
+              class="app-user-search-filter d-flex justify-content-end flex-wrap gap-4"
             >
               <!-- 👉 Search  -->
-              <div style="width: 10rem">
+              <div style="width: 16rem">
                 <VTextField
                   v-model="searchQuery"
                   placeholder="Search"
@@ -397,5 +401,10 @@ onMounted(() => {
 
 .user-list-name:not(:hover) {
   color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity));
+}
+</style>
+<style scoped>
+.justify-content-end {
+  justify-content: flex-end;
 }
 </style>

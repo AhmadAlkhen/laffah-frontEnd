@@ -103,12 +103,9 @@ const isDisabled = () => {
 
 <template>
   <VCard>
-    <div class="d-flex cart" v-if="cartDataComputed.length > 0">
+    <!-- <div class="d-flex cart" v-if="cartDataComputed.length > 0">
       <v-container fluid>
         <v-row v-for="(cart, index) in cartDataComputed" :key="cart.id">
-          <!-- <v-col cols="12" sm="1" md="1">
-            <span>{{ index }}</span>
-          </v-col> -->
           <v-col cols="12" sm="6" md="2">
             <img
               height="75"
@@ -133,7 +130,6 @@ const isDisabled = () => {
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6" md="2">
-            <!-- <VBtn @click="Delete(cart.id)" color="error"> Delete </VBtn> -->
             <VBtn
               @click="Delete(cart.id)"
               icon
@@ -158,7 +154,94 @@ const isDisabled = () => {
           </div>
         </v-row>
       </v-container>
+    </div> -->
+
+    <div class="" v-if="cartDataComputed.length > 0">
+      <VTable class="text-no-wrap">
+        <!-- 👉 table head -->
+        <thead>
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Name</th>
+            <th scope="col">Unit</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">ACTIONS</th>
+          </tr>
+        </thead>
+        <!-- 👉 table body -->
+        <tbody>
+          <tr
+            v-for="(cart, index) in cartDataComputed"
+            :key="cart.id"
+            style="height: 3.75rem"
+          >
+            <!-- 👉  -->
+            <td>
+              <img
+                height="75"
+                width="75"
+                src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                class="ml-2"
+              />
+            </td>
+
+            <!-- 👉 -->
+            <td>
+              <span class="text-capitalize text-base">{{ cart.name }}</span>
+            </td>
+            <!-- 👉  -->
+            <td>
+              <span class="text-capitalize text-base">{{ cart.unit }}</span>
+            </td>
+
+            <!-- 👉  -->
+            <td>
+              <v-text-field
+                v-model="quantity[index]"
+                :counter="max"
+                type="number"
+                :rules="rules"
+                label="Quantity"
+              ></v-text-field>
+            </td>
+
+            <!-- 👉  -->
+            <td>
+              <VBtn
+                @click="Delete(cart.id)"
+                icon
+                size="x-small"
+                color="default"
+                variant="text"
+              >
+                <VIcon size="22" icon="tabler-trash" />
+              </VBtn>
+            </td>
+          </tr>
+        </tbody>
+
+        <!-- 👉 table footer  -->
+        <tfoot v-show="!cartDataComputed.length">
+          <tr>
+            <td colspan="7" class="text-center">No data available</td>
+          </tr>
+        </tfoot>
+      </VTable>
+      <VContainer class="">
+        <VRow class="d-flex flex-row-reverse my-3">
+          <div>
+            <VBtn
+              color="primary"
+              @click="saveOrderCart()"
+              :disabled="isDisabled()"
+            >
+              Save
+            </VBtn>
+          </div>
+        </VRow>
+      </VContainer>
     </div>
+
     <div v-else>
       <v-alert border="right" colored-border type="error" elevation="2">
         there are no products in the cart.

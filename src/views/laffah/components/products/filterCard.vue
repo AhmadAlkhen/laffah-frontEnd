@@ -3,11 +3,19 @@
     <template #progress>
       <VProgressLinear color="deep-purple" height="10" indeterminate />
     </template>
+    <!-- <VImg
+      v-if="product.image"
+      height="250"
+      class="p-0 mb-2"
+      :src="`http://localhost:8000/storage/${product.image}`"
+    /> -->
     <VImg
       height="250"
       class="p-0 mb-2"
       src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
     />
+    <!-- :src="https://cdn.vuetifyjs.com/images/cards/cooking.png" -->
+
     <VCardTitle>{{ product.name }}</VCardTitle>
     <VDivider class="mx-4" />
     <!-- <VCardText>

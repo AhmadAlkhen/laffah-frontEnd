@@ -1,38 +1,38 @@
 <script setup>
-import AddNewBranchDrawer from "@/views/laffah/branchs/AddNewBranchDrawer.vue";
-import { useBranchListStore } from "@/views/laffah/branchs/useBranchListStore";
+import AddNewCategoryDrawer from "@/views/laffah/categories/AddNewCategoryDrawer.vue";
+import { useCategoryListStore } from "@/views/laffah/categories/useCategoryListStore";
 import { avatarText } from "@core/utils/formatters";
 import { useToast } from "vue-toastification";
 const toast = useToast();
-const branchListStore = useBranchListStore();
+const categoryListStore = useCategoryListStore();
 const searchQuery = ref("");
 const selectedStatus = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
-const totalBranchs = ref(0);
-const branchs = ref([]);
+const totalCategories = ref(0);
+const categories = ref([]);
 
-// 👉 Fetching branchs
-const fetchBranchs = () => {
-  branchListStore
-    .fetchBranchs({
+// 👉 Fetching categories
+const fetchCategories = () => {
+  categoryListStore
+    .fetchCategories({
       q: searchQuery.value,
       status: selectedStatus.value,
       perPage: rowPerPage.value,
       currentPage: currentPage.value,
     })
     .then((response) => {
-      branchs.value = response.data.data.data;
+      categories.value = response.data.data.data;
       totalPage.value = response.data.data.last_page;
-      totalBranchs.value = response.data.data.total;
+      totalCategories.value = response.data.data.total;
     })
     .catch((error) => {
       console.error(error);
     });
 };
 
-watchEffect(fetchBranchs);
+watchEffect(fetchCategories);
 
 // 👉 watching current page
 watchEffect(() => {
@@ -66,28 +66,28 @@ const convertStatus = (status) => {
   return "Active";
 };
 
-const isAddNewBranchDrawerVisible = ref(false);
+const isAddNewCategoryDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
-  const firstIndex = branchs.value.length
+  const firstIndex = categories.value.length
     ? (currentPage.value - 1) * rowPerPage.value + 1
     : 0;
   const lastIndex =
-    branchs.value.length + (currentPage.value - 1) * rowPerPage.value;
+    categories.value.length + (currentPage.value - 1) * rowPerPage.value;
 
-  return `Showing ${firstIndex} to ${lastIndex} of ${totalBranchs.value} entries`;
+  return `Showing ${firstIndex} to ${lastIndex} of ${totalCategories.value} entries`;
 });
 
-const addNewBranch = (branchData) => {
-  branchListStore.addBranch(branchData).then(() => {
-    toast.success("Branch added successfully", {
+const addNewCategory = (categoryData) => {
+  categoryListStore.addCategory(categoryData).then(() => {
+    toast.success("Category added successfully", {
       timeout: 2000,
     });
   });
 
-  // refetch Branchs
-  fetchBranchs();
+  // refetch categories
+  fetchCategories();
 };
 </script>
 
@@ -97,34 +97,17 @@ const addNewBranch = (branchData) => {
       <VCol cols="12">
         <VCard title="Search Filter">
           <!-- 👉 Filters -->
-          <!-- <VCardText>
-            <VRow>
-               //👉 Select Status 
-              <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedStatus"
-                  label="Select Status"
-                  :items="status"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol>
-            </VRow>
-          </VCardText> -->
 
-          <!-- <VDivider /> -->
-
-          <VCardText class="d-flex flex-wrap py-4 gap-4">
-            <!-- <div class="me-3" style="width: 80px">
+          <!-- <VCardText class="d-flex flex-wrap py-4 gap-4">
+            <div class="me-3" style="width: 80px">
               <VSelect
                 v-model="rowPerPage"
                 density="compact"
                 variant="outlined"
                 :items="[10, 20, 30, 50]"
               />
-            </div> -->
+            </div>
 
-            <!-- 👉 Select Status -->
             <VSelect
               v-model="selectedStatus"
               label="Select Status"
@@ -136,9 +119,8 @@ const addNewBranch = (branchData) => {
             <VSpacer />
 
             <div
-              class="app-user-search-filter d-flex flex-wrap justify-content-end gap-4"
+              class="app-user-search-filter d-flex justify-content-end flex-wrap gap-4"
             >
-              <!-- 👉 Search  -->
               <div style="width: 16rem">
                 <VTextField
                   v-model="searchQuery"
@@ -146,26 +128,50 @@ const addNewBranch = (branchData) => {
                   density="compact"
                 />
               </div>
-
-              <!-- 👉 Export button -->
-              <!-- <VBtn
-                variant="tonal"
-                color="secondary"
-                prepend-icon="tabler-screen-share"
-              >
-                Export
-              </VBtn> -->
-
-              <!-- 👉 Add user button -->
               <VBtn
                 prepend-icon="tabler-plus"
-                @click="isAddNewBranchDrawerVisible = true"
+                @click="isAddNewCategoryDrawerVisible = true"
               >
-                Add New Branch
+                Add New category
               </VBtn>
             </div>
-          </VCardText>
-
+          </VCardText> -->
+          <VRow class="mx-1 my-1">
+            <VCol cols="12" class="" md="3">
+              <div class="" style="width: 80px">
+                <VSelect
+                  v-model="rowPerPage"
+                  density="compact"
+                  variant="outlined"
+                  :items="[10, 20, 30, 50]"
+                /></div
+            ></VCol>
+            <VCol cols="12" class="" md="3">
+              <VSelect
+                v-model="selectedStatus"
+                label="Select Status"
+                :items="status"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol cols="12" class="" md="3">
+              <div>
+                <VTextField
+                  v-model="searchQuery"
+                  placeholder="Search"
+                  density="compact"
+                /></div
+            ></VCol>
+            <VCol cols="12" class="" md="3">
+              <VBtn
+                prepend-icon="tabler-plus"
+                @click="isAddNewCategoryDrawerVisible = true"
+              >
+                Add New category
+              </VBtn></VCol
+            >
+          </VRow>
           <VDivider />
 
           <VTable class="text-no-wrap">
@@ -181,15 +187,15 @@ const addNewBranch = (branchData) => {
             <!-- 👉 table body -->
             <tbody>
               <tr
-                v-for="branch in branchs"
-                :key="branch.id"
+                v-for="category in categories"
+                :key="category.id"
                 style="height: 3.75rem"
               >
                 <!-- 👉 ID -->
                 <td>
                   <span
                     class="text-capitalize text-base font-weight-semibold"
-                    >{{ branch.id }}</span
+                    >{{ category.id }}</span
                   >
                 </td>
 
@@ -197,7 +203,7 @@ const addNewBranch = (branchData) => {
                 <td>
                   <span
                     class="text-capitalize text-base font-weight-semibold"
-                    >{{ branch.name }}</span
+                    >{{ category.name }}</span
                   >
                 </td>
 
@@ -205,11 +211,11 @@ const addNewBranch = (branchData) => {
                 <td>
                   <VChip
                     label
-                    :color="resolveUserStatusVariant(branch.status)"
+                    :color="resolveUserStatusVariant(category.status)"
                     size="small"
                     class="text-capitalize"
                   >
-                    {{ convertStatus(branch.status) }}
+                    {{ convertStatus(category.status) }}
                   </VChip>
                 </td>
 
@@ -244,7 +250,7 @@ const addNewBranch = (branchData) => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!branchs.length">
+            <tfoot v-show="!categories.length">
               <tr>
                 <td colspan="7" class="text-center">No data available</td>
               </tr>
@@ -271,10 +277,10 @@ const addNewBranch = (branchData) => {
       </VCol>
     </VRow>
 
-    <!-- 👉 Add New Branch -->
-    <AddNewBranchDrawer
-      v-model:isDrawerOpen="isAddNewBranchDrawerVisible"
-      @branch-data="addNewBranch"
+    <!-- 👉 Add New category -->
+    <AddNewCategoryDrawer
+      v-model:isDrawerOpen="isAddNewCategoryDrawerVisible"
+      @category-data="addNewCategory"
     />
   </section>
 </template>

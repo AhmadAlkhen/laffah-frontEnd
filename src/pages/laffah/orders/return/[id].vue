@@ -19,15 +19,11 @@ const route = useRoute();
 const orderData = ref([]);
 const orderDetails = ref();
 const quantitySent = ref([]);
-const quantityConfirm = ref([]);
+const quantityReturn = ref([]);
 const quantityCount = ref();
 const rating = ref([]);
 const comment = ref("");
 const listComments = ref([]);
-const selectedCarrier = ref({ name: "", id: "" });
-const carriers = ref([]);
-const isCarrierSelected = ref(false);
-const isDialogVisible = ref(false);
 
 const isAllQtySentFilled = ref(false);
 
@@ -43,10 +39,6 @@ orderListStore
   .catch((error) => {
     console.log(error);
   });
-
-orderListStore.fetchCarriers().then((res) => {
-  carriers.value = res.data.data;
-});
 
 const fetchOrders = () => {
   orderListStore
@@ -64,31 +56,16 @@ const printInvoice = () => {
   window.print();
 };
 
-const storeQuantitySent = (item, quaSent, index) => {
+const storeQuantityReturn = (item, quaReturn, index) => {
   const id = item.id;
-  const quantity_sent = quaSent;
+  const quantity_return = quaReturn;
 
   axios
-    .post("/order/quantity/sent", { id, quantity_sent })
+    .post("/order/quantity/return", { id, quantity_return })
     .then(() => {
       alert("added successfuly");
       fetchOrders();
-      quantitySent.value[index] = "";
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-const storeQuantityConfirm = (item, quaConfirm, index) => {
-  const id = item.id;
-  const quantity_confirm = quaConfirm;
-
-  axios
-    .post("/order/quantity/confirm", { id, quantity_confirm })
-    .then(() => {
-      alert("added successfuly");
-      fetchOrders();
-      quantityConfirm.value[index] = "";
+      quantityReturn.value[index] = "";
     })
     .catch((err) => {
       console.log(err);
@@ -107,32 +84,6 @@ const convertCreated = (value) => {
   return moment(value).format("YYYY-MM-DD hh:mm");
 };
 
-const isProcessing = () => {
-  const carrierId = selectedCarrier.value.id;
-  if (carrierId == "") {
-    isCarrierSelected.value = true;
-    // isDialogVisible.value = false;
-  } else {
-    isCarrierSelected.value = false;
-
-    const status = "processing";
-    const orderId = orderDetails.value.id;
-    const carrier_id = carrierId;
-    axios
-      .post("/order/status/processing", { status, orderId, carrier_id })
-      .then(() => {
-        isDialogVisible.value = false;
-        toast.success("Done successfully", {
-          timeout: 2000,
-        });
-        // router.push({ name: "laffah-orders-MyOrders" });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
-
 const isAllFilled = () => {
   const allFilled = orderData.value.every(
     (element) => element.quantity_sent !== null
@@ -140,10 +91,10 @@ const isAllFilled = () => {
   return allFilled;
 };
 
-const completedOrder = () => {
+const returnedOrder = () => {
   Swal.fire({
     title: "Are you sure?",
-    text: "Do you really want to complete this order?!",
+    text: "Do you really want to return this order?!",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -151,10 +102,10 @@ const completedOrder = () => {
     confirmButtonText: "Yes, confirm!",
   }).then((res) => {
     if (res.isConfirmed) {
-      const status = "completed";
+      const status = "returned";
       const orderId = orderDetails.value.id;
       axios
-        .post("/order/status", { status, orderId })
+        .post("/order/status/returned", { status, orderId })
         .then((res) => {
           // if (res.data.OrderStatus > 0) {
           //   Swal.fire(
@@ -176,21 +127,6 @@ const completedOrder = () => {
   });
 };
 
-const changeRate = (item, rated) => {
-  const id = item.id;
-  const rate = rated;
-
-  axios
-    .post("/order/quantity/rate", { id, rate })
-    .then(() => {
-      alert("added successfuly");
-      fetchOrders();
-      quantityConfirm.value[index] = "";
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
 const addMessage = () => {
   const orderId = orderDetails.value.id;
 
@@ -293,84 +229,11 @@ const userName = computed(() => {
                   orderDetails.status
                 }}</span>
               </p>
-              <!-- 👉 Due Date -->
             </div>
           </VCardText>
           <!-- !SECTION -->
 
           <VDivider />
-
-          <!-- 👉 Payment Details -->
-          <!-- <VCardText class="d-flex justify-space-between flex-wrap flex-column flex-sm-row print-row">
-            <div class="ma-sm-4">
-              <h6 class="text-sm font-weight-semibold mb-3">
-                Invoice To:
-              </h6>
-              <p class="mb-1">
-                {{ invoiceData.client.name }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.company }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.address }}, {{ invoiceData.client.country }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.contact }}
-              </p>
-              <p class="mb-0">
-                {{ invoiceData.client.companyEmail }}
-              </p>
-            </div>
-
-            <div class="mt-4 ma-sm-4">
-              <h6 class="text-sm font-weight-semibold mb-3">
-                Bill To:
-              </h6>
-              <table>
-                <tr>
-                  <td class="pe-6">
-                    Total Due:
-                  </td>
-                  <td>
-                    {{ paymentDetails.totalDue }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    Bank Name:
-                  </td>
-                  <td>
-                    {{ paymentDetails.bankName }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    Country:
-                  </td>
-                  <td>
-                    {{ paymentDetails.country }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    IBAN:
-                  </td>
-                  <td>
-                    {{ paymentDetails.iban }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    SWIFT Code:
-                  </td>
-                  <td>
-                    {{ paymentDetails.swiftCode }}
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </VCardText> -->
 
           <!-- 👉 Table -->
           <VDivider />
@@ -382,17 +245,9 @@ const userName = computed(() => {
                 <th scope="col">Unit</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Sent</th>
-                <th scope="col">confirm</th>
                 <th scope="col">return</th>
-                <th
-                  scope="col"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
-                >
-                  Quantity Sent
-                </th>
-                <th scope="col" v-if="userRole == 'branch'">Confirm Sent</th>
-                <th scope="col">Action</th>
-                <th scope="col">Rate</th>
+                <th scope="col" v-if="userRole == 'branch'">return Sent</th>
+                <th scope="col" v-if="userRole == 'branch'">Action</th>
               </tr>
             </thead>
 
@@ -428,49 +283,19 @@ const userName = computed(() => {
                   {{ item.quantity_sent }}
                 </td>
                 <td class="text-no-wrap">
-                  {{ item.quantity_confirm }}
-                </td>
-                <td class="text-no-wrap">
                   {{ item.quantity_return }}
                 </td>
-                <td
-                  class="text-center quantitySent"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
-                >
-                  <VTextField
-                    v-model="quantitySent[index]"
-                    persistent-placeholder
-                    placeholder="Qty Sent"
-                    type="number"
-                    class=""
-                    :disabled="
-                      orderDetails.status == 'completed' ? true : false
-                    "
-                  />
-                </td>
+
                 <td
                   class="text-center quantityConfirm"
                   v-if="userRole == 'branch'"
                 >
                   <VTextField
-                    v-model="quantityConfirm[index]"
+                    v-model="quantityReturn[index]"
                     persistent-placeholder
-                    placeholder="Qty confirm"
+                    placeholder="Qty Returned"
                     type="number"
                     class=""
-                    :disabled="item.quantity_sent ? false : true"
-                  />
-                </td>
-                <td
-                  class="text-center"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
-                >
-                  <VBtn
-                    icon="ic:baseline-send"
-                    variant="text"
-                    size="24"
-                    @click="storeQuantitySent(item, quantitySent[index], index)"
-                    :disabled="orderDetails.status != 'pending' ? true : false"
                   />
                 </td>
                 <td class="text-center" v-if="userRole == 'branch'">
@@ -479,131 +304,30 @@ const userName = computed(() => {
                     variant="text"
                     size="24"
                     @click="
-                      storeQuantityConfirm(item, quantityConfirm[index], index)
+                      storeQuantityReturn(item, quantityReturn[index], index)
                     "
-                    :disabled="
-                      item.quantity_sent && orderDetails.status == 'processing'
-                        ? false
-                        : true
-                    "
+                    :disabled="orderDetails.status == 'returned' ? true : false"
                   />
                 </td>
-                <td>
-                  <VRating
-                    hover
-                    v-model="item.rate"
-                    color="warning"
-                    @change="changeRate(item, item.rate)"
-                    :readonly="userRole == 'branch' ? false : true"
-                  />
-                </td>
-
-                <!--
-                    :rules="[requiredValidator]"
-                   <td class="text-center">${{ item.price }}</td> -->
               </tr>
             </tbody>
           </VTable>
 
-          <!-- show btn to proccess the order in warehouse  -->
-          <VRow
-            class="flex-row-reverse mr-2 my-5"
-            v-if="userRole == 'admin' || userRole == 'warehouse'"
-          >
-            <VDialog v-model="isDialogVisible" max-width="600">
-              <!-- Dialog Activator -->
-              <template #activator="{ props }">
-                <VBtn
-                  v-bind="props"
-                  prepend-icon="tabler-send"
-                  class="mr-3"
-                  :disabled="orderDetails.status != 'pending' ? true : false"
-                >
-                  <!-- !isAllFilled() -->
-                  Proccess
-                </VBtn>
-              </template>
-
-              <!-- Dialog close btn -->
-              <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
-
-              <!-- Dialog Content -->
-              <VCard title="Select Carrier">
-                <VCardText>
-                  <VRow>
-                    <VCol cols="12" sm="6">
-                      <VAutocomplete
-                        v-model="selectedCarrier"
-                        :items="carriers"
-                        item-title="name"
-                        item-value="id"
-                        label="Select"
-                        persistent-hint
-                        return-object
-                        single-line
-                        rounded
-                        filled
-                        solo-inverted
-                        class="ml-2"
-                        :rules="[requiredValidator]"
-                      />
-                      <span
-                        v-if="isCarrierSelected"
-                        class="text-danger ml-2"
-                        type="error"
-                      >
-                        Please choose a carrier</span
-                      >
-                    </VCol>
-                  </VRow>
-                </VCardText>
-
-                <VCardText class="d-flex justify-end flex-wrap gap-3">
-                  <VBtn
-                    variant="tonal"
-                    color="secondary"
-                    @click="isDialogVisible = false"
-                  >
-                    Close
-                  </VBtn>
-                  <VBtn @click="isProcessing()"> Save </VBtn>
-                </VCardText>
-              </VCard>
-            </VDialog>
-          </VRow>
-
-          <!-- show btn to complete the order in branch  -->
+          <!-- show btn to complete the order  -->
           <VRow class="flex-row-reverse mr-2 my-5" v-if="userRole == 'branch'">
             <VBtn
               prepend-icon="tabler-send"
               class="mr-3"
-              @click="completedOrder()"
-              :disabled="
-                orderDetails.status == 'completed' ||
-                orderDetails.status == 'returned' ||
-                orderDetails.status == 'canceled'
-              "
+              @click="returnedOrder()"
+              :disabled="orderDetails.status == 'returned' ? true : false"
             >
-              Complete
+              Return
             </VBtn>
           </VRow>
-          <VRow class="flex-row-reverse mr-2 my-5" v-if="userRole == 'branch'">
-            <p class="mb-2">
-              <span></span>
-              <VBtn
-                color="info"
-                prepend-icon="tabler-arrow-back-up"
-                class="mr-3"
-                :to="{
-                  name: 'laffah-orders-return-id',
-                  params: { id: orderDetails.id },
-                }"
-              >
-              </VBtn>
-            </p>
-          </VRow>
+
           <VDivider class="my-5" />
 
+          <!-- Add Message -->
           <VRow class="my-7">
             <VCol cols="12" md="7" class="ml-2">
               <VTextarea label="Comment" v-model="comment" rows="2" />
@@ -620,7 +344,6 @@ const userName = computed(() => {
               </VBtn>
             </VCol>
           </VRow>
-
           <VCardText>
             <div
               class="d-flex align-center mb-1 pb-1 border-bottom"
