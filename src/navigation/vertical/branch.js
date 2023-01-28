@@ -18,6 +18,12 @@ export default [
       
     },
     {
+      title: 'Order products ',
+      icon: { icon: 'tabler-eye' },
+      to: 'laffah-orders-products',
+      
+    },
+    {
       title: 'Cart',
       icon: { icon: 'tabler-file' },
       to: 'laffah-orders-cart',

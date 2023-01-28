@@ -16,16 +16,20 @@ let cart = computed(function () {
   console.log(authStore.state.userData);
 });
 
-const searchQuery = ref("");
-const startFrom = ref("");
+const searchQuery = ref();
+const startFrom = ref();
+const startTo = ref();
+
 const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref();
+const selectedBranch = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
 const totalOrderProducts = ref(0);
 const orderProducts = ref([]);
+const branches = ref([]);
 
 // 👉 Fetching orders
 const fetchProductsOrder = () => {
@@ -35,6 +39,9 @@ const fetchProductsOrder = () => {
       status: selectedStatus.value,
       perPage: rowPerPage.value,
       page: currentPage.value,
+      branchId: selectedBranch.value,
+      startFrom: startFrom.value,
+      startTo: startTo.value,
     })
     .then((response) => {
       orderProducts.value = response.data.data.data;
@@ -46,6 +53,19 @@ const fetchProductsOrder = () => {
       console.error(error);
     });
 };
+// const fetchBranches = () => {
+//   productOrderStore
+//     .fetchBranches({
+//       perPage: 50,
+//       page: 1,
+//     })
+//     .then((response) => {
+//       branches.value = response.data.data.data;
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//     });
+// };
 const convertCreated = (value) => {
   return moment(value).format("YYYY-MM-DD");
 };
@@ -54,9 +74,25 @@ const getUserRole = computed(() => {
   return userStore;
 });
 
-// onMounted(() => {
-//   useUserStore();
-// });
+onMounted(() => {
+  productOrderStore
+    .fetchBranches({
+      perPage: 50,
+      page: 1,
+    })
+    .then((response) => {
+      branches.value = response.data.data.data;
+      let branchesAll = [];
+      branches.value.forEach((element) => {
+        branchesAll.push({ title: element.name, value: element.id });
+      });
+      console.log(branchesAll);
+      branches.value = branchesAll;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
 
 watchEffect(fetchProductsOrder);
 
@@ -196,13 +232,6 @@ const subQty = (q1, q2) => {
     return q1 - q2;
   } else return "n/a";
 };
-// onMounted(() => {
-//   // console.log(store.state.auth.userRole);
-//   // localStorage.getItem("userRole");
-//   userRole.value = console.log(localStorage.getItem("userRole"));
-// });
-
-// onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <template>
@@ -226,13 +255,12 @@ const subQty = (q1, q2) => {
                 />
               </div>
             </VCol>
-            <VCol md="3">
-              <AppDateTimePicker v-model="startFrom" label="Default" />
-            </VCol>
+            <!-- <VCol md="3">
+            </VCol> -->
             <VCol md="3">
               <VTextField
                 v-model="searchQuery"
-                placeholder="Search"
+                placeholder="Search by product name"
                 density="compact"
               />
             </VCol>
@@ -247,6 +275,26 @@ const subQty = (q1, q2) => {
             </VCol>
             <!-- <VCol md="3"> </VCol> -->
           </VRow>
+          <VRow class="py-2 px-2">
+            <!-- <VCol md="3"> </VCol> -->
+            <VCol md="3">
+              <AppDateTimePicker v-model="startFrom" label="Start From" />
+            </VCol>
+            <VCol md="3">
+              <AppDateTimePicker v-model="startTo" label="Start to" />
+            </VCol>
+            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
+              <VSelect
+                v-model="selectedBranch"
+                label="Select branch"
+                :items="branches"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <!-- <VCol md="3"> </VCol> -->
+          </VRow>
+
           <!-- <div class="me-3" style="width: 250px"></div>
             <div
               class="app-user-search-filter d-flex align-center flex-wrap gap-4"
@@ -282,9 +330,15 @@ const subQty = (q1, q2) => {
                 <th scope="col">Sent</th>
                 <th scope="col">Div</th>
                 <th scope="col">order Id</th>
-                <th scope="col">Branch</th>
+                <th scope="col">Order Status</th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  Branch
+                </th>
                 <th scope="col">Created at</th>
-                <th scope="col">ACTIONS</th>
+                <!-- <th scope="col">ACTIONS</th> -->
               </tr>
             </thead>
             <!-- 👉 table body -->
@@ -331,9 +385,15 @@ const subQty = (q1, q2) => {
                     ordProduct.order_id
                   }}</span>
                 </td>
+                <!-- 👉 order Status -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.order.status
+                  }}</span>
+                </td>
 
                 <!-- 👉 Branch -->
-                <td>
+                <td v-if="userRole == 'admin' || userRole == 'warehouse'">
                   <span
                     class="text-capitalize text-base"
                     v-if="ordProduct.order.user.branch.name != undefined"
@@ -349,7 +409,7 @@ const subQty = (q1, q2) => {
                 </td>
 
                 <!-- 👉 Actions -->
-                <td class="text-center" style="width: 5rem">
+                <!-- <td class="text-center" style="width: 5rem">
                   <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
@@ -357,35 +417,7 @@ const subQty = (q1, q2) => {
                   <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
-                  <!-- <VBtn
-                    icon
-                    variant="text"
-                    color="default"
-                    size="x-small"
-                    :to="{
-                      name: 'laffah-orders-preview-id',
-                      params: { id: order.id },
-                    }"
-                  >
-                    <VIcon :size="22" icon="tabler-eye" />
-                  </VBtn> -->
-                  <!-- <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: order.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu>
-                  </VBtn> -->
-                </td>
+                </td> -->
               </tr>
             </tbody>
 

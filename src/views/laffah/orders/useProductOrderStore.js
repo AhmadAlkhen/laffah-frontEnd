@@ -6,15 +6,12 @@ export const useProductOrderStore = defineStore('ProductOrderStore', {
     // 👉 Fetch users data
     fetchProductsOrder(params) {
       
-      // let order=null;
-      
-      //  axios.get('/order/myOrder').then((response) => {
-      //   console.log(response.data);
-      //   order=response.data
-      // }).catch((err)=>{console.log(err)})
-      
-    
     return axios.get('/order/products',{ params });
+    },
+
+    fetchBranches(params) {
+      
+    return axios.get('branch/index',{ params });
     },
 
 

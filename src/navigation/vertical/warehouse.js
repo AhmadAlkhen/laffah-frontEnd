@@ -17,6 +17,12 @@ export default [
       to: 'laffah-orders-MyOrders',
       
     },
+    {
+      title: 'Order products ',
+      icon: { icon: 'tabler-eye' },
+      to: 'laffah-orders-products',
+      
+    },
 
   ]
   
