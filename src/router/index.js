@@ -1,8 +1,17 @@
-import { canNavigate } from '@layouts/plugins/casl'
-import { setupLayouts } from 'virtual:generated-layouts'
-import { createRouter, createWebHistory } from 'vue-router'
-import routes from '~pages'
-import { isUserLoggedIn } from './utils'
+// import { canNavigate } from '@layouts/plugins/casl'
+import { setupLayouts } from 'virtual:generated-layouts';
+import { createRouter, createWebHistory } from 'vue-router';
+import routes from '~pages';
+import { isUserLoggedIn } from './utils';
+
+
+// console.log(isLoggedIn)
+// onMounted(() => {
+
+//   console.log('Route component mounted');
+//   console.log(localStorage.getItem('userRole'));
+ 
+// });
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,13 +22,13 @@ const router = createRouter({
       path: '/',
       redirect: to => {
         // const userData = JSON.parse(localStorage.getItem('userData') || '{}')
-        // const userRole = localStorage.getItem('userRole') ? localStorage.getItem('userRole') : null
+        const userRole = localStorage.getItem('userRole') ? localStorage.getItem('userRole') : null
         // if (userRole === 'admin')
         //   return { name: 'dashboards-analytics' }
-        // if (userRole === 'client')
+        // if (userRole === 'branch')
         //   return { name: 'access-control' }
         
-        // return { name: 'login', query: to.query }
+        // return { name: 'login' }
         return { name: 'dashboards-analytics'}
       },
     },
@@ -35,10 +44,15 @@ const router = createRouter({
   ],
 })
 
+// const myMiddleware = (to, from, next) => {
+//   console.log(`Navigating from ${from.path} to ${to.path}`);
+//   next();
+// };
+
 
 // Docs: https://router.vuejs.org/guide/advanced/navigation-guards.html#global-before-guards
-router.beforeEach(to => {
-  const isLoggedIn = isUserLoggedIn()
+// router.beforeEach(to => {
+//   const isLoggedIn = isUserLoggedIn()
 
   /*
   
@@ -61,20 +75,21 @@ router.beforeEach(to => {
     return next()
   
     */
-  if (canNavigate(to)) {
-    if (to.meta.redirectIfLoggedIn && isLoggedIn)
-      return '/'
-  }
-  else {
-    if (isLoggedIn)
-      return { name: 'not-authorized' }
-    else
-      return { name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }
-  }
-})
+//   if (canNavigate(to)) {
+//     if (to.meta.redirectIfLoggedIn && isLoggedIn)
+//       return '/'
+//   }
+//   else {
+//     if (isLoggedIn)
+//       return { name: 'not-authorized' }
+//     else
+//       return { name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }
+//   }
+// })
 
 // router.beforeEach((to, from, next) => {
 //   const isLoggedIn = isUserLoggedIn()
+  
 // if (isLoggedIn) {
 //   return next()
 // }else{
@@ -82,4 +97,24 @@ router.beforeEach(to => {
 // }
 
 // })
+
+router.beforeEach((to, from, next) => {
+    // to.name !== 'Login' && 
+  const isLoggedIn = isUserLoggedIn()
+
+  console.log(to.name)
+
+  if (to.name !== 'login' && !isLoggedIn){
+    // console.log('h1')
+    // return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
+    // routes.push({name:'login'})
+       return next({ name: 'login' }) 
+
+  } 
+  else{
+    // console.log('h2')
+    return next()
+  } 
+})
+
 export default router

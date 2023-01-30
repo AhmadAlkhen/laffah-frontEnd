@@ -9,6 +9,7 @@ const userData = JSON.parse(localStorage.getItem("userData") || "null");
 const logout = () => {
   // Remove "userData" from localStorage
   localStorage.removeItem("userData");
+  localStorage.removeItem("userRole");
 
   // Remove "accessToken" from localStorage
   localStorage.removeItem("accessToken");

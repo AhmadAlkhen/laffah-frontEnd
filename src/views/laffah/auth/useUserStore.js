@@ -59,32 +59,32 @@ export const useUserStore = defineStore('userStore', {
     },
     async login(formData) {
       try {
-          const user = await axios.post("auth/login", formData);    
+          const user = await axios.post("auth/login", formData);
+      
+          // this.userData = user.data.userData;
+          // // store user details and jwt in local storage to keep user logged in between page refreshes
+          // localStorage.setItem('userData', JSON.stringify(user.data.userData));
+          // var userRole = user.data.userData.role.split('"').join('');
+          // localStorage.setItem('userRole', userRole);
 
-          console.log(user.data.userData);
-          // update pinia state
-          this.userData = user.data.userData;
-
-
-          
-          // store user details and jwt in local storage to keep user logged in between page refreshes
-          localStorage.setItem('userData', JSON.stringify(user.data.userData));
-          var userRole = user.data.userData.role.split('"').join('');
-          localStorage.setItem('userRole', userRole);
-
-          localStorage.setItem(
-            "userAbilities",
-            JSON.stringify(this.userAbilities)
-          );
-          // ability.update(userAbilities);
-          localStorage.setItem("accessToken", user.data.accessToken);
+          // localStorage.setItem(
+          //   "userAbilities",
+          //   JSON.stringify(this.userAbilities)
+          // );
+          // // ability.update(userAbilities);
+          // localStorage.setItem("accessToken", user.data.accessToken);
           // redirect to previous url or default to home page
-          return userRole
+          // return user
          
       } catch (error) {
         console.log(error);
+        return error
         
       }
+  },
+  setUserRole(state, userRole) {
+    console.log(userRole)
+    state.userRole = userRole
   },
   },
 

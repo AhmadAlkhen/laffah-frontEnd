@@ -1,7 +1,7 @@
 <script setup>
 import { VForm } from "vuetify/components";
 import { useAppAbility } from "@/plugins/casl/useAppAbility";
-import AuthProvider from "@/views/pages/authentication/AuthProvider.vue";
+// import AuthProvider from "@/views/pages/authentication/AuthProvider.vue";
 import axios from "axios";
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant";
 import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
@@ -26,7 +26,7 @@ const authThemeImg = useGenerateImageVariant(
 );
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
 const isPasswordVisible = ref(false);
-const route = useRoute();
+//const route = useRoute();
 const router = useRouter();
 const ability = useAppAbility();
 
@@ -48,65 +48,66 @@ const userAbilities = ref([
     subject: "all",
   },
 ]);
-const login = () => {
-  loginCSRF().then(() => {
-    const formData = new FormData();
-    formData.append("email", email.value);
-    formData.append("password", password.value);
+// const login = () => {
+//   loginCSRF().then(() => {
+//     const formData = new FormData();
+//     formData.append("email", email.value);
+//     formData.append("password", password.value);
 
-    axios
-      .post("auth/login", formData)
-      .then((response) => {
-        // console.log(response.data);
-        // const { accessToken, userData, userAbilities } = response.data;
+//     axios
+//       .post("auth/login", formData)
+//       .then((response) => {
+//         // console.log(response.data);
+//         // const { accessToken, userData, userAbilities } = response.data;
 
-        localStorage.setItem(
-          "userAbilities",
-          JSON.stringify(userAbilities.value)
-        );
-        ability.update(userAbilities);
-        localStorage.setItem(
-          "userData",
-          JSON.stringify(response.data.userData)
-        );
-        localStorage.setItem("accessToken", response.data.accessToken);
-        // userStore.authUser();
+//         localStorage.setItem(
+//           "userAbilities",
+//           JSON.stringify(userAbilities.value)
+//         );
+//         ability.update(userAbilities);
+//         localStorage.setItem(
+//           "userData",
+//           JSON.stringify(response.data.userData)
+//         );
+//         localStorage.setItem("accessToken", response.data.accessToken);
+//         // userStore.authUser();
+//         alert("sdfgd");
+//         // Redirect to `to` query if exist or redirect to index route
+//         // router.replace(route.query.to ? String(route.query.to) : "/");
+//         router.replace("/");
+//         // router.push("/laffah/orders/myorders");
+//       })
+//       .catch((err) => {
+//         console.log("error::" + err);
+//       });
+//   });
+//   // axios
+//   //   .post("/auth/login", {
+//   //     email: email.value,
+//   //     password: password.value,
+//   //   })
+//   //   .then((r) => {
+//   //     const { accessToken, userData, userAbilities } = r.data;
 
-        // Redirect to `to` query if exist or redirect to index route
-        // router.replace(route.query.to ? String(route.query.to) : "/");
-        router.push("/laffah/orders/myorders");
-      })
-      .catch((err) => {
-        console.log("error::" + err);
-      });
-  });
-  // axios
-  //   .post("/auth/login", {
-  //     email: email.value,
-  //     password: password.value,
-  //   })
-  //   .then((r) => {
-  //     const { accessToken, userData, userAbilities } = r.data;
+//   //     localStorage.setItem("userAbilities", JSON.stringify(userAbilities));
+//   //     ability.update(userAbilities);
+//   //     localStorage.setItem("userData", JSON.stringify(userData));
+//   //     localStorage.setItem("accessToken", JSON.stringify(accessToken));
 
-  //     localStorage.setItem("userAbilities", JSON.stringify(userAbilities));
-  //     ability.update(userAbilities);
-  //     localStorage.setItem("userData", JSON.stringify(userData));
-  //     localStorage.setItem("accessToken", JSON.stringify(accessToken));
+//   //     // Redirect to `to` query if exist or redirect to index route
+//   //     router.replace(route.query.to ? String(route.query.to) : "/");
+//   //   })
+//   //   .catch((e) => {
+//   //     const { errors: formErrors } = e.response.data;
 
-  //     // Redirect to `to` query if exist or redirect to index route
-  //     router.replace(route.query.to ? String(route.query.to) : "/");
-  //   })
-  //   .catch((e) => {
-  //     const { errors: formErrors } = e.response.data;
-
-  //     errors.value = formErrors;
-  //     console.error(e.response.data);
-  //   });
-};
-
-const loginCSRF = async () => {
-  await axios.get("http://localhost:8000/sanctum/csrf-cookie");
-};
+//   //     errors.value = formErrors;
+//   //     console.error(e.response.data);
+//   //   });
+// };
+const errorLogin = ref();
+// const loginCSRF = async () => {
+//   await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+// };
 
 const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
@@ -115,10 +116,47 @@ const onSubmit = () => {
       const formData = new FormData();
       formData.append("email", email.value);
       formData.append("password", password.value);
-      userStore.login(formData).then((res) => {
-        console.log(res);
-        router.replace(route.query.to ? String(route.query.to) : "/");
-      });
+      axios
+        .post("auth/login", formData)
+        .then((res) => {
+          if (res.status) {
+            // console.log(res);
+            localStorage.setItem("userData", JSON.stringify(res.data.userData));
+            var userRole = res.data.userData.role.split('"').join("");
+            localStorage.setItem("userRole", userRole);
+            localStorage.setItem("accessToken", res.data.accessToken);
+            localStorage.setItem(
+              "userAbilities",
+              JSON.stringify(userAbilities.value)
+            );
+            // userStore.setUserRole("userRole", userRole);
+            router.replace("/");
+            // router
+            //   .replace(route.query.to ? String(route.query.to) : "/")
+            //   .then(() => {
+            //     // location.reload();
+            //   });
+          }
+        })
+
+        .catch((err) => {
+          errorLogin.value = err.response?.data?.message || err.message;
+          // console.log(err.response.data.message);
+        });
+
+      // userStore
+      //   .login(formData)
+      //   .then((res) => {
+      //     console.log("then" + res);
+      //     // router
+      //     //   .replace(route.query.to ? String(route.query.to) : "/")
+      //     //   .then(() => {
+      //     //     // location.reload();
+      //     //   });
+      //   })
+      //   .catch((err) => {
+      //     console.log("err" + err);
+      //   });
     }
   });
 };
@@ -207,6 +245,9 @@ const onSubmit = () => {
                 <VBtn block type="submit"> Login </VBtn>
               </VCol>
 
+              <VAlert border="start" border-color="error" v-if="errorLogin">
+                {{ errorLogin }}
+              </VAlert>
               <!-- create account -->
               <!-- <VCol cols="12" class="text-center">
                 <span>New on our platform?</span>

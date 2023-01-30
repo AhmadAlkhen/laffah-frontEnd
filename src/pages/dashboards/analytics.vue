@@ -1,53 +1,50 @@
 <script setup>
-import { useTheme } from 'vuetify'
-import AnalyticsEarningReportsWeeklyOverview from '@/views/dashboards/analytics/AnalyticsEarningReportsWeeklyOverview.vue'
-import AnalyticsMonthlyCampaignState from '@/views/dashboards/analytics/AnalyticsMonthlyCampaignState.vue'
-import AnalyticsProjectTable from '@/views/dashboards/analytics/AnalyticsProjectTable.vue'
-import AnalyticsSalesByCountries from '@/views/dashboards/analytics/AnalyticsSalesByCountries.vue'
-import AnalyticsSalesOverview from '@/views/dashboards/analytics/AnalyticsSalesOverview.vue'
-import AnalyticsSourceVisits from '@/views/dashboards/analytics/AnalyticsSourceVisits.vue'
-import AnalyticsSupportTracker from '@/views/dashboards/analytics/AnalyticsSupportTracker.vue'
-import AnalyticsTotalEarning from '@/views/dashboards/analytics/AnalyticsTotalEarning.vue'
-import AnalyticsWebsiteAnalytics from '@/views/dashboards/analytics/AnalyticsWebsiteAnalytics.vue'
-import CardStatisticsVertical from '@core/components/CardStatisticsVertical.vue'
+import { useTheme } from "vuetify";
+import AnalyticsEarningReportsWeeklyOverview from "@/views/dashboards/analytics/AnalyticsEarningReportsWeeklyOverview.vue";
+import AnalyticsMonthlyCampaignState from "@/views/dashboards/analytics/AnalyticsMonthlyCampaignState.vue";
+import AnalyticsProjectTable from "@/views/dashboards/analytics/AnalyticsProjectTable.vue";
+import AnalyticsSalesByCountries from "@/views/dashboards/analytics/AnalyticsSalesByCountries.vue";
+import AnalyticsSalesOverview from "@/views/dashboards/analytics/AnalyticsSalesOverview.vue";
+import AnalyticsSourceVisits from "@/views/dashboards/analytics/AnalyticsSourceVisits.vue";
+import AnalyticsSupportTracker from "@/views/dashboards/analytics/AnalyticsSupportTracker.vue";
+import AnalyticsTotalEarning from "@/views/dashboards/analytics/AnalyticsTotalEarning.vue";
+import AnalyticsWebsiteAnalytics from "@/views/dashboards/analytics/AnalyticsWebsiteAnalytics.vue";
+import CardStatisticsVertical from "@core/components/CardStatisticsVertical.vue";
+import { useUserStore } from "@/views/laffah/auth/useUserStore";
 
-const vuetifyTheme = useTheme()
-const currentTheme = vuetifyTheme.current.value.colors
+const userStore = useUserStore();
+
+const vuetifyTheme = useTheme();
+const currentTheme = vuetifyTheme.current.value.colors;
 
 const statisticsVertical = {
-  title: 'Revenue Generated',
-  color: 'success',
-  icon: 'tabler-credit-card',
-  stats: '97.5k',
+  title: "Revenue Generated",
+  color: "success",
+  icon: "tabler-credit-card",
+  stats: "97.5k",
   height: 120,
-  series: [{
-    data: [
-      300,
-      350,
-      330,
-      380,
-      340,
-      400,
-      380,
-    ],
-  }],
+  series: [
+    {
+      data: [300, 350, 330, 380, 340, 400, 380],
+    },
+  ],
   chartOptions: {
     chart: {
       height: 110,
-      type: 'area',
+      type: "area",
       parentHeightOffset: 0,
       toolbar: { show: false },
       sparkline: { enabled: true },
     },
     tooltip: { enabled: false },
     markers: {
-      colors: 'transparent',
-      strokeColors: 'transparent',
+      colors: "transparent",
+      strokeColors: "transparent",
     },
     grid: { show: false },
     colors: [currentTheme.success],
     fill: {
-      type: 'gradient',
+      type: "gradient",
       gradient: {
         shadeIntensity: 0.8,
         opacityFrom: 0.6,
@@ -57,7 +54,7 @@ const statisticsVertical = {
     dataLabels: { enabled: false },
     stroke: {
       width: 2,
-      curve: 'smooth',
+      curve: "smooth",
     },
     xaxis: {
       show: true,
@@ -71,94 +68,58 @@ const statisticsVertical = {
       show: false,
     },
   },
-}
+};
 </script>
 
 <template>
   <VRow class="match-height">
     <!-- 👉 Website analytics -->
-    <VCol
-      cols="12"
-      md="6"
-    >
+    <VCol cols="12" md="6">
       <AnalyticsWebsiteAnalytics />
     </VCol>
 
     <!-- 👉 Sales Overview -->
-    <VCol
-      cols="12"
-      md="3"
-      sm="6"
-    >
+    <VCol cols="12" md="3" sm="6">
       <AnalyticsSalesOverview />
     </VCol>
 
     <!-- 👉 Statistics Vertical -->
-    <VCol
-      cols="12"
-      md="3"
-      sm="6"
-    >
+    <VCol cols="12" md="3" sm="6">
       <CardStatisticsVertical v-bind="statisticsVertical" />
     </VCol>
 
     <!-- 👉 Earning Reports Weekly Overview -->
-    <VCol
-      cols="12"
-      md="6"
-    >
+    <VCol cols="12" md="6">
       <AnalyticsEarningReportsWeeklyOverview />
     </VCol>
 
     <!-- 👉 Support Tracker -->
-    <VCol
-      cols="12"
-      md="6"
-    >
+    <VCol cols="12" md="6">
       <AnalyticsSupportTracker />
     </VCol>
 
     <!-- 👉 Sales by Countries -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
+    <VCol cols="12" sm="6" lg="4">
       <AnalyticsSalesByCountries />
     </VCol>
 
     <!-- 👉 Total Earning -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
+    <VCol cols="12" sm="6" lg="4">
       <AnalyticsTotalEarning />
     </VCol>
 
     <!-- 👉 Monthly Campaign State -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
+    <VCol cols="12" sm="6" lg="4">
       <AnalyticsMonthlyCampaignState />
     </VCol>
 
     <!-- 👉 Source Visits -->
-    <VCol
-      cols="12"
-      sm="6"
-      lg="4"
-    >
+    <VCol cols="12" sm="6" lg="4">
       <AnalyticsSourceVisits />
     </VCol>
 
     <!-- 👉 Project Table -->
-    <VCol
-      cols="12"
-      lg="8"
-    >
+    <VCol cols="12" lg="8">
       <AnalyticsProjectTable />
     </VCol>
   </VRow>
