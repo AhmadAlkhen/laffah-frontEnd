@@ -54,25 +54,9 @@ const userAbilities = ref([
 //     formData.append("email", email.value);
 //     formData.append("password", password.value);
 
-//     axios
-//       .post("auth/login", formData)
-//       .then((response) => {
-//         // console.log(response.data);
-//         // const { accessToken, userData, userAbilities } = response.data;
-
-//         localStorage.setItem(
-//           "userAbilities",
-//           JSON.stringify(userAbilities.value)
-//         );
-//         ability.update(userAbilities);
-//         localStorage.setItem(
-//           "userData",
-//           JSON.stringify(response.data.userData)
-//         );
-//         localStorage.setItem("accessToken", response.data.accessToken);
 //         // userStore.authUser();
-//         alert("sdfgd");
-//         // Redirect to `to` query if exist or redirect to index route
+
+//
 //         // router.replace(route.query.to ? String(route.query.to) : "/");
 //         router.replace("/");
 //         // router.push("/laffah/orders/myorders");
@@ -81,29 +65,21 @@ const userAbilities = ref([
 //         console.log("error::" + err);
 //       });
 //   });
-//   // axios
-//   //   .post("/auth/login", {
-//   //     email: email.value,
-//   //     password: password.value,
-//   //   })
-//   //   .then((r) => {
-//   //     const { accessToken, userData, userAbilities } = r.data;
 
-//   //     localStorage.setItem("userAbilities", JSON.stringify(userAbilities));
-//   //     ability.update(userAbilities);
-//   //     localStorage.setItem("userData", JSON.stringify(userData));
-//   //     localStorage.setItem("accessToken", JSON.stringify(accessToken));
+const logIn = () => {
+  const formData = new FormData();
+  formData.append("email", email.value);
+  formData.append("password", password.value);
+  userStore
+    .login(formData)
+    .then(() => {
+      router.replace(route.query.to ? String(route.query.to) : "/");
+    })
+    .catch((err) => {
+      errorLogin.value = err.response?.data?.message || err.message;
+    });
+};
 
-//   //     // Redirect to `to` query if exist or redirect to index route
-//   //     router.replace(route.query.to ? String(route.query.to) : "/");
-//   //   })
-//   //   .catch((e) => {
-//   //     const { errors: formErrors } = e.response.data;
-
-//   //     errors.value = formErrors;
-//   //     console.error(e.response.data);
-//   //   });
-// };
 const errorLogin = ref();
 // const loginCSRF = async () => {
 //   await axios.get("http://localhost:8000/sanctum/csrf-cookie");
@@ -129,7 +105,7 @@ const onSubmit = () => {
               "userAbilities",
               JSON.stringify(userAbilities.value)
             );
-            // userStore.setUserRole("userRole", userRole);
+            // userStore.setUserRole(userRole);
             // router.replace("/");
             router.replace(route.query.to ? String(route.query.to) : "/");
             //   .then(() => {
@@ -137,25 +113,10 @@ const onSubmit = () => {
             //   });
           }
         })
-
         .catch((err) => {
           errorLogin.value = err.response?.data?.message || err.message;
           // console.log(err.response.data.message);
         });
-
-      // userStore
-      //   .login(formData)
-      //   .then((res) => {
-      //     console.log("then" + res);
-      //     // router
-      //     //   .replace(route.query.to ? String(route.query.to) : "/")
-      //     //   .then(() => {
-      //     //     // location.reload();
-      //     //   });
-      //   })
-      //   .catch((err) => {
-      //     console.log("err" + err);
-      //   });
     }
   });
 };
@@ -202,7 +163,7 @@ const onSubmit = () => {
           </VAlert>
         </VCardText> -->
         <VCardText>
-          <VForm ref="refVForm" @submit.prevent="onSubmit">
+          <VForm ref="refVForm" @submit.prevent="logIn">
             <VRow>
               <!-- email -->
               <VCol cols="12">

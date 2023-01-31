@@ -1,25 +1,24 @@
-import { useUserStore } from "@/views/laffah/auth/useUserStore";
+import { reactive } from 'vue';
 import admin from "./admin";
 import branch from "./branch";
 import warehouse from "./warehouse";
-const userStore = useUserStore();
+
 
 const routesArray = [];
+const state = reactive({
+  userRole: localStorage.getItem('userRole')
+});
 
-
-const userRole =  localStorage.getItem('userRole');
-// const userRole =  userStore.userRole;
-
-
-if(userRole=='admin'){
-    routesArray.push(...admin);
+if (state.userRole === 'admin') {
+  routesArray.push(...admin);
 }
 
-if(userRole=='branch'){
-    routesArray.push(...branch);
-}
-if(userRole=='warehouse'){
-    routesArray.push(...warehouse);
+if (state.userRole === 'branch') {
+  routesArray.push(...branch);
 }
 
-export default routesArray
+if (state.userRole === 'warehouse') {
+  routesArray.push(...warehouse);
+}
+
+export default routesArray;

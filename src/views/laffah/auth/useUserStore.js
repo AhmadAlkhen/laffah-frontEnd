@@ -11,7 +11,8 @@ export const useUserStore = defineStore('userStore', {
       userData: localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')):null,
       accessToken:"",
       authenticated:false,
-      userRole:localStorage.getItem('userRole') ? localStorage.getItem('userRole'):null,
+      userRole:"",
+      // userRole:localStorage.getItem('userRole') ? localStorage.getItem('userRole'):'',
       userAbilities:[{
         action: "manage",
         subject: "all",
@@ -32,17 +33,18 @@ export const useUserStore = defineStore('userStore', {
     //   return state.authenticated 
     // },
 
-    getUserData(state){
-      const user = JSON.parse(localStorage.getItem("userData"));
-      const token =  localStorage.getItem('accessToken');
+    // getUserData(state){
+    //   const user = JSON.parse(localStorage.getItem("userData"));
+    //   const token =  localStorage.getItem('accessToken');
 
-      state.userData = user;
-      state.userRole = user.role;
-      state.accessToken = token;
+    //   state.userData = user;
+    //   state.userRole = user.role;
+    //   state.accessToken = token;
   
-      return state.userData
-    },
+    //   return state.userData
+    // },
     getRole(state) {
+      state.userRole= localStorage.getItem('userRole') ? localStorage.getItem('userRole'):''
       return state.userRole 
     },
 
@@ -61,18 +63,19 @@ export const useUserStore = defineStore('userStore', {
       try {
           const user = await axios.post("auth/login", formData);
       
-          // this.userData = user.data.userData;
+          this.userData = user.data.userData;
           // // store user details and jwt in local storage to keep user logged in between page refreshes
-          // localStorage.setItem('userData', JSON.stringify(user.data.userData));
-          // var userRole = user.data.userData.role.split('"').join('');
-          // localStorage.setItem('userRole', userRole);
-
+          localStorage.setItem('userData', JSON.stringify(user.data.userData));
+          var userRole = user.data.userData.role.split('"').join('');
+          this.userRole=userRole;
+          localStorage.setItem('userRole', userRole);
+          localStorage.setItem("accessToken", user.data.accessToken);
           // localStorage.setItem(
           //   "userAbilities",
           //   JSON.stringify(this.userAbilities)
           // );
           // // ability.update(userAbilities);
-          // localStorage.setItem("accessToken", user.data.accessToken);
+         
           // redirect to previous url or default to home page
           // return user
          
@@ -82,8 +85,7 @@ export const useUserStore = defineStore('userStore', {
         
       }
   },
-  setUserRole(state, userRole) {
-    console.log(userRole)
+  setUserRole(state ,userRole) {
     state.userRole = userRole
   },
   },

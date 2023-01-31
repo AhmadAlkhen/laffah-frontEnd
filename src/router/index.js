@@ -3,15 +3,10 @@ import { setupLayouts } from 'virtual:generated-layouts';
 import { createRouter, createWebHistory } from 'vue-router';
 import routes from '~pages';
 import { isUserLoggedIn } from './utils';
+const userRole=localStorage.getItem('userRole')?localStorage.getItem('userRole'):null
 
 
-// console.log(isLoggedIn)
-// onMounted(() => {
 
-//   console.log('Route component mounted');
-//   console.log(localStorage.getItem('userRole'));
- 
-// });
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +35,24 @@ const router = createRouter({
       path: '/pages/account-settings',
       redirect: () => ({ name: 'pages-account-settings-tab', params: { tab: 'account' } }),
     },
+    // my route
+    // {
+    //   path: '/laffah/branches/list',
+    //   name: 'branches-list',
+    //   component: () => import('@/pages/laffah/branches/list.vue'),
+    //   beforeEnter: (to, from, next) => {
+    //     if (userRole =='admin') {
+    //      return next()
+    //     } else {
+    //       return next({ name: 'unauthorized' })
+    //     }
+    //   }
+    // },
+
+
+
+
+
     ...setupLayouts(routes),
   ],
 })
@@ -103,22 +116,56 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = isUserLoggedIn()
   const userRole=localStorage.getItem('userRole')?localStorage.getItem('userRole'):null
 
-  console.log(userRole)
-  console.log(to.name)
+  // console.log(userRole)
+  // console.log(to.name)
 
   if (to.name !== 'login' && !isLoggedIn){
     return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
       //  return next({ name: 'login' }) 
-  } 
+  }
   else{
-    if(to.name==='laffah-users-list'|| to.name==='laffah-branches-list'){
-      if(userRole !=='admin'){
-        return next({name:'not-authorized'})
-      } 
-    }        
-    else 
-    return next()
+    switch (to.name) {
+      case 'laffah-branches-list':
+        if (userRole=='admin') {
+         return next()
+        } else {
+          return next({ name: 'not-authorized' })
+        }
+        break
+      case 'laffah-users-list':
+        if (userRole === 'admin') {
+          return next()
+        } else {
+          return next({ name: 'not-authorized' })
+        }
+        break
+      case 'laffah-categories-list':
+        if (userRole === 'admin' || userRole === 'warehouse' ) {
+          return next()
+        } else {
+          return next({ name: 'not-authorized' })
+        }
+        break
+      case 'laffah-products-list':
+        if (userRole === 'admin' || userRole === 'warehouse' ) {
+          return next()
+        } else {
+          return next({ name: 'not-authorized' })
+        }
+        break
+      default:
+        return next()
+    }
   } 
+  // else{
+  //   if(to.name==='laffah-users-list'|| to.name==='laffah-branches-list'){
+  //     if(userRole !=='admin'){
+  //       return next({name:'not-authorized'})
+  //     } 
+  //   }        
+  //   else 
+  //   return next()
+  // } 
 })
 
 export default router
