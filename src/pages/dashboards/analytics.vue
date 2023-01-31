@@ -77,7 +77,7 @@ const statisticsVertical = {
     <VCol cols="12" md="6">
       <AnalyticsWebsiteAnalytics />
     </VCol>
-
+    {{ userStore.userRole }}
     <!-- 👉 Sales Overview -->
     <VCol cols="12" md="3" sm="6">
       <AnalyticsSalesOverview />

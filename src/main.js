@@ -17,13 +17,13 @@ import { createApp } from 'vue'
 import VueSweetalert2 from 'vue-sweetalert2'
 import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
-import store from './store'
-
-
+// import store from './store'
 loadFonts()
+const isDev = process.env.NODE_ENV !== 'production'
 
-const pinia = createPinia()
-
+const pinia = createPinia({
+  dev: isDev,
+})
 
 // Create vue app
 const app = createApp(App)
@@ -35,7 +35,7 @@ app.use(pinia)
 app.use(router)
 app.use(layoutsPlugin)
 app.use(i18n)
-app.use(store)
+// app.use(store)
 app.use(Toast);
 app.use(VueSweetalert2);
 

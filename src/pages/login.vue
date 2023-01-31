@@ -26,7 +26,7 @@ const authThemeImg = useGenerateImageVariant(
 );
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark);
 const isPasswordVisible = ref(false);
-//const route = useRoute();
+const route = useRoute();
 const router = useRouter();
 const ability = useAppAbility();
 
@@ -130,9 +130,8 @@ const onSubmit = () => {
               JSON.stringify(userAbilities.value)
             );
             // userStore.setUserRole("userRole", userRole);
-            router.replace("/");
-            // router
-            //   .replace(route.query.to ? String(route.query.to) : "/")
+            // router.replace("/");
+            router.replace(route.query.to ? String(route.query.to) : "/");
             //   .then(() => {
             //     // location.reload();
             //   });

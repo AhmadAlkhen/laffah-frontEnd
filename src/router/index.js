@@ -33,7 +33,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/pages/user-profile',
+      path: '//user-profile',
       redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
     },
     {
@@ -101,18 +101,22 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     // to.name !== 'Login' && 
   const isLoggedIn = isUserLoggedIn()
+  const userRole=localStorage.getItem('userRole')?localStorage.getItem('userRole'):null
 
+  console.log(userRole)
   console.log(to.name)
 
   if (to.name !== 'login' && !isLoggedIn){
-    // console.log('h1')
-    // return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
-    // routes.push({name:'login'})
-       return next({ name: 'login' }) 
-
+    return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
+      //  return next({ name: 'login' }) 
   } 
   else{
-    // console.log('h2')
+    if(to.name==='laffah-users-list'|| to.name==='laffah-branches-list'){
+      if(userRole !=='admin'){
+        return next({name:'not-authorized'})
+      } 
+    }        
+    else 
     return next()
   } 
 })

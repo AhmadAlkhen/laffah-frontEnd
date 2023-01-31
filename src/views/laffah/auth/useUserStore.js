@@ -11,7 +11,7 @@ export const useUserStore = defineStore('userStore', {
       userData: localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')):null,
       accessToken:"",
       authenticated:false,
-      userRole:"",
+      userRole:localStorage.getItem('userRole') ? localStorage.getItem('userRole'):null,
       userAbilities:[{
         action: "manage",
         subject: "all",

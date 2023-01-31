@@ -8,7 +8,7 @@ export default [
     {
       title: 'Branches',
       icon: { icon: 'tabler-lifebuoy' },
-      to: {name:'laffah-branchs-list'},
+      to: {name:'laffah-branches-list'},
       
     },
     {
