@@ -14,8 +14,9 @@ import authV2LoginIllustrationLight from "@images/pages/auth-v2-login-illustrati
 import authV2MaskDark from "@images/pages/misc-mask-dark.png";
 import authV2MaskLight from "@images/pages/misc-mask-light.png";
 
-import { useUserStore } from "@/views/laffah/auth/useUserStore";
+// import { useUserStore } from "@/views/laffah/auth/useUserStore";
 // import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/views/laffah/auth/useAuthStore";
 
 const authThemeImg = useGenerateImageVariant(
   authV2LoginIllustrationLight,
@@ -30,8 +31,8 @@ const route = useRoute();
 const router = useRouter();
 const ability = useAppAbility();
 
-const userStore = useUserStore();
-// const authStore = useAuthStore();
+// const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const errors = ref({
   email: undefined,
@@ -48,37 +49,20 @@ const userAbilities = ref([
     subject: "all",
   },
 ]);
-// const login = () => {
-//   loginCSRF().then(() => {
-//     const formData = new FormData();
-//     formData.append("email", email.value);
-//     formData.append("password", password.value);
 
-//         // userStore.authUser();
-
-//
-//         // router.replace(route.query.to ? String(route.query.to) : "/");
-//         router.replace("/");
-//         // router.push("/laffah/orders/myorders");
-//       })
-//       .catch((err) => {
-//         console.log("error::" + err);
-//       });
-//   });
-
-const logIn = () => {
-  const formData = new FormData();
-  formData.append("email", email.value);
-  formData.append("password", password.value);
-  userStore
-    .login(formData)
-    .then(() => {
-      router.replace(route.query.to ? String(route.query.to) : "/");
-    })
-    .catch((err) => {
-      errorLogin.value = err.response?.data?.message || err.message;
-    });
-};
+// const logIn = () => {
+//   const formData = new FormData();
+//   formData.append("email", email.value);
+//   formData.append("password", password.value);
+//   userStore
+//     .login(formData)
+//     .then(() => {
+//       router.replace(route.query.to ? String(route.query.to) : "/");
+//     })
+//     .catch((err) => {
+//       errorLogin.value = err.response?.data?.message || err.message;
+//     });
+// };
 
 const errorLogin = ref();
 // const loginCSRF = async () => {
@@ -107,6 +91,14 @@ const onSubmit = () => {
             );
             // userStore.setUserRole(userRole);
             // router.replace("/");
+            const role = res.data.userData.role.split('"').join("");
+            const accessToken = res.data.accessToken;
+
+            // authStore.updateData(role, accessToken);
+            authStore.$patch({
+              userRole: role,
+            });
+
             router.replace(route.query.to ? String(route.query.to) : "/");
             //   .then(() => {
             //     // location.reload();
@@ -163,7 +155,7 @@ const onSubmit = () => {
           </VAlert>
         </VCardText> -->
         <VCardText>
-          <VForm ref="refVForm" @submit.prevent="logIn">
+          <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
               <VCol cols="12">

@@ -10,9 +10,10 @@ import AnalyticsSupportTracker from "@/views/dashboards/analytics/AnalyticsSuppo
 import AnalyticsTotalEarning from "@/views/dashboards/analytics/AnalyticsTotalEarning.vue";
 import AnalyticsWebsiteAnalytics from "@/views/dashboards/analytics/AnalyticsWebsiteAnalytics.vue";
 import CardStatisticsVertical from "@core/components/CardStatisticsVertical.vue";
-import { useUserStore } from "@/views/laffah/auth/useUserStore";
+// import { useUserStore } from "@/views/laffah/auth/useUserStore";
+import { useAuthStore } from "@/views/laffah/auth/useAuthStore";
 
-const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const vuetifyTheme = useTheme();
 const currentTheme = vuetifyTheme.current.value.colors;
@@ -77,11 +78,11 @@ const statisticsVertical = {
     <VCol cols="12" md="6">
       <AnalyticsWebsiteAnalytics />
     </VCol>
-    {{ userStore.userRole }}
     <!-- 👉 Sales Overview -->
     <VCol cols="12" md="3" sm="6">
       <AnalyticsSalesOverview />
     </VCol>
+    {{ authStore.userRole }}
 
     <!-- 👉 Statistics Vertical -->
     <VCol cols="12" md="3" sm="6">

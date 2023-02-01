@@ -1,5 +1,6 @@
 <script setup>
 import AddNewBranchDrawer from "@/views/laffah/branchs/AddNewBranchDrawer.vue";
+import UpdateBranchDrawer from "@/views/laffah/branchs/UpdateBranchDrawer.vue";
 import { useBranchListStore } from "@/views/laffah/branchs/useBranchListStore";
 import { avatarText } from "@core/utils/formatters";
 import { useToast } from "vue-toastification";
@@ -12,6 +13,7 @@ const currentPage = ref(1);
 const totalPage = ref(1);
 const totalBranchs = ref(0);
 const branchs = ref([]);
+const branchData = ref({});
 
 // 👉 Fetching branchs
 const fetchBranchs = () => {
@@ -68,6 +70,8 @@ const convertStatus = (status) => {
 
 const isAddNewBranchDrawerVisible = ref(false);
 
+const isUpdateBranchDrawerVisible = ref(false);
+
 // 👉 Computing pagination data
 const paginationData = computed(() => {
   const firstIndex = branchs.value.length
@@ -86,6 +90,23 @@ const addNewBranch = (branchData) => {
     });
   });
 
+  // refetch Branchs
+  fetchBranchs();
+};
+
+const getBranch = (id) => {
+  branchListStore.fetchBranch(id).then((res) => {
+    branchData.value = res.data.data[0];
+    console.log(branchData.value);
+    isUpdateBranchDrawerVisible.value = true;
+  });
+};
+const updateBranch = (branchData) => {
+  branchListStore.updateBranch(branchData).then(() => {
+    toast.success("Branch updated successfully", {
+      timeout: 2000,
+    });
+  });
   // refetch Branchs
   fetchBranchs();
 };
@@ -215,30 +236,19 @@ const addNewBranch = (branchData) => {
 
                 <!-- 👉 Actions -->
                 <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="getBranch(branch.id)"
+                  >
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
-                  </VBtn>
-
-                  <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <!-- <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: user.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu> -->
-                  </VBtn>
+                  </VBtn> -->
                 </td>
               </tr>
             </tbody>
@@ -275,6 +285,13 @@ const addNewBranch = (branchData) => {
     <AddNewBranchDrawer
       v-model:isDrawerOpen="isAddNewBranchDrawerVisible"
       @branch-data="addNewBranch"
+    />
+
+    <!-- 👉 Update Branch -->
+    <UpdateBranchDrawer
+      v-model:isDrawerOpen="isUpdateBranchDrawerVisible"
+      @branch-data2="updateBranch"
+      :branchData="branchData"
     />
   </section>
 </template>

@@ -19,11 +19,23 @@ export const useBranchListStore = defineStore('BranchListStore', {
           .catch(error => reject(error))
       })
     },
+    updateBranch(branchData) {
+
+      return new Promise((resolve, reject) => {
+        
+        const formData = new FormData();
+        formData.append('id',branchData.id);
+        formData.append('name',branchData.fullName);
+        formData.append('status',branchData.status);
+        axios.post('/branch/update', formData).then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
 
     // 👉 fetch single user
-    fetchUser(id) {
+    fetchBranch(id) {
       return new Promise((resolve, reject) => {
-        axios.get(`/apps/users/${id}`).then(response => resolve(response)).catch(error => reject(error))
+        axios.get(`/branch/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
       })
     },
   },
