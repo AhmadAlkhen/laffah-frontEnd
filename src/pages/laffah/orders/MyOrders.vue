@@ -1,6 +1,8 @@
 <script setup>
 import { useUserStore } from "@/views/laffah/auth/useUserStore";
 import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
+import { useProductOrderStore } from "@/views/laffah/orders/useProductOrderStore";
+
 import { avatarText } from "@core/utils/formatters";
 import { computed } from "@vue/runtime-core";
 import moment from "moment";
@@ -14,6 +16,7 @@ import { ref, onMounted } from "vue";
 
 const userStore = useUserStore();
 const orderListStore = useOrderListStore();
+const productOrderStore = useProductOrderStore();
 // const authStore = auth();
 
 let cart = computed(function () {
@@ -24,11 +27,13 @@ const searchQuery = ref("");
 const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref();
+const selectedBranch = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
 const totalOrders = ref(0);
 const orders = ref([]);
+const branches = ref([]);
 
 // 👉 Fetching orders
 const fetchOrders = () => {
@@ -36,6 +41,7 @@ const fetchOrders = () => {
     .fetchOrders({
       q: searchQuery.value,
       status: selectedStatus.value,
+      branchId: selectedBranch.value,
       perPage: rowPerPage.value,
       page: currentPage.value,
     })
@@ -235,6 +241,25 @@ const canceledOrder = (order_id) => {
     }
   });
 };
+onMounted(() => {
+  productOrderStore
+    .fetchBranches({
+      perPage: 50,
+      page: 1,
+    })
+    .then((response) => {
+      branches.value = response.data.data.data;
+      let branchesAll = [];
+      branches.value.forEach((element) => {
+        branchesAll.push({ title: element.name, value: element.id });
+      });
+      console.log(branchesAll);
+      branches.value = branchesAll;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+});
 </script>
 
 <template>
@@ -258,7 +283,16 @@ const canceledOrder = (order_id) => {
                 />
               </div>
             </VCol>
-            <VCol md="6"> </VCol>
+            <VCol md="3"> </VCol>
+            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
+              <VSelect
+                v-model="selectedBranch"
+                label="Select branch"
+                :items="branches"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
             <VCol md="3">
               <VSelect
                 v-model="selectedStatus"

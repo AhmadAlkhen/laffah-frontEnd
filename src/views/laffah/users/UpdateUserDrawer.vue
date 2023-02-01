@@ -11,18 +11,18 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  user: {
+    type: Object,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["update:isDrawerOpen", "userData"]);
 
 const isFormValid = ref(false);
 const refForm = ref();
-const name = ref("");
-const email = ref("");
+
 const password = ref("");
-const role = ref();
-const branch = ref("");
-const status = ref(1);
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -38,12 +38,13 @@ const onSubmit = () => {
     if (valid) {
       emit("userData", {
         // id: 0,
-        name: name.value,
-        email: email.value,
+        id: props.user.id,
+        name: props.user.name,
+        email: props.user.email,
         password: password.value,
-        role: role.value,
-        branch: branch.value,
-        status: status.value,
+        role: props.user.role,
+        branch_id: props.user.branch_id,
+        status: props.user.status,
       });
       emit("update:isDrawerOpen", false);
       nextTick(() => {
@@ -70,7 +71,7 @@ const handleDrawerModelValueUpdate = (val) => {
   >
     <!-- 👉 Title -->
     <div class="d-flex align-center pa-6 pb-1">
-      <h6 class="text-h6">Add User</h6>
+      <h6 class="text-h6">Edit User</h6>
 
       <VSpacer />
 
@@ -96,7 +97,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Full name -->
               <VCol cols="12">
                 <VTextField
-                  v-model="name"
+                  v-model="user.name"
                   :rules="[requiredValidator]"
                   label="User Name"
                 />
@@ -104,7 +105,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Email -->
               <VCol cols="12">
                 <VTextField
-                  v-model="email"
+                  v-model="user.email"
                   :rules="[requiredValidator, emailValidator]"
                   label="Email"
                 />
@@ -113,16 +114,14 @@ const handleDrawerModelValueUpdate = (val) => {
               <VCol cols="12">
                 <VTextField
                   v-model="password"
-                  :rules="[requiredValidator]"
                   label="Password"
                   type="password"
                 />
               </VCol>
-
               <!-- 👉 Role -->
               <VCol cols="12">
                 <VSelect
-                  v-model="role"
+                  v-model="user.role"
                   label="Select Role"
                   :rules="[requiredValidator]"
                   :items="[
@@ -135,7 +134,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Branch -->
               <VCol cols="12">
                 <VSelect
-                  v-model="branch"
+                  v-model="user.branch_id"
                   label="Select Branch"
                   :rules="[requiredValidator]"
                   :items="branches"
@@ -145,7 +144,7 @@ const handleDrawerModelValueUpdate = (val) => {
               <!-- 👉 Status -->
               <VCol cols="12">
                 <VSelect
-                  v-model="status"
+                  v-model="user.status"
                   label="Select Status"
                   :rules="[requiredValidator]"
                   :items="[

@@ -57,9 +57,16 @@ export const useUserListStore = defineStore('UserListStore', {
     },
 
     // 👉 fetch single user
-    fetchUser(id) {
+    getUser(id) {
       return new Promise((resolve, reject) => {
-        axios.get(`/apps/users/${id}`).then(response => resolve(response)).catch(error => reject(error))
+        axios.get(`/users/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+
+    // 👉 Update User 
+    updateUser(userData) {
+      return new Promise((resolve, reject) => {
+        axios.post('/users/update',userData).then(response => resolve(response)).catch(error => reject(error))
       })
     },
   },

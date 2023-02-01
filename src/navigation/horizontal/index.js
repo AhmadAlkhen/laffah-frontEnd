@@ -1,8 +1,29 @@
-import appAndPages from './app-and-pages'
-import charts from './charts'
-import dashboard from './dashboard'
-import forms from './forms'
-import others from './others'
-import uiElements from './ui-elements'
+import { useAuthStore } from "@/views/laffah/auth/useAuthStore"
+import { computed } from 'vue'
+import admin from "./admin"
+import branch from "./branch"
+import warehouse from "./warehouse"
 
-export default [...dashboard, ...appAndPages, ...uiElements, ...forms, ...charts, ...others]
+const authStore = useAuthStore()
+
+const routesArray = computed(() => {
+
+  const userRole = authStore.userRole
+  const routes = []
+
+  if (userRole === 'admin') {
+    routes.push(...admin)
+  }
+
+  if (userRole === 'branch') {
+    routes.push(...branch)
+  }
+
+  if (userRole === 'warehouse') {
+    routes.push(...warehouse)
+  }
+
+  return routes
+})
+
+export default [routesArray]

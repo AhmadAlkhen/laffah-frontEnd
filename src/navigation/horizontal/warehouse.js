@@ -1,6 +1,7 @@
 export default [
+    // { heading: 'Laffah' },
     {
-      title: 'Laffah Branch',
+      title: 'Laffah warehouse',
       icon: { icon: 'tabler-smart-home' },
       
     },
@@ -21,11 +22,6 @@ export default [
       icon: { icon: 'tabler-eye' },
       to: 'laffah-orders-products',
       
-    },
-    {
-      title: 'Cart',
-      icon: { icon: 'tabler-file' },
-      to: 'laffah-orders-cart',
     },
 
   ]

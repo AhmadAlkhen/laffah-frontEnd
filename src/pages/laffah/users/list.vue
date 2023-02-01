@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 
 import AddNewUserDrawer from "@/views/laffah/users/AddNewUserDrawer.vue";
+import UpdateUserDrawer from "@/views/laffah/users/UpdateUserDrawer.vue";
 import { useUserListStore } from "@/views/laffah/users/useUserListStore";
 import { avatarText } from "@core/utils/formatters";
 import axios from "axios";
@@ -18,6 +19,7 @@ const totalPage = ref(1);
 const totalUsers = ref(0);
 const users = ref([]);
 const branchesAll = ref([]);
+const userData = ref({});
 // 👉 Fetching users
 const fetchUsers = () => {
   userListStore
@@ -105,6 +107,7 @@ const convertStatus = (status) => {
 };
 
 const isAddNewUserDrawerVisible = ref(false);
+const isUpdateUserDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
@@ -128,26 +131,50 @@ const addNewUser = (userData) => {
   fetchUsers();
 };
 
-const branches = computed(() => {
-  let allBranches = [];
-  let branchesItem = [];
-  axios
-    .get("/branch/index")
-    .then((res) => {
-      allBranches = res.data.data.data;
-      allBranches.forEach((branch) => {
-        branchesItem.push({
-          title: branch.name,
-          value: branch.id,
-        });
+const getUser = (userId) => {
+  userListStore.getUser(userId).then((res) => {
+    userData.value = res.data.data[0];
+    isUpdateUserDrawerVisible.value = true;
+  });
+};
+const updateUser = (userData) => {
+  userListStore
+    .updateUser(userData)
+    .then(() => {
+      toast.success("User added successfully", {
+        timeout: 2000,
       });
-      branchesAll.value = branchesItem;
-      return branchesItem;
+      // refetch Branchs
+      fetchUsers();
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err.response.data.message);
+      toast.error("check your values and try again!", {
+        timeout: 2000,
+      });
     });
-});
+};
+
+// const branches = computed(() => {
+//   let allBranches = [];
+//   let branchesItem = [];
+//   axios
+//     .get("/branch/index")
+//     .then((res) => {
+//       allBranches = res.data.data.data;
+//       allBranches.forEach((branch) => {
+//         branchesItem.push({
+//           title: branch.name,
+//           value: branch.id,
+//         });
+//       });
+//       branchesAll.value = branchesItem;
+//       return branchesItem;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 
 onMounted(() => {
   let allBranches = [];
@@ -325,30 +352,23 @@ onMounted(() => {
 
                 <!-- 👉 Actions -->
                 <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="getUser(user.id)"
+                  >
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
-
+                  <!-- 
                   <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
-                  </VBtn>
+                  </VBtn> -->
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <!-- <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: user.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu> -->
-                  </VBtn>
+                  </VBtn> -->
                 </td>
               </tr>
             </tbody>
@@ -381,11 +401,18 @@ onMounted(() => {
       </VCol>
     </VRow>
 
-    <!-- 👉 Add New Branch -->
+    <!-- 👉 Add New user -->
     <AddNewUserDrawer
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
       :branches="branchesAll"
       @user-data="addNewUser"
+    />
+    <!-- 👉 update user -->
+    <UpdateUserDrawer
+      v-model:isDrawerOpen="isUpdateUserDrawerVisible"
+      :branches="branchesAll"
+      :user="userData"
+      @user-data="updateUser"
     />
   </section>
 </template>
