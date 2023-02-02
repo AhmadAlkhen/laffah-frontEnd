@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useAuthStore = defineStore('authStore', {
   state: () => {
     return {
-      accessToken:"",
+      accessToken:localStorage.getItem('accessToken')?localStorage.getItem('accessToken'):"",
       userRole:localStorage.getItem('userRole')?localStorage.getItem('userRole'):"",
     }
   },
@@ -17,6 +17,9 @@ export const useAuthStore = defineStore('authStore', {
     getRole(state) {
     //   state.userRole= localStorage.getItem('userRole') ? localStorage.getItem('userRole'):''
       return state.userRole 
+    },
+    getAccessToken(state) {
+      return state.accessToken 
     },
   },
   actions: {

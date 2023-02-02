@@ -97,7 +97,12 @@ const onSubmit = () => {
             // authStore.updateData(role, accessToken);
             authStore.$patch({
               userRole: role,
+              accessToken: accessToken,
             });
+            // add the token for the API
+            axios.defaults.headers.common["Authorization"] = accessToken
+              ? `Bearer ${accessToken}`
+              : "";
 
             router.replace(route.query.to ? String(route.query.to) : "/");
             //   .then(() => {

@@ -17,6 +17,7 @@ import { createApp } from 'vue'
 import VueSweetalert2 from 'vue-sweetalert2'
 import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
+
 // import store from './store'
 loadFonts()
 const isDev = process.env.NODE_ENV !== 'production'
@@ -42,6 +43,7 @@ app.use(VueSweetalert2);
 app.use(abilitiesPlugin, ability, {
   useGlobalProperties: true,
 })
+
 
 // Mount vue app
 app.mount('#app')
