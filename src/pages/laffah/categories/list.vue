@@ -1,5 +1,6 @@
 <script setup>
 import AddNewCategoryDrawer from "@/views/laffah/categories/AddNewCategoryDrawer.vue";
+import UpdateCategoryDrawer from "@/views/laffah/categories/UpdateCategoryDrawer.vue";
 import { useCategoryListStore } from "@/views/laffah/categories/useCategoryListStore";
 import { avatarText } from "@core/utils/formatters";
 import { useToast } from "vue-toastification";
@@ -12,7 +13,7 @@ const currentPage = ref(1);
 const totalPage = ref(1);
 const totalCategories = ref(0);
 const categories = ref([]);
-
+const category = ref({});
 // 👉 Fetching categories
 const fetchCategories = () => {
   categoryListStore
@@ -67,6 +68,7 @@ const convertStatus = (status) => {
 };
 
 const isAddNewCategoryDrawerVisible = ref(false);
+const isUpdateCategoryDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
@@ -87,6 +89,23 @@ const addNewCategory = (categoryData) => {
   });
 
   // refetch categories
+  fetchCategories();
+};
+
+const getCategory = (id) => {
+  categoryListStore.fetchCategory(id).then((res) => {
+    category.value = res.data.data[0];
+    console.log(category.value);
+    isUpdateCategoryDrawerVisible.value = true;
+  });
+};
+const updateCategory = (categoryData) => {
+  categoryListStore.updateCategory(categoryData).then(() => {
+    toast.success("Category updated successfully", {
+      timeout: 2000,
+    });
+  });
+  // refetch Categories
   fetchCategories();
 };
 </script>
@@ -221,30 +240,23 @@ const addNewCategory = (categoryData) => {
 
                 <!-- 👉 Actions -->
                 <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="getCategory(category.id)"
+                  >
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
 
                   <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <!-- <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: user.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu> -->
-                  </VBtn>
+                  </VBtn> -->
                 </td>
               </tr>
             </tbody>
@@ -281,6 +293,13 @@ const addNewCategory = (categoryData) => {
     <AddNewCategoryDrawer
       v-model:isDrawerOpen="isAddNewCategoryDrawerVisible"
       @category-data="addNewCategory"
+    />
+
+    <!-- 👉 update category -->
+    <UpdateCategoryDrawer
+      v-model:isDrawerOpen="isUpdateCategoryDrawerVisible"
+      @category-data="updateCategory"
+      :category="category"
     />
   </section>
 </template>

@@ -32,7 +32,7 @@ export const useBranchListStore = defineStore('BranchListStore', {
       })
     },
 
-    // 👉 fetch single user
+    // 👉 fetch branch user
     fetchBranch(id) {
       return new Promise((resolve, reject) => {
         axios.get(`/branch/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
