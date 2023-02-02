@@ -12,6 +12,7 @@ import AnalyticsWebsiteAnalytics from "@/views/dashboards/analytics/AnalyticsWeb
 import CardStatisticsVertical from "@core/components/CardStatisticsVertical.vue";
 // import { useUserStore } from "@/views/laffah/auth/useUserStore";
 import { useAuthStore } from "@/views/laffah/auth/useAuthStore";
+import { ref, onMounted } from "vue";
 
 const authStore = useAuthStore();
 
@@ -70,6 +71,13 @@ const statisticsVertical = {
     },
   },
 };
+
+// onMounted(() => {
+//   router.beforeEnter((to, from, next) => {
+//     console.log(to.name);
+//     console.log(from.name);
+//   });
+// });
 </script>
 
 <template>
@@ -82,7 +90,7 @@ const statisticsVertical = {
     <VCol cols="12" md="3" sm="6">
       <AnalyticsSalesOverview />
     </VCol>
-    {{ authStore.userRole }}
+    <!-- {{ authStore.userRole }} -->
 
     <!-- 👉 Statistics Vertical -->
     <VCol cols="12" md="3" sm="6">

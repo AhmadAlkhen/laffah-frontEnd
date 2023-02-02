@@ -125,6 +125,16 @@ router.beforeEach((to, from, next) => {
   }
   else{
     switch (to.name) {
+      // case 'dashboards-analytics':
+      //   if (from.name == 'login') {
+      //     console.log('from login')
+      //     return  next()
+      //     location.reload()
+      //   } else {
+      //     console.log(' not from login')
+      //     return next()
+      //   }
+      //   break
       case 'laffah-branches-list':
         if (userRole=='admin') {
          return next()

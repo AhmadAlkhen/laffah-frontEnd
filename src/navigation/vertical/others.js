@@ -14,6 +14,8 @@ export default [
       {
         title: 'Level 2.1',
         to: null,
+        action: 'read',
+        subject: 'Auth',
       },
       {
         title: 'Level 2.2',
@@ -21,6 +23,8 @@ export default [
           {
             title: 'Level 3.1',
             to: null,
+            action: 'read',
+            subject: 'Auth',
           },
           {
             title: 'Level 3.2',
@@ -29,12 +33,15 @@ export default [
         ],
       },
     ],
+    
   },
   {
     title: 'Disabled Menu',
     to: null,
     icon: { icon: 'tabler-eye-off' },
     disable: true,
+    action: 'read',
+    subject: 'Auth',
   },
   {
     title: 'Raise Support',
