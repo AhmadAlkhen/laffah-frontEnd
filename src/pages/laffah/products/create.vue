@@ -13,7 +13,7 @@ const category = ref({ title: "", value: "" });
 const categoriesAll = ref([]);
 const unit = ref("");
 const image = ref("");
-const status = ref({ title: "Active", value: 1 });
+const status = ref(1);
 
 const onFileChange = (e) => {
   image.value = e.target.files[0];
@@ -25,9 +25,9 @@ const onSubmit = () => {
       const formData = new FormData();
       formData.append("name", fullName.value);
       formData.append("sku", sku.value);
-      formData.append("category", category.value.value);
+      formData.append("category", category.value);
       formData.append("unit", unit.value);
-      formData.append("status", status.value.value);
+      formData.append("status", status.value);
       formData.append("image", image.value);
       axios
         .post("/product/store", formData)

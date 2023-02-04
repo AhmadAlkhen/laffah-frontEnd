@@ -24,7 +24,7 @@ const category = ref({ title: "", value: "" });
 const unit = ref("");
 const image = ref("");
 const imageName = ref({ name: "" });
-const status = ref({ title: "Active", value: 1 });
+const status = ref(1);
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -174,7 +174,6 @@ const units = [
                   :items="units"
                 />
               </VCol>
-
               <!-- 👉 Status -->
               <VCol cols="12">
                 <VSelect
