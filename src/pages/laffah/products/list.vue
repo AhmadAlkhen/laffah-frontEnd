@@ -16,7 +16,9 @@ const totalPage = ref(1);
 const totalProducts = ref(0);
 const products = ref([]);
 const categoriesAll = ref([]);
-
+const isDialogVisible = ref(false);
+const fileImport = ref();
+const fileName = ref({ name: "" });
 const toggleSwitch = ref(1);
 
 // 👉 Fetching products
@@ -109,6 +111,35 @@ const addNewProduct = (productData) => {
   // refetch products
   fetchProducts();
 };
+const uploading = () => {
+  productListStore
+    .uploadProducts(fileImport.value)
+    .then(() => {
+      toast.success("products added successfully", {
+        timeout: 2000,
+      });
+      fileImport.value = null;
+      fileName.value = { name: "" };
+      isDialogVisible.value = false;
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+
+  // refetch products
+  fetchProducts();
+};
+const onFileChange = (e) => {
+  if (e.target.files.length > 0) {
+    fileImport.value = e.target.files[0];
+    fileName.value.name = e.target.files[0].name;
+  } else {
+    fileImport.value = null;
+    fileName.value.name = null;
+  }
+};
 
 const changeStatus = (productId, statu) => {
   const id = productId;
@@ -185,7 +216,54 @@ onMounted(() => {
             >
           </VRow>
           <VRow class="mx-1 my-1">
-            <VCol cols="12" class="" md="4"> </VCol>
+            <VCol cols="12" class="" md="4">
+              <VDialog v-model="isDialogVisible" max-width="600">
+                <!-- Dialog Activator -->
+                <template #activator="{ props }">
+                  <VBtn
+                    v-bind="props"
+                    prepend-icon="tabler-arrow-big-down-lines"
+                    class="mr-3"
+                  >
+                    <!-- !isAllFilled() -->
+                    import
+                  </VBtn>
+                </template>
+
+                <!-- Dialog close btn -->
+                <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
+
+                <!-- Dialog Content -->
+                <VCard title="Upload a file">
+                  <VCardText>
+                    <VRow>
+                      <VCol cols="12" sm="12">
+                        <VFileInput
+                          accept=".xlsx, .xls, .csv"
+                          label="file"
+                          v-model="fileName"
+                          density="compact"
+                          @change="onFileChange"
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+
+                  <VCardText class="d-flex justify-end flex-wrap gap-3">
+                    <VBtn
+                      variant="tonal"
+                      color="secondary"
+                      @click="isDialogVisible = false"
+                    >
+                      Close
+                    </VBtn>
+                    <VBtn @click="uploading()" :disabled="!fileImport">
+                      Upload
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VDialog>
+            </VCol>
             <VCol cols="12" class="" md="4">
               <VSelect
                 v-model="selectedStatus"
@@ -297,26 +375,13 @@ onMounted(() => {
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-trash" />
-                  </VBtn>
+                  </VBtn> -->
 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <!-- <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: user.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu> -->
-                  </VBtn>
+                  </VBtn> -->
                 </td>
               </tr>
             </tbody>

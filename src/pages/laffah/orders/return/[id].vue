@@ -62,8 +62,17 @@ const storeQuantityReturn = (item, quaReturn, index) => {
 
   axios
     .post("/order/quantity/return", { id, quantity_return })
-    .then(() => {
-      alert("added successfuly");
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
+
       fetchOrders();
       quantityReturn.value[index] = "";
     })

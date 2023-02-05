@@ -24,7 +24,7 @@ const category = ref({ title: "", value: "" });
 const unit = ref("");
 const image = ref("");
 const imageName = ref({ name: "" });
-const status = ref(1);
+const status = ref();
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -65,8 +65,8 @@ const onSubmit = () => {
         sku: sku.value,
         category: category.value,
         unit: unit.value,
-        image: image.value,
         status: status.value,
+        image: image.value,
       });
       emit("update:isDrawerOpen", false);
       nextTick(() => {

@@ -70,8 +70,17 @@ const storeQuantitySent = (item, quaSent, index) => {
 
   axios
     .post("/order/quantity/sent", { id, quantity_sent })
-    .then(() => {
-      alert("added successfuly");
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
+
       fetchOrders();
       quantitySent.value[index] = "";
     })
@@ -85,8 +94,16 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
 
   axios
     .post("/order/quantity/confirm", { id, quantity_confirm })
-    .then(() => {
-      alert("added successfuly");
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
       fetchOrders();
       quantityConfirm.value[index] = "";
     })
@@ -182,8 +199,16 @@ const changeRate = (item, rated) => {
 
   axios
     .post("/order/quantity/rate", { id, rate })
-    .then(() => {
-      alert("added successfuly");
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
       fetchOrders();
       quantityConfirm.value[index] = "";
     })

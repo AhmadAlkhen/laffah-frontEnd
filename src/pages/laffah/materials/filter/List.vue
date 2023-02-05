@@ -10,9 +10,9 @@ const currentPage = ref(1);
 const perPage = ref(12);
 const length = ref(1);
 const categorySelected = ref("");
-// const categoriesAll = ["category 1", "category 2", "category 3"];
+const totalPage = ref(1);
+const totalProducts = ref(0);
 const categoriesAll = ref([]);
-// const categories = ref(["category1", "category2"]);
 
 const fetchProductData = () => {
   const formData = new FormData();
@@ -28,9 +28,13 @@ const fetchProductData = () => {
   axios
     .post("products/search", formData)
     .then((response) => {
-      productsData.value = response.data.data;
-      productsCount.value = response.data.meta.total;
-      length.value = Math.round(productsCount.value / perPage.value);
+      // productsData.value = response.data.data.data;
+      // productsCount.value = response.data.meta.total;
+      // length.value = Math.round(productsCount.value / perPage.value);
+
+      productsData.value = response.data.data.data;
+      totalPage.value = response.data.data.last_page;
+      totalProducts.value = response.data.data.total;
     })
     .catch((err) => {
       console.log(err);
@@ -67,7 +71,7 @@ const paginationData = computed(() => {
   const lastIndex =
     productsData.value.length + (currentPage.value - 1) * perPage.value;
 
-  return `Showing ${firstIndex} to ${lastIndex} of ${productsCount.value} entries`;
+  return `Showing ${firstIndex} to ${lastIndex} of ${totalProducts.value} entries`;
 });
 </script>
 
@@ -124,7 +128,7 @@ const paginationData = computed(() => {
             v-model="currentPage"
             size="small"
             :total-visible="5"
-            :length="length"
+            :length="totalPage"
           />
         </VCardText>
         <!-- <v-container class="max-width">
