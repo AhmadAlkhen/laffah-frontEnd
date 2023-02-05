@@ -16,6 +16,8 @@ import axios from "axios";
 
 const orderListStore = useOrderListStore();
 const route = useRoute();
+const router = useRouter();
+
 const orderData = ref([]);
 const orderDetails = ref();
 const quantitySent = ref([]);
@@ -137,15 +139,24 @@ const isProcessing = () => {
     const carrier_id = carrierId;
     axios
       .post("/order/status/processing", { status, orderId, carrier_id })
-      .then(() => {
+      .then((res) => {
         isDialogVisible.value = false;
-        toast.success("Done successfully", {
-          timeout: 2000,
-        });
-        // router.push({ name: "laffah-orders-MyOrders" });
+        if (res.status != 200) {
+          toast.warning(res.data.message, {
+            timeout: 2000,
+          });
+        } else {
+          toast.success(res.data.message, {
+            timeout: 2000,
+          });
+        }
+        router.replace({ name: "laffah-orders-MyOrders" });
       })
       .catch((err) => {
         console.log(err);
+        toast.warning(err.response?.data?.message || err.message, {
+          timeout: 2000,
+        });
       });
   }
 };
@@ -173,21 +184,22 @@ const completedOrder = () => {
       axios
         .post("/order/status", { status, orderId })
         .then((res) => {
-          // if (res.data.OrderStatus > 0) {
-          //   Swal.fire(
-          //     "Done successfully!",
-          //     "Your order has been completed.",
-          //     "success"
-          //   );
-          // }
-
-          toast.success(res.data.message, {
-            timeout: 2000,
-          });
-          // router.push({ name: "laffah-orders-MyOrders" });
+          if (res.status != 200) {
+            toast.warning(res.data.message, {
+              timeout: 2000,
+            });
+          } else {
+            toast.success(res.data.message, {
+              timeout: 2000,
+            });
+          }
+          router.replace({ name: "laffah-orders-MyOrders" });
         })
         .catch((err) => {
           console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
         });
     }
   });
@@ -214,6 +226,9 @@ const changeRate = (item, rated) => {
     })
     .catch((err) => {
       console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
 };
 const addMessage = () => {
@@ -468,9 +483,7 @@ const userName = computed(() => {
                     placeholder="Qty Sent"
                     type="number"
                     class=""
-                    :disabled="
-                      orderDetails.status == 'completed' ? true : false
-                    "
+                    :disabled="orderDetails.status != 'pending' ? true : false"
                   />
                 </td>
                 <td
@@ -483,7 +496,9 @@ const userName = computed(() => {
                     placeholder="Qty confirm"
                     type="number"
                     class=""
-                    :disabled="item.quantity_sent ? false : true"
+                    :disabled="
+                      orderDetails.status != 'processing' ? true : false
+                    "
                   />
                 </td>
                 <td
@@ -507,9 +522,7 @@ const userName = computed(() => {
                       storeQuantityConfirm(item, quantityConfirm[index], index)
                     "
                     :disabled="
-                      item.quantity_sent && orderDetails.status == 'processing'
-                        ? false
-                        : true
+                      orderDetails.status != 'processing' ? true : false
                     "
                   />
                 </td>

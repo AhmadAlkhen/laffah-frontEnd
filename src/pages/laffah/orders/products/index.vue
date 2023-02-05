@@ -255,8 +255,7 @@ const subQty = (q1, q2) => {
                 />
               </div>
             </VCol>
-            <!-- <VCol md="3">
-            </VCol> -->
+            <VCol md="3"> </VCol>
             <VCol md="3">
               <VTextField
                 v-model="searchQuery"
@@ -273,7 +272,6 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <!-- <VCol md="3"> </VCol> -->
           </VRow>
           <VRow class="py-2 px-2">
             <!-- <VCol md="3"> </VCol> -->

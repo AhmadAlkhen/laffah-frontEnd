@@ -284,8 +284,9 @@ onMounted(() => {
               </div>
             </VCol>
             <VCol md="3"> </VCol>
-            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
+            <VCol md="3">
               <VSelect
+                v-if="userRole == 'admin' || userRole == 'warehouse'"
                 v-model="selectedBranch"
                 label="Select branch"
                 :items="branches"
@@ -302,6 +303,7 @@ onMounted(() => {
                 clear-icon="tabler-x"
               />
             </VCol>
+
             <!-- <VCol md="3"> </VCol> -->
           </VRow>
           <!-- <div class="me-3" style="width: 250px"></div>
@@ -429,10 +431,6 @@ onMounted(() => {
 
                 <!-- 👉 Actions -->
                 <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-edit" />
-                  </VBtn>
-
                   <VBtn
                     v-if="userRole == 'branch'"
                     icon
@@ -456,22 +454,6 @@ onMounted(() => {
                   >
                     <VIcon :size="22" icon="tabler-eye" />
                   </VBtn>
-                  <!-- <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-dots-vertical" />
-
-                    <VMenu activator="parent">
-                      <VList>
-                        <VListItem
-                          title="View"
-                          :to="{
-                            name: 'apps-user-view-id',
-                            params: { id: order.id },
-                          }"
-                        />
-                        <VListItem title="Suspend" href="javascript:void(0)" />
-                      </VList>
-                    </VMenu>
-                  </VBtn> -->
                 </td>
               </tr>
             </tbody>

@@ -116,21 +116,22 @@ const returnedOrder = () => {
       axios
         .post("/order/status/returned", { status, orderId })
         .then((res) => {
-          // if (res.data.OrderStatus > 0) {
-          //   Swal.fire(
-          //     "Done successfully!",
-          //     "Your order has been completed.",
-          //     "success"
-          //   );
-          // }
-
-          toast.success(res.data.message, {
-            timeout: 2000,
-          });
-          // router.push({ name: "laffah-orders-MyOrders" });
+          if (res.status != 200) {
+            toast.warning(res.data.message, {
+              timeout: 2000,
+            });
+          } else {
+            toast.success(res.data.message, {
+              timeout: 2000,
+            });
+          }
+          router.replace({ name: "laffah-orders-MyOrders" });
         })
         .catch((err) => {
           console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
         });
     }
   });
@@ -253,7 +254,7 @@ const userName = computed(() => {
                 <th scope="col">Product</th>
                 <th scope="col">Unit</th>
                 <th scope="col">Quantity</th>
-                <th scope="col">Sent</th>
+                <th scope="col">Confirm</th>
                 <th scope="col">return</th>
                 <th scope="col" v-if="userRole == 'branch'">return Sent</th>
                 <th scope="col" v-if="userRole == 'branch'">Action</th>
@@ -289,7 +290,7 @@ const userName = computed(() => {
                   {{ item.quantity }}
                 </td>
                 <td class="text-no-wrap">
-                  {{ item.quantity_sent }}
+                  {{ item.quantity_confirm }}
                 </td>
                 <td class="text-no-wrap">
                   {{ item.quantity_return }}
@@ -305,6 +306,9 @@ const userName = computed(() => {
                     placeholder="Qty Returned"
                     type="number"
                     class=""
+                    :disabled="
+                      orderDetails.status != 'completed' ? true : false
+                    "
                   />
                 </td>
                 <td class="text-center" v-if="userRole == 'branch'">
@@ -315,7 +319,9 @@ const userName = computed(() => {
                     @click="
                       storeQuantityReturn(item, quantityReturn[index], index)
                     "
-                    :disabled="orderDetails.status == 'returned' ? true : false"
+                    :disabled="
+                      orderDetails.status != 'completed' ? true : false
+                    "
                   />
                 </td>
               </tr>
