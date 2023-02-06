@@ -182,7 +182,7 @@ const completedOrder = () => {
       const status = "completed";
       const orderId = orderDetails.value.id;
       axios
-        .post("/order/status", { status, orderId })
+        .post("/order/status/completed", { status, orderId })
         .then((res) => {
           if (res.status != 200) {
             toast.warning(res.data.message, {

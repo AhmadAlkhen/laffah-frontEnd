@@ -80,14 +80,12 @@ const paginationData = computed(() => {
     <VCard class="my-4 py-5 px-2">
       <VRow class="pt-1">
         <VCol class="" md="6">
-          <VCard>
-            <VTextField
-              v-model="searchQuery"
-              prepend-inner-icon="tabler-search"
-              label="Search"
-              placeholder="Search"
-            />
-          </VCard>
+          <VTextField
+            v-model="searchQuery"
+            prepend-inner-icon="tabler-search"
+            label="Search"
+            placeholder="Search"
+          />
         </VCol>
         <VCol md="6">
           <v-autocomplete
