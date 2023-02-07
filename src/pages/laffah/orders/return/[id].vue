@@ -4,6 +4,7 @@ import { themeConfig } from "@themeConfig";
 import moment from "moment";
 import Swal from "sweetalert2";
 import { avatarText } from "@core/utils/formatters";
+const router = useRouter();
 
 import { requiredValidator } from "@validators";
 import { useToast } from "vue-toastification";
@@ -256,8 +257,22 @@ const userName = computed(() => {
                 <th scope="col">Quantity</th>
                 <th scope="col">Confirm</th>
                 <th scope="col">return</th>
-                <th scope="col" v-if="userRole == 'branch'">return Sent</th>
-                <th scope="col" v-if="userRole == 'branch'">Action</th>
+                <th
+                  scope="col"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'completed'
+                  "
+                >
+                  return Sent
+                </th>
+                <th
+                  scope="col"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'completed'
+                  "
+                >
+                  Action
+                </th>
               </tr>
             </thead>
 
@@ -298,7 +313,10 @@ const userName = computed(() => {
 
                 <td
                   class="text-center quantityConfirm"
-                  v-if="userRole == 'branch'"
+                  v-if="
+                    (userRole == 'branch') &
+                    (orderDetails.status == 'completed')
+                  "
                 >
                   <VTextField
                     v-model="quantityReturn[index]"
@@ -311,7 +329,13 @@ const userName = computed(() => {
                     "
                   />
                 </td>
-                <td class="text-center" v-if="userRole == 'branch'">
+                <td
+                  class="text-center"
+                  v-if="
+                    (userRole == 'branch') &
+                    (orderDetails.status == 'completed')
+                  "
+                >
                   <VBtn
                     icon="ic:baseline-send"
                     variant="text"
@@ -334,7 +358,7 @@ const userName = computed(() => {
               prepend-icon="tabler-send"
               class="mr-3"
               @click="returnedOrder()"
-              :disabled="orderDetails.status == 'returned' ? true : false"
+              :disabled="orderDetails.status != 'completed' ? true : false"
             >
               Return
             </VBtn>

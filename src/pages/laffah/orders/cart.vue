@@ -74,6 +74,7 @@ const saveOrderCart = () => {
               "success"
             );
           }
+          router.replace({ name: "laffah-orders-MyOrders" });
         })
         .catch((err) => {
           console.log(err);
@@ -178,10 +179,10 @@ const isDisabled = () => {
             <!-- 👉  -->
             <td>
               <img
-                height="75"
-                width="75"
-                src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                class="ml-2"
+                height="90"
+                width="90"
+                :src="cart.image"
+                class="ml-2 rounded mt-2"
               />
             </td>
 
@@ -243,9 +244,12 @@ const isDisabled = () => {
     </div>
 
     <div v-else>
-      <v-alert border="right" colored-border type="error" elevation="2">
+      <!-- <v-alert border="right" colored-border type="error" elevation="2">
         there are no products in the cart.
-      </v-alert>
+      </v-alert> -->
+      <VAlert border="start" border-color="error">
+        there are no products in the cart.
+      </VAlert>
     </div>
   </VCard>
 </template>

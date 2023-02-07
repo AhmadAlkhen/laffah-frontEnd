@@ -320,7 +320,7 @@ onMounted(() => {
                       class="me-3"
                       size="38"
                     >
-                      <VImg v-if="product.avatar" :src="product.avatar" />
+                      <VImg v-if="product.image" :src="product.image" />
                       <span v-else>{{ avatarText(product.name) }}</span>
                     </VAvatar>
 

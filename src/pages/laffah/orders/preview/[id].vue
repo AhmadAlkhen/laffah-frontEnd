@@ -220,9 +220,8 @@ const changeRate = (item, rated) => {
         toast.success(res.data.message, {
           timeout: 2000,
         });
+        // fetchOrders();
       }
-      fetchOrders();
-      quantityConfirm.value[index] = "";
     })
     .catch((err) => {
       console.log(err);
@@ -340,78 +339,6 @@ const userName = computed(() => {
 
           <VDivider />
 
-          <!-- 👉 Payment Details -->
-          <!-- <VCardText class="d-flex justify-space-between flex-wrap flex-column flex-sm-row print-row">
-            <div class="ma-sm-4">
-              <h6 class="text-sm font-weight-semibold mb-3">
-                Invoice To:
-              </h6>
-              <p class="mb-1">
-                {{ invoiceData.client.name }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.company }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.address }}, {{ invoiceData.client.country }}
-              </p>
-              <p class="mb-1">
-                {{ invoiceData.client.contact }}
-              </p>
-              <p class="mb-0">
-                {{ invoiceData.client.companyEmail }}
-              </p>
-            </div>
-
-            <div class="mt-4 ma-sm-4">
-              <h6 class="text-sm font-weight-semibold mb-3">
-                Bill To:
-              </h6>
-              <table>
-                <tr>
-                  <td class="pe-6">
-                    Total Due:
-                  </td>
-                  <td>
-                    {{ paymentDetails.totalDue }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    Bank Name:
-                  </td>
-                  <td>
-                    {{ paymentDetails.bankName }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    Country:
-                  </td>
-                  <td>
-                    {{ paymentDetails.country }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    IBAN:
-                  </td>
-                  <td>
-                    {{ paymentDetails.iban }}
-                  </td>
-                </tr>
-                <tr>
-                  <td class="pe-6">
-                    SWIFT Code:
-                  </td>
-                  <td>
-                    {{ paymentDetails.swiftCode }}
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </VCardText> -->
-
           <!-- 👉 Table -->
           <VDivider />
           <VTable>
@@ -424,14 +351,44 @@ const userName = computed(() => {
                 <th scope="col">Sent</th>
                 <th scope="col">confirm</th>
                 <th scope="col">return</th>
+                <!-- for Admin & warehouse -->
                 <th
                   scope="col"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                  v-if="
+                    (userRole == 'admin' || userRole == 'warehouse') &&
+                    orderDetails.status == 'pending'
+                  "
                 >
                   Quantity Sent
                 </th>
-                <th scope="col" v-if="userRole == 'branch'">Confirm Sent</th>
-                <th scope="col">Action</th>
+                <th
+                  scope="col"
+                  v-if="
+                    (userRole == 'admin' || userRole == 'warehouse') &&
+                    orderDetails.status == 'pending'
+                  "
+                >
+                  Action
+                </th>
+                <!-- end Admin & warehouse -->
+                <!-- for Branch -->
+                <th
+                  scope="col"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'processing'
+                  "
+                >
+                  Confirm Sent
+                </th>
+                <th
+                  scope="col"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'processing'
+                  "
+                >
+                  Action
+                </th>
+                <!-- end for Branch -->
                 <th scope="col">Rate</th>
               </tr>
             </thead>
@@ -439,21 +396,11 @@ const userName = computed(() => {
             <tbody>
               <tr v-for="(item, index) in orderData" :key="item.id">
                 <td class="text-no-wrap">
-                  <!-- <VAvatar
-                    variant="tonal"
-                    color="success"
-                    class="me-3"
-                    size="80"
-                  > -->
-                  <!-- <VImg v-if="user.avatar" :src="user.avatar" /> -->
-                  <!-- <span v-else>{{ avatarText(user.name) }}</span> -->
-
                   <VImg
-                    src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                    class="mt-1"
+                    :src="item.product.image"
+                    class="mt-1 rounded my-2"
                     width="80px"
                   />
-                  <!-- </VAvatar> -->
                 </td>
                 <td class="text-no-wrap">
                   {{ item.product.name }}
@@ -473,9 +420,13 @@ const userName = computed(() => {
                 <td class="text-no-wrap">
                   {{ item.quantity_return }}
                 </td>
+                <!-- for Admin & warehouse -->
                 <td
                   class="text-center quantitySent"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                  v-if="
+                    (userRole == 'admin' || userRole == 'warehouse') &&
+                    orderDetails.status == 'pending'
+                  "
                 >
                   <VTextField
                     v-model="quantitySent[index]"
@@ -487,8 +438,28 @@ const userName = computed(() => {
                   />
                 </td>
                 <td
+                  class="text-center"
+                  v-if="
+                    (userRole == 'admin' || userRole == 'warehouse') &&
+                    orderDetails.status == 'pending'
+                  "
+                >
+                  <VBtn
+                    icon="ic:baseline-send"
+                    variant="text"
+                    size="24"
+                    @click="storeQuantitySent(item, quantitySent[index], index)"
+                    :disabled="orderDetails.status != 'pending' ? true : false"
+                  />
+                </td>
+                <!-- end for Admin & warehouse -->
+
+                <!-- for branch -->
+                <td
                   class="text-center quantityConfirm"
-                  v-if="userRole == 'branch'"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'processing'
+                  "
                 >
                   <VTextField
                     v-model="quantityConfirm[index]"
@@ -503,17 +474,10 @@ const userName = computed(() => {
                 </td>
                 <td
                   class="text-center"
-                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                  v-if="
+                    userRole == 'branch' && orderDetails.status == 'processing'
+                  "
                 >
-                  <VBtn
-                    icon="ic:baseline-send"
-                    variant="text"
-                    size="24"
-                    @click="storeQuantitySent(item, quantitySent[index], index)"
-                    :disabled="orderDetails.status != 'pending' ? true : false"
-                  />
-                </td>
-                <td class="text-center" v-if="userRole == 'branch'">
                   <VBtn
                     icon="ic:baseline-send"
                     variant="text"
@@ -526,19 +490,22 @@ const userName = computed(() => {
                     "
                   />
                 </td>
+                <!-- end for branch -->
+
                 <td>
                   <VRating
                     hover
                     v-model="item.rate"
                     color="warning"
                     @change="changeRate(item, item.rate)"
-                    :readonly="userRole == 'branch' ? false : true"
+                    :readonly="
+                      userRole == 'branch' &&
+                      orderDetails.status == 'processing'
+                        ? false
+                        : true
+                    "
                   />
                 </td>
-
-                <!--
-                    :rules="[requiredValidator]"
-                   <td class="text-center">${{ item.price }}</td> -->
               </tr>
             </tbody>
           </VTable>
@@ -661,7 +628,7 @@ const userName = computed(() => {
 
           <VCardText>
             <div
-              class="d-flex align-center mb-1 pb-1 border-bottom"
+              class="d-flex align-center mb-1 pb-2 border-bottom"
               v-for="comment in listComments"
               :key="comment.id"
             >

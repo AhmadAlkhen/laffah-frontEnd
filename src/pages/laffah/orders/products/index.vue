@@ -326,7 +326,8 @@ const subQty = (q1, q2) => {
                 <th scope="col">Product</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Sent</th>
-                <th scope="col">Div</th>
+                <th scope="col">Confirm</th>
+                <th scope="col">Return</th>
                 <th scope="col">order Id</th>
                 <th scope="col">Order Status</th>
                 <th
@@ -370,10 +371,17 @@ const subQty = (q1, q2) => {
                   }}</span>
                 </td>
 
-                <!-- 👉 sub sent -->
+                <!-- 👉 confirm sent -->
                 <td>
                   <span class="text-capitalize text-base">{{
-                    subQty(ordProduct.quantity, ordProduct.quantity_sent)
+                    ordProduct.quantity_confirm
+                  }}</span>
+                </td>
+
+                <!-- 👉 return sent -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.quantity_return
                   }}</span>
                 </td>
 

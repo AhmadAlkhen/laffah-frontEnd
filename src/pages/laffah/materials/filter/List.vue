@@ -13,7 +13,7 @@ const categorySelected = ref("");
 const totalPage = ref(1);
 const totalProducts = ref(0);
 const categoriesAll = ref([]);
-
+const loading = ref(false);
 const fetchProductData = () => {
   const formData = new FormData();
   formData.append("currentPage", currentPage.value);
@@ -106,7 +106,6 @@ const paginationData = computed(() => {
         </VCol>
       </VRow>
     </VCard>
-
     <VRow>
       <VCol v-for="product in productsData" :key="product.id" md="3">
         <FilterCard :product="product" />

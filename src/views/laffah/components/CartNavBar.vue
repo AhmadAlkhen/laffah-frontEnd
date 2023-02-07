@@ -72,7 +72,7 @@ const props = defineProps({
                 <VListItemAction start>
                   <VAvatar
                     :color="notification.color || 'primary'"
-                    :image="notification.img || undefined"
+                    :image="notification.image || undefined"
                     :icon="notification.icon || undefined"
                     size="40"
                     variant="tonal"
