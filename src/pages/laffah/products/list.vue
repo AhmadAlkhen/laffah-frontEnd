@@ -18,8 +18,10 @@ const totalProducts = ref(0);
 const products = ref([]);
 const categoriesAll = ref([]);
 const isDialogVisible = ref(false);
+const isImagesDialogVisible = ref(false);
 const fileImport = ref();
 const fileName = ref({ name: "" });
+const images = ref([]);
 const toggleSwitch = ref(1);
 const product = ref({});
 // 👉 Fetching products
@@ -150,6 +152,39 @@ const uploading = () => {
   // refetch products
   fetchProducts();
 };
+const uploadingImages = () => {
+  productListStore
+    .uploadImages(formData.value)
+    .then(() => {
+      toast.success("images added successfully", {
+        timeout: 2000,
+      });
+      this.$refs.images = null;
+      // fileName.value = { name: "" };
+      isImagesDialogVisible.value = false;
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+
+  // refetch products
+  // fetchProducts();
+};
+// @changre the input file images
+const uploadImages = (e) => {
+  // if (e.target.files.length > 0) {
+  //   images.value = [...e.target.files];
+  //   // images.value = e.target.files[0];
+  // }
+  const formData = ref(new FormData());
+  for (var i = 0; i < this.$refs.image.files.length; i++) {
+    let file = this.$refs.image.files[i];
+    formData.value.append("files[" + i + "]", file);
+  }
+};
+
 const onFileChange = (e) => {
   if (e.target.files.length > 0) {
     fileImport.value = e.target.files[0];
@@ -235,6 +270,7 @@ onMounted(() => {
             >
           </VRow>
           <VRow class="mx-1 my-1">
+            <!-- import excel file -->
             <VCol cols="12" class="" md="4">
               <VDialog v-model="isDialogVisible" max-width="600">
                 <!-- Dialog Activator -->
@@ -283,6 +319,62 @@ onMounted(() => {
                 </VCard>
               </VDialog>
             </VCol>
+            <!-- end import excel file -->
+
+            <!-- upload the images -->
+            <!--
+            <VCol cols="12" class="" md="2">
+              <VDialog v-model="isImagesDialogVisible" max-width="600">
+              Dialog Activator 
+            <template #activator="{ props }">
+              <VBtn
+                v-bind="props"
+                prepend-icon="tabler-arrow-big-down-lines"
+                class="mr-3"
+              >
+            !isAllFilled()
+                upload
+              </VBtn>
+            </template>
+
+             Dialog close btn
+            <DialogCloseBtn
+              @click="isImagesDialogVisible = !isImagesDialogVisible"
+            />
+
+             Dialog Content 
+                <VCard title="Upload the images">
+                  <VCardText>
+                    <VRow>
+                      <VCol cols="12" sm="12">
+                        <VFileInput
+                          ref="image"
+                          accept="image/*"
+                          label="file"
+                          density="compact"
+                          @change="uploadImages"
+                          multiple
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+
+                  <VCardText class="d-flex justify-end flex-wrap gap-3">
+                    <VBtn
+                      variant="tonal"
+                      color="secondary"
+                      @click="isImagesDialogVisible = false"
+                    >
+                      Close
+                    </VBtn>
+                    <VBtn @click="uploadingImages()" :disabled="!images">
+                      Upload
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VDialog>
+            </VCol>-->
+
             <VCol cols="12" class="" md="4">
               <VSelect
                 v-model="selectedStatus"

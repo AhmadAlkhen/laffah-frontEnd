@@ -60,6 +60,16 @@ export const useProductListStore = defineStore('ProductListStore', {
         axios.post('/product/import', formData).then(response => resolve(response))
           .catch(error => reject(error))
       })
+    },
+    uploadImages(images){
+      return new Promise((resolve, reject) => {
+        
+        // const formData = new FormData();
+        // formData.append('images',images);
+
+        axios.post('/product/import/images', images).then(response => resolve(response))
+          .catch(error => reject(error))
+      })
 
     }
 
