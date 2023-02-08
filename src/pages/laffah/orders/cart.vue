@@ -3,6 +3,7 @@ import { useProductStore } from "@/views/laffah/products/useProductStore";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
+const router = useRouter();
 
 const toast = useToast();
 const ProductStore = useProductStore();

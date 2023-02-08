@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import AddNewProductDrawer from "@/views/laffah/products/AddNewProductDrawer.vue";
+import UpdateProductDrawer from "@/views/laffah/products/UpdateProductDrawer.vue";
 import { useProductListStore } from "@/views/laffah/products/useProductListStore";
 import { avatarText } from "@core/utils/formatters";
 import { useToast } from "vue-toastification";
@@ -20,7 +21,7 @@ const isDialogVisible = ref(false);
 const fileImport = ref();
 const fileName = ref({ name: "" });
 const toggleSwitch = ref(1);
-
+const product = ref({});
 // 👉 Fetching products
 const fetchProducts = () => {
   productListStore
@@ -82,6 +83,7 @@ const convertStatusBoolean = (status) => {
 };
 
 const isAddNewProductDrawerVisible = ref(false);
+const isUpdateProductDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
@@ -111,6 +113,23 @@ const addNewProduct = (productData) => {
   // refetch products
   fetchProducts();
 };
+
+const getProduct = (id) => {
+  productListStore.getProduct(id).then((res) => {
+    product.value = res.data.data;
+    isUpdateProductDrawerVisible.value = true;
+  });
+};
+const updateProduct = (productData) => {
+  productListStore.updateProduct(productData).then(() => {
+    toast.success("Product updated successfully", {
+      timeout: 2000,
+    });
+  });
+  // refetch Branchs
+  fetchProducts();
+};
+
 const uploading = () => {
   productListStore
     .uploadProducts(fileImport.value)
@@ -371,7 +390,13 @@ onMounted(() => {
 
                 <!-- 👉 Actions -->
                 <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="getProduct(product.id)"
+                  >
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
@@ -419,6 +444,14 @@ onMounted(() => {
       v-model:isDrawerOpen="isAddNewProductDrawerVisible"
       @product-data="addNewProduct"
       :categories="categoriesAll"
+    />
+
+    <!-- 👉 edit product -->
+    <UpdateProductDrawer
+      v-model:isDrawerOpen="isUpdateProductDrawerVisible"
+      @product-data="updateProduct"
+      :categories="categoriesAll"
+      :product="product"
     />
   </section>
 </template>
