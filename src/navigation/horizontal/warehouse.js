@@ -9,9 +9,26 @@ export default [
     {
       title: 'Products',
       icon: { icon: 'tabler-archive' },
-      to: {name:'laffah-materials-filter-List'},
+      children: [
+      {
+      title: 'All products',
+      to: 'laffah-products-list',
+      action: "read",
+      subject: "Auth", 
+      },
+      {
+      title: 'Upload images',
+      to: 'laffah-products-files',
+      action: "read",
+      subject: "Auth", 
+      },
+      { title: 'products', to: 'laffah-materials-filter-List',
       action: "read",
       subject: "Auth",
+      },
+
+      ],
+      
     },
     {
       title: 'Orders',
