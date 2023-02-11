@@ -7,6 +7,13 @@ export default [
       subject: "Auth",
     },
     {
+      title: 'Categories',
+      icon: { icon: 'tabler-lifebuoy' },
+      to: {name:'laffah-categories-list'},
+      action: "read",
+      subject: "Auth",
+    },
+    {
       title: 'Products',
       icon: { icon: 'tabler-archive' },
       children: [

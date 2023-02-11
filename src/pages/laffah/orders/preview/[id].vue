@@ -355,8 +355,7 @@ const userName = computed(() => {
                 <th
                   scope="col"
                   v-if="
-                    (userRole == 'admin' || userRole == 'warehouse') &&
-                    orderDetails.status == 'pending'
+                    userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
                 >
                   Quantity Sent
@@ -364,8 +363,7 @@ const userName = computed(() => {
                 <th
                   scope="col"
                   v-if="
-                    (userRole == 'admin' || userRole == 'warehouse') &&
-                    orderDetails.status == 'pending'
+                    userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
                 >
                   Action
@@ -424,8 +422,7 @@ const userName = computed(() => {
                 <td
                   class="text-center quantitySent"
                   v-if="
-                    (userRole == 'admin' || userRole == 'warehouse') &&
-                    orderDetails.status == 'pending'
+                    userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
                 >
                   <VTextField
@@ -440,8 +437,7 @@ const userName = computed(() => {
                 <td
                   class="text-center"
                   v-if="
-                    (userRole == 'admin' || userRole == 'warehouse') &&
-                    orderDetails.status == 'pending'
+                    userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
                 >
                   <VBtn
@@ -513,7 +509,7 @@ const userName = computed(() => {
           <!-- show btn to proccess the order in warehouse  -->
           <VRow
             class="flex-row-reverse mr-2 my-5"
-            v-if="userRole == 'admin' || userRole == 'warehouse'"
+            v-if="userRole == 'warehouse'"
           >
             <VDialog v-model="isDialogVisible" max-width="600">
               <!-- Dialog Activator -->
