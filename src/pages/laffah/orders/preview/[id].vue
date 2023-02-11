@@ -393,7 +393,7 @@ const userName = computed(() => {
 
             <tbody>
               <tr v-for="(item, index) in orderData" :key="item.id">
-                <td class="text-no-wrap">
+                <td class="text-no-wrap" v-viewer>
                   <VImg
                     :src="item.product.image"
                     class="mt-1 rounded my-2"

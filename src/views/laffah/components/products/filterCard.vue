@@ -4,6 +4,7 @@
       <VProgressLinear color="deep-purple" height="10" indeterminate />
     </template>
     <VImg
+      v-viewer
       v-if="product.image"
       class="p-0 mb-2"
       :src="product.image"

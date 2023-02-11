@@ -4631,11 +4631,6 @@
   "resolved" "https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz"
   "version" "0.2.0"
 
-"throttle-debounce@^2.0.1":
-  "integrity" "sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ=="
-  "resolved" "https://registry.npmjs.org/throttle-debounce/-/throttle-debounce-2.3.0.tgz"
-  "version" "2.3.0"
-
 "to-fast-properties@^2.0.0":
   "integrity" "sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog=="
   "resolved" "https://registry.npmjs.org/to-fast-properties/-/to-fast-properties-2.0.0.tgz"
@@ -4829,13 +4824,13 @@
   "resolved" "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
   "version" "1.0.2"
 
-"v-viewer@^1.6.4":
-  "integrity" "sha512-LVkiUHpmsbsZXebeNXnu8krRCi5i2n07FeLFxoIVGhw8lVvTBO0ffpbDC6mLEuacCjrIh09HjIqpciwUtWE8lQ=="
-  "resolved" "https://registry.npmjs.org/v-viewer/-/v-viewer-1.6.4.tgz"
-  "version" "1.6.4"
+"v-viewer@^3.0.11":
+  "integrity" "sha512-E8LOdAxhzuktt4HB3PswVCccQ1Q1sYHYnLsS6zaJISpb5EvmAFs5sYNfXnDLFxVb5DQ82v4ZlGxkYlseXwWRJw=="
+  "resolved" "https://registry.npmjs.org/v-viewer/-/v-viewer-3.0.11.tgz"
+  "version" "3.0.11"
   dependencies:
-    "throttle-debounce" "^2.0.1"
-    "viewerjs" "^1.5.0"
+    "lodash" "^4.17.21"
+    "viewerjs" "^1.9.0"
 
 "v8-compile-cache@^2.3.0":
   "integrity" "sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA=="
@@ -4850,7 +4845,7 @@
     "spdx-correct" "^3.0.0"
     "spdx-expression-parse" "^3.0.0"
 
-"viewerjs@^1.5.0":
+"viewerjs@^1.9.0":
   "integrity" "sha512-z7N9R91ORhtLvOUxN7GoIl+MFVVMbtWNB1T2UmTKuMlzc4EevS+/bletZcIwDf8RIUzk2CFMdleQzcsjsfLl+A=="
   "resolved" "https://registry.npmjs.org/viewerjs/-/viewerjs-1.11.2.tgz"
   "version" "1.11.2"

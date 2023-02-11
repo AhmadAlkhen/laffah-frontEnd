@@ -178,7 +178,7 @@ const isDisabled = () => {
             style="height: 3.75rem"
           >
             <!-- 👉  -->
-            <td>
+            <td v-viewer>
               <img
                 height="90"
                 width="90"

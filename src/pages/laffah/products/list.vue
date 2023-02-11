@@ -430,6 +430,7 @@ onMounted(() => {
                       color="primary"
                       class="me-3"
                       size="38"
+                      v-viewer
                     >
                       <VImg v-if="product.image" :src="product.image" />
                       <span v-else>{{ avatarText(product.name) }}</span>
