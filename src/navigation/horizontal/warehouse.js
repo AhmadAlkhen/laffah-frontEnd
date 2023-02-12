@@ -3,6 +3,14 @@ export default [
     {
       title: 'Laffah warehouse',
       icon: { icon: 'tabler-smart-home' },
+      to: {name:'dashboard'},
+      action: "read",
+      subject: "Auth",
+    },
+    {
+      title: 'Categories',
+      icon: { icon: 'tabler-lifebuoy' },
+      to: {name:'laffah-categories-list'},
       action: "read",
       subject: "Auth",
     },

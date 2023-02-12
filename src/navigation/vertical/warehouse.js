@@ -3,6 +3,7 @@ export default [
     {
       title: 'Laffah warehouse',
       icon: { icon: 'tabler-smart-home' },
+      to: {name:'dashboard'},
       action: "read",
       subject: "Auth",
     },

@@ -1,30 +1,4 @@
 <script setup>
-const statistics = [
-  {
-    title: "Pending",
-    stats: "230k",
-    icon: "tabler-chart-pie-2",
-    color: "primary",
-  },
-  {
-    title: "Processing",
-    stats: "8.549k",
-    icon: "tabler-users",
-    color: "info",
-  },
-  {
-    title: "Completed",
-    stats: "1.423k",
-    icon: "tabler-shopping-cart",
-    color: "error",
-  },
-  {
-    title: "Returned",
-    stats: "$9745",
-    icon: "tabler-currency-dollar",
-    color: "success",
-  },
-];
 const props = defineProps({
   orderStatus: {
     type: Object,

@@ -24,7 +24,7 @@ const router = createRouter({
         //   return { name: 'access-control' }
         
         // return { name: 'login' }
-        return { name: 'dashboards-analytics'}
+        return { name: 'dashboard'}
       },
     },
     {
