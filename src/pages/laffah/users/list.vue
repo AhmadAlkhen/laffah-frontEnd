@@ -20,8 +20,10 @@ const totalUsers = ref(0);
 const users = ref([]);
 const branchesAll = ref([]);
 const userData = ref({});
+const isLoading = ref(false);
 // 👉 Fetching users
 const fetchUsers = () => {
+  isLoading.value = true;
   userListStore
     .fetchUsers({
       q: searchQuery.value,
@@ -37,6 +39,9 @@ const fetchUsers = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 
@@ -374,9 +379,11 @@ onMounted(() => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!users.length">
+            <tfoot v-show="isLoading || users.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="7" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>

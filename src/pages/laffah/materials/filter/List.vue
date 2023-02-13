@@ -14,7 +14,9 @@ const totalPage = ref(1);
 const totalProducts = ref(0);
 const categoriesAll = ref([]);
 const loading = ref(false);
+const overlay = ref(false);
 const fetchProductData = () => {
+  overlay.value = true;
   const formData = new FormData();
   formData.append("currentPage", currentPage.value);
   formData.append("perPage", perPage.value);
@@ -31,13 +33,15 @@ const fetchProductData = () => {
       // productsData.value = response.data.data.data;
       // productsCount.value = response.data.meta.total;
       // length.value = Math.round(productsCount.value / perPage.value);
-
       productsData.value = response.data.data.data;
       totalPage.value = response.data.data.last_page;
       totalProducts.value = response.data.data.total;
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      overlay.value = false;
     });
 };
 watch(fetchProductData, currentPage, { immediate: true });
@@ -106,6 +110,13 @@ const paginationData = computed(() => {
         </VCol>
       </VRow>
     </VCard>
+    <VOverlay v-model="overlay" class="align-center justify-center">
+      <VProgressCircular
+        color="primary"
+        indeterminate
+        size="64"
+      ></VProgressCircular>
+    </VOverlay>
     <VRow>
       <VCol v-for="product in productsData" :key="product.id" md="3">
         <FilterCard :product="product" />

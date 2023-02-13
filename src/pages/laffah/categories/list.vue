@@ -14,8 +14,10 @@ const totalPage = ref(1);
 const totalCategories = ref(0);
 const categories = ref([]);
 const category = ref({});
+const isLoading = ref(false);
 // 👉 Fetching categories
 const fetchCategories = () => {
+  isLoading.value = true;
   categoryListStore
     .fetchCategories({
       q: searchQuery.value,
@@ -30,6 +32,9 @@ const fetchCategories = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 
@@ -262,9 +267,11 @@ const updateCategory = (categoryData) => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!categories.length">
+            <tfoot v-show="isLoading || categories.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="7" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>

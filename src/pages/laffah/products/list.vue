@@ -24,8 +24,12 @@ const fileName = ref({ name: "" });
 const images = ref([]);
 const toggleSwitch = ref(1);
 const product = ref({});
+const isLoading = ref(false);
+const overlay = ref(false);
+
 // 👉 Fetching products
 const fetchProducts = () => {
+  isLoading.value = true;
   productListStore
     .fetchProducts({
       q: searchQuery.value,
@@ -41,6 +45,9 @@ const fetchProducts = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 
@@ -99,6 +106,7 @@ const paginationData = computed(() => {
 });
 
 const addNewProduct = (productData) => {
+  overlay.value = true;
   productListStore
     .addProduct(productData)
     .then(() => {
@@ -110,6 +118,9 @@ const addNewProduct = (productData) => {
       toast.warning(err.response?.data?.message || err.message, {
         timeout: 2000,
       });
+    })
+    .finally(() => {
+      overlay.value = false;
     });
 
   // refetch products
@@ -123,16 +134,30 @@ const getProduct = (id) => {
   });
 };
 const updateProduct = (productData) => {
-  productListStore.updateProduct(productData).then(() => {
-    toast.success("Product updated successfully", {
-      timeout: 2000,
+  overlay.value = true;
+
+  productListStore
+    .updateProduct(productData)
+    .then(() => {
+      toast.success("Product updated successfully", {
+        timeout: 2000,
+      });
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
     });
-  });
   // refetch Branchs
   fetchProducts();
 };
 
+// upload excel file
 const uploading = () => {
+  overlay.value = true;
   productListStore
     .uploadProducts(fileImport.value)
     .then(() => {
@@ -147,6 +172,9 @@ const uploading = () => {
       toast.warning(err.response?.data?.message || err.message, {
         timeout: 2000,
       });
+    })
+    .finally(() => {
+      overlay.value = false;
     });
 
   // refetch products
@@ -171,18 +199,6 @@ const uploadingImages = () => {
 
   // refetch products
   // fetchProducts();
-};
-// @changre the input file images
-const uploadImages = (e) => {
-  // if (e.target.files.length > 0) {
-  //   images.value = [...e.target.files];
-  //   // images.value = e.target.files[0];
-  // }
-  const formData = ref(new FormData());
-  for (var i = 0; i < this.$refs.image.files.length; i++) {
-    let file = this.$refs.image.files[i];
-    formData.value.append("files[" + i + "]", file);
-  }
 };
 
 const onFileChange = (e) => {
@@ -235,6 +251,14 @@ onMounted(() => {
 
 <template>
   <section>
+    <VOverlay v-model="overlay" class="align-center justify-center" persistent>
+      <VProgressCircular
+        color="primary"
+        indeterminate
+        size="64"
+      ></VProgressCircular>
+    </VOverlay>
+
     <VRow>
       <VCol cols="12">
         <VCard title="Search Filter">
@@ -505,9 +529,11 @@ onMounted(() => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!products.length">
+            <tfoot v-show="isLoading || products.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="7" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>

@@ -34,9 +34,11 @@ const totalPage = ref(1);
 const totalOrders = ref(0);
 const orders = ref([]);
 const branches = ref([]);
+const isLoading = ref(false);
 
 // 👉 Fetching orders
 const fetchOrders = () => {
+  isLoading.value = true;
   orderListStore
     .fetchOrders({
       q: searchQuery.value,
@@ -53,6 +55,9 @@ const fetchOrders = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 const convertCreated = (value) => {
@@ -459,9 +464,11 @@ onMounted(() => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!orders.length">
+            <tfoot v-show="isLoading || orders.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="7" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>

@@ -14,9 +14,10 @@ const totalPage = ref(1);
 const totalBranchs = ref(0);
 const branchs = ref([]);
 const branchData = ref({});
-
+const isLoading = ref(false);
 // 👉 Fetching branchs
 const fetchBranchs = () => {
+  isLoading.value = true;
   branchListStore
     .fetchBranchs({
       q: searchQuery.value,
@@ -31,6 +32,9 @@ const fetchBranchs = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 
@@ -190,6 +194,8 @@ const updateBranch = (branchData) => {
           <VDivider />
 
           <VTable class="text-no-wrap">
+            <!-- :empty-html="isLoading ? 'Loading...' : 'No data found'" -->
+
             <!-- 👉 table head -->
             <thead>
               <tr>
@@ -253,10 +259,12 @@ const updateBranch = (branchData) => {
               </tr>
             </tbody>
 
-            <!-- 👉 table footer  -->
-            <tfoot v-show="!branchs.length">
+            <!-- 👉 table footer !branchs.length -->
+            <tfoot v-show="isLoading || branchs.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="7" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>

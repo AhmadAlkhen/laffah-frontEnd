@@ -30,9 +30,11 @@ const totalPage = ref(1);
 const totalOrderProducts = ref(0);
 const orderProducts = ref([]);
 const branches = ref([]);
+const isLoading = ref(false);
 
 // 👉 Fetching orders
 const fetchProductsOrder = () => {
+  isLoading.value = true;
   productOrderStore
     .fetchProductsOrder({
       q: searchQuery.value,
@@ -51,6 +53,9 @@ const fetchProductsOrder = () => {
     })
     .catch((error) => {
       console.error(error);
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 };
 // const fetchBranches = () => {
@@ -428,9 +433,11 @@ const subQty = (q1, q2) => {
             </tbody>
 
             <!-- 👉 table footer  -->
-            <tfoot v-show="!orderProducts.length">
+            <tfoot v-show="isLoading || orderProducts.length === 0">
               <tr>
-                <td colspan="7" class="text-center">No data available</td>
+                <td colspan="8" class="text-center">
+                  {{ isLoading ? "Loading..." : "No data available" }}
+                </td>
               </tr>
             </tfoot>
           </VTable>
