@@ -95,6 +95,8 @@ const paginationData = computed(() => {
           <v-autocomplete
             v-model="categorySelected"
             :items="categoriesAll"
+            placeholder="Select Category"
+            label="Select Category"
             item-value="value"
             item-text="text"
             return-object

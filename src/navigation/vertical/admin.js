@@ -67,12 +67,12 @@ export default [
       action: "read",
       subject: "Auth",
     },
-    {
-      title: 'Cart',
-      icon: { icon: 'tabler-file' },
-      to: 'laffah-orders-cart',
-      action: "read",
-      subject: "Auth",
-    },
+    // {
+    //   title: 'Cart',
+    //   icon: { icon: 'tabler-file' },
+    //   to: 'laffah-orders-cart',
+    //   action: "read",
+    //   subject: "Auth",
+    // },
   ]
   
