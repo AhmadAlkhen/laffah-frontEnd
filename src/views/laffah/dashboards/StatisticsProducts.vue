@@ -47,9 +47,16 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                products.productsTotal
-              }}</span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-products-list',
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  products.productsTotal
+                }}</span>
+              </RouterLink>
+
               <span class="text-caption">Products Total </span>
             </div>
           </div>
@@ -61,9 +68,17 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                products.productsActiveTotal
-              }}</span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-products-list',
+                  query: { status: 1 },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  products.productsActiveTotal
+                }}</span>
+              </RouterLink>
+
               <span class="text-caption">Products Active</span>
             </div>
           </div>
@@ -75,9 +90,17 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                products.productsInactiveTotal
-              }}</span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-products-list',
+                  query: { status: 0 },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  products.productsInactiveTotal
+                }}</span>
+              </RouterLink>
+
               <span class="text-caption">Products Inactive</span>
             </div>
           </div>

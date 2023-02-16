@@ -6,10 +6,13 @@ import UpdateProductDrawer from "@/views/laffah/products/UpdateProductDrawer.vue
 import { useProductListStore } from "@/views/laffah/products/useProductListStore";
 import { avatarText } from "@core/utils/formatters";
 import { useToast } from "vue-toastification";
+const route = useRoute();
+const router = useRouter();
 const toast = useToast();
+
 const productListStore = useProductListStore();
 const searchQuery = ref("");
-const selectedStatus = ref();
+const selectedStatus = ref(route.query.status || null);
 const selectedCategory = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);

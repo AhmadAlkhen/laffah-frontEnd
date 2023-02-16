@@ -21,9 +21,17 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                orderStatus.pendingTotal
-              }}</span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                  query: { status: 'pending' },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  orderStatus.pendingTotal
+                }}</span>
+              </RouterLink>
+
               <span class="text-caption">Pending </span>
             </div>
           </div>
@@ -35,10 +43,18 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                orderStatus.processingTotal
-              }}</span>
-              <span class="text-caption">processing </span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                  query: { status: 'processing' },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  orderStatus.processingTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Processing </span>
             </div>
           </div>
         </VCol>
@@ -49,10 +65,18 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                orderStatus.completedTotal
-              }}</span>
-              <span class="text-caption">completed </span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                  query: { status: 'completed' },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  orderStatus.completedTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Completed </span>
             </div>
           </div>
         </VCol>
@@ -63,10 +87,18 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                orderStatus.returnedTotal
-              }}</span>
-              <span class="text-caption">returned </span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                  query: { status: 'returned' },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  orderStatus.returnedTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Returned </span>
             </div>
           </div>
         </VCol>

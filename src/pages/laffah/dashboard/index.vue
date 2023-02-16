@@ -34,7 +34,6 @@ onMounted(() => {
     ></VProgressCircular>
   </VOverlay>
   <VRow>
-    {{ orderStatus }}
     <!-- 👉 Congratulation John -->
     <!-- <VCol cols="12" md="3" lg="3">
       <EcommerceCongratulationsJohn />

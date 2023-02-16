@@ -21,10 +21,17 @@ const props = defineProps({
             </VAvatar>
 
             <div class="d-flex flex-column">
-              <span class="text-h6 font-weight-medium">{{
-                categories.categoriesTotal
-              }}</span>
-              <span class="text-caption">categories Total </span>
+              <RouterLink
+                :to="{
+                  name: 'laffah-categories-list',
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  categories.categoriesTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Categories Total </span>
             </div>
           </div>
         </VCol>

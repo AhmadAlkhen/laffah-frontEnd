@@ -11,6 +11,9 @@ import axios from "axios";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 
+const route = useRoute();
+const router = useRouter();
+
 // import { auth } from "@/store/auth/index";
 import { ref, onMounted } from "vue";
 
@@ -26,7 +29,7 @@ let cart = computed(function () {
 const searchQuery = ref("");
 const selectedRole = ref();
 const selectedPlan = ref();
-const selectedStatus = ref();
+const selectedStatus = ref(route.query.status || null);
 const selectedBranch = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
@@ -264,6 +267,9 @@ onMounted(() => {
     .catch((error) => {
       console.error(error);
     });
+});
+onMounted(() => {
+  console.log(route.query.status);
 });
 </script>
 
