@@ -4,7 +4,9 @@ import { useProductOrderStore } from "@/views/laffah/orders/useProductOrderStore
 import { avatarText } from "@core/utils/formatters";
 import { computed } from "@vue/runtime-core";
 import moment from "moment";
-
+import axios from "axios";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 // import { auth } from "@/store/auth/index";
 import { ref, onMounted } from "vue";
 
@@ -78,6 +80,50 @@ const convertCreated = (value) => {
 const getUserRole = computed(() => {
   return userStore;
 });
+
+// export Products
+const exportProducts = () => {
+  const from = startFrom.value ? startFrom.value : "";
+  const to = startTo.value ? startTo.value : "";
+
+  axios
+    .get("/order/products/export", {
+      params: { from, to },
+      responseType: "blob",
+    })
+    .then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      const fileName = `Products-${from}_${to}.xlsx`;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+
+  // axios
+  //   .get("/order/products/export", { responseType: "blob" })
+  //   .then((response) => {
+  //     const url = window.URL.createObjectURL(new Blob([response.data]));
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", "Order.xlsx");
+  //     document.body.appendChild(link);
+  //     link.click();
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //     toast.warning(err.response?.data?.message || err.message, {
+  //       timeout: 2000,
+  //     });
+  //   });
+};
 
 onMounted(() => {
   productOrderStore
@@ -295,7 +341,18 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <!-- <VCol md="3"> </VCol> -->
+            <VCol md="3">
+              <VBtn
+                block
+                prepend-icon="tabler-icon"
+                variant="tonal"
+                color="info"
+                class="mb-2"
+                @click="exportProducts"
+              >
+                Export
+              </VBtn>
+            </VCol>
           </VRow>
 
           <!-- <div class="me-3" style="width: 250px"></div>

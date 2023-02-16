@@ -17,12 +17,14 @@ const ProductStore = useProductStore();
 import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
 import axios from "axios";
 import { name } from "vue-prism-component";
+import { watch } from "@vue/runtime-core";
 
 const orderListStore = useOrderListStore();
 const route = useRoute();
 const router = useRouter();
 
 const orderData = ref([]);
+const orderDataNew = ref([]);
 const orderDetails = ref();
 const quantitySent = ref([]);
 const quantityConfirm = ref([]);
@@ -32,6 +34,9 @@ const comment = ref("");
 const listComments = ref([]);
 const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
+const categories = ref([]);
+const category = ref();
+
 const isCarrierSelected = ref(false);
 const isDialogVisible = ref(false);
 
@@ -42,9 +47,25 @@ orderListStore
   .fetchOrder(Number(route.params.id))
   .then((response) => {
     orderData.value = response.data.data;
+    orderDataNew.value = response.data.data;
     orderDetails.value = response.data.order[0];
     quantityCount.value = response.data.data.length;
     listComments.value = response.data.comments;
+  })
+  .then(() => {
+    let categoriesSpec = [{ title: "All", value: "0" }];
+    orderData.value.forEach((item) => {
+      const category = {
+        title: item.product.category.name,
+        value: item.product.category.id,
+      };
+
+      // check if category already exists in categoriesSpec array
+      if (!categoriesSpec.some((c) => c.value === category.value)) {
+        categoriesSpec.push(category);
+      }
+    });
+    categories.value = categoriesSpec;
   })
   .catch((error) => {
     console.log(error);
@@ -65,7 +86,7 @@ const fetchOrders = () => {
     });
 };
 
-// 👉 Print Invoice
+// 👉 Print Order
 const printInvoice = () => {
   window.print();
 };
@@ -79,6 +100,27 @@ const duplicateOrder = () => {
   ProductStore.addItems(myProducts);
   // localStorage.setItem("cart", JSON.stringify(myProducts));
   router.replace({ name: "laffah-orders-cart" });
+};
+
+// export Order
+const exportOrder = () => {
+  const orderId = orderDetails.value.id;
+  axios
+    .get("/order/export", { params: { orderId }, responseType: "blob" })
+    .then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Order.xlsx");
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
 };
 
 const storeQuantitySent = (item, quaSent, index) => {
@@ -295,6 +337,48 @@ const userName = computed(() => {
   let data = JSON.parse(localStorage.getItem("userData"));
   return data.name;
 });
+
+const filterProductsByCategory = () => {
+  if (category.value) {
+    orderDataNew.value = orderData.value;
+    if (category.value.value == "0") {
+      console.log(category.value);
+      orderDataNew.value = orderData.value;
+    } else {
+      const newOrderData = orderData.value.filter(
+        (item) => item.product.category_id === category.value.value
+      );
+      orderDataNew.value = newOrderData;
+    }
+  }
+};
+watch(
+  () => category.value,
+  () => {
+    filterProductsByCategory();
+  }
+);
+
+// onMounted(() => {
+//   let allCategories = [];
+//   let categoryItem = [];
+//   axios
+//     .get("/category/index")
+//     .then((res) => {
+//       allCategories = res.data.data.data;
+//       allCategories.forEach((category) => {
+//         categoryItem.push({
+//           title: category.name,
+//           value: category.id,
+//         });
+//       });
+//       categories.value = categoryItem;
+//       return categoryItem;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 </script>
 
 <template>
@@ -321,6 +405,29 @@ const userName = computed(() => {
             @click="printInvoice"
           >
             Print
+          </VBtn>
+        </VCol>
+        <VCol cols="3" class="d-print-none">
+          <VAutocomplete
+            v-model="category"
+            :items="categories"
+            item-title="title"
+            item-value="value"
+            label="Select category"
+            persistent-hint
+            return-object
+          />
+        </VCol>
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-icon"
+            variant="tonal"
+            color="info"
+            class="mb-2"
+            @click="exportOrder"
+          >
+            Export
           </VBtn>
         </VCol>
       </VRow>
@@ -382,7 +489,7 @@ const userName = computed(() => {
 
           <!-- 👉 Table -->
           <VDivider />
-          <VTable>
+          <VTable fixed-header>
             <thead>
               <tr>
                 <th scope="col">ITEM</th>
@@ -390,10 +497,12 @@ const userName = computed(() => {
                 <th scope="col">Unit</th>
                 <th scope="col">Quantity</th>
                 <th scope="col">Sent</th>
-                <th scope="col">confirm</th>
-                <th scope="col">return</th>
+                <th scope="col">Confirm</th>
+                <th scope="col">Return</th>
+                <th scope="col">Total</th>
                 <!-- for Admin & warehouse -->
                 <th
+                  class="d-print-none"
                   scope="col"
                   v-if="
                     userRole == 'warehouse' && orderDetails.status == 'pending'
@@ -402,6 +511,7 @@ const userName = computed(() => {
                   Quantity Sent
                 </th>
                 <th
+                  class="d-print-none"
                   scope="col"
                   v-if="
                     userRole == 'warehouse' && orderDetails.status == 'pending'
@@ -412,6 +522,7 @@ const userName = computed(() => {
                 <!-- end Admin & warehouse -->
                 <!-- for Branch -->
                 <th
+                  class="d-print-none"
                   scope="col"
                   v-if="
                     userRole == 'branch' && orderDetails.status == 'processing'
@@ -420,6 +531,7 @@ const userName = computed(() => {
                   Confirm Sent
                 </th>
                 <th
+                  class="d-print-none"
                   scope="col"
                   v-if="
                     userRole == 'branch' && orderDetails.status == 'processing'
@@ -428,12 +540,12 @@ const userName = computed(() => {
                   Action
                 </th>
                 <!-- end for Branch -->
-                <th scope="col">Rate</th>
+                <th class="d-print-none" scope="col">Rate</th>
               </tr>
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in orderData" :key="item.id">
+              <tr v-for="(item, index) in orderDataNew" :key="item.id">
                 <td class="text-no-wrap" v-viewer>
                   <VImg
                     :src="item.product.image"
@@ -459,9 +571,12 @@ const userName = computed(() => {
                 <td class="text-no-wrap">
                   {{ item.quantity_return }}
                 </td>
+                <td class="text-no-wrap">
+                  {{ item.quantity_confirm - item.quantity_return }}
+                </td>
                 <!-- for Admin & warehouse -->
                 <td
-                  class="text-center quantitySent"
+                  class="text-center quantitySent d-print-none"
                   v-if="
                     userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
@@ -476,7 +591,7 @@ const userName = computed(() => {
                   />
                 </td>
                 <td
-                  class="text-center"
+                  class="text-center d-print-none"
                   v-if="
                     userRole == 'warehouse' && orderDetails.status == 'pending'
                   "
@@ -493,7 +608,7 @@ const userName = computed(() => {
 
                 <!-- for branch -->
                 <td
-                  class="text-center quantityConfirm"
+                  class="text-center quantityConfirm d-print-none"
                   v-if="
                     userRole == 'branch' && orderDetails.status == 'processing'
                   "
@@ -510,7 +625,7 @@ const userName = computed(() => {
                   />
                 </td>
                 <td
-                  class="text-center"
+                  class="text-center d-print-none"
                   v-if="
                     userRole == 'branch' && orderDetails.status == 'processing'
                   "
@@ -529,7 +644,7 @@ const userName = computed(() => {
                 </td>
                 <!-- end for branch -->
 
-                <td>
+                <td class="d-print-none">
                   <VRating
                     hover
                     v-model="item.rate"
@@ -549,8 +664,8 @@ const userName = computed(() => {
 
           <!-- show btn to proccess the order in warehouse  -->
           <VRow
-            class="flex-row-reverse mr-2 my-5"
-            v-if="userRole == 'warehouse'"
+            class="flex-row-reverse mr-2 my-5 d-print-none"
+            v-if="userRole == 'warehouse' && orderDetails.status == 'pending'"
           >
             <VDialog v-model="isDialogVisible" max-width="600">
               <!-- Dialog Activator -->
@@ -615,21 +730,23 @@ const userName = computed(() => {
           </VRow>
 
           <!-- show btn to complete the order in branch  -->
-          <VRow class="flex-row-reverse mr-2 my-5" v-if="userRole == 'branch'">
+          <VRow
+            class="flex-row-reverse mr-2 my-5 d-print-none"
+            v-if="userRole == 'branch' && orderDetails.status == 'processing'"
+          >
             <VBtn
               prepend-icon="tabler-send"
               class="mr-3"
               @click="completedOrder()"
-              :disabled="
-                orderDetails.status == 'completed' ||
-                orderDetails.status == 'returned' ||
-                orderDetails.status == 'canceled'
-              "
+              :disabled="orderDetails.status != 'processing' ? true : false"
             >
               Complete
             </VBtn>
           </VRow>
-          <VRow class="flex-row-reverse mr-2 my-5" v-if="userRole == 'branch'">
+          <VRow
+            class="flex-row-reverse mr-2 my-5 d-print-none"
+            v-if="userRole == 'branch'"
+          >
             <p class="mb-2">
               <span></span>
               <VBtn
@@ -646,7 +763,7 @@ const userName = computed(() => {
           </VRow>
           <VDivider class="my-5" />
 
-          <VRow class="my-7">
+          <VRow class="my-7 d-print-none">
             <VCol cols="12" md="7" class="ml-2">
               <VTextarea label="Comment" v-model="comment" rows="2" />
             </VCol>
@@ -682,7 +799,7 @@ const userName = computed(() => {
                     >
                   </h4>
                 </h6>
-                <span class="text-sm text-disabled">{{ comment.message }}</span>
+                <span class="text-md">{{ comment.message }}</span>
               </div>
             </div>
           </VCardText>
@@ -700,7 +817,11 @@ const userName = computed(() => {
 
   @page {
     margin: 0;
-    size: auto;
+    size: landscape;
+  }
+  table {
+    width: 100%;
+    overflow-x: visible !important;
   }
 
   .layout-page-content,
