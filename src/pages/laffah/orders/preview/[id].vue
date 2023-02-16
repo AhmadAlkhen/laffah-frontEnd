@@ -10,9 +10,13 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 // Components
 
+import { useProductStore } from "@/views/apps/products/useProductStore";
+const ProductStore = useProductStore();
+
 // Store
 import { useOrderListStore } from "@/views/laffah/orders/useOrderListStore";
 import axios from "axios";
+import { name } from "vue-prism-component";
 
 const orderListStore = useOrderListStore();
 const route = useRoute();
@@ -64,6 +68,17 @@ const fetchOrders = () => {
 // 👉 Print Invoice
 const printInvoice = () => {
   window.print();
+};
+
+// duplicate Order
+const duplicateOrder = () => {
+  let myProducts = [];
+  orderData.value.forEach((element) => {
+    myProducts.push(element.product);
+  });
+  ProductStore.addItems(myProducts);
+  // localStorage.setItem("cart", JSON.stringify(myProducts));
+  router.replace({ name: "laffah-orders-cart" });
 };
 
 const storeQuantitySent = (item, quaSent, index) => {
@@ -284,6 +299,32 @@ const userName = computed(() => {
 
 <template>
   <section v-if="orderData && orderDetails">
+    <VCard class="my-2">
+      <VRow class="my-1 ml-1">
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-copy"
+            class="mb-2"
+            @click="duplicateOrder"
+          >
+            duplicate
+          </VBtn>
+        </VCol>
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-scan"
+            variant="tonal"
+            color="info"
+            class="mb-2"
+            @click="printInvoice"
+          >
+            Print
+          </VBtn>
+        </VCol>
+      </VRow>
+    </VCard>
     <VRow>
       <VCol cols="12" md="12">
         <VCard>
@@ -647,32 +688,6 @@ const userName = computed(() => {
           </VCardText>
         </VCard>
       </VCol>
-
-      <!-- <VCol cols="12" md="3" class="d-print-none">
-        <VCard>
-          <VCardText>
-            👉 Send Invoice Trigger button
-            <VBtn
-              block
-              prepend-icon="tabler-send"
-              class="mb-2"
-              @click="isSendPaymentSidebarVisible = true"
-            >
-              Send Invoice
-            </VBtn>
-
-            <VBtn
-              block
-              variant="tonal"
-              color="secondary"
-              class="mb-2"
-              @click="printInvoice"
-            >
-              Print
-            </VBtn>
-          </VCardText>
-        </VCard>
-      </VCol> -->
     </VRow>
   </section>
 </template>

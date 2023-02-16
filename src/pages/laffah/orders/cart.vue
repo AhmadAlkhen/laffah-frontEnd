@@ -86,6 +86,15 @@ const saveOrderCart = () => {
   // if (confirm("Do you really want to save the order?")) {
   // }
 };
+
+const resetCart = () => {
+  if (confirm("Do you really want to reset the cart?")) {
+    ProductStore.resetCart();
+    toast.success("Products deleted successfully", {
+      timeout: 2000,
+    });
+  }
+};
 const isDisabled = () => {
   // console.log(quantity.value.length);
   // const len = quantity.value.length;
@@ -239,6 +248,7 @@ const isDisabled = () => {
             >
               Save
             </VBtn>
+            <VBtn color="error" @click="resetCart()" class="mx-2"> Reset </VBtn>
           </div>
         </VRow>
       </VContainer>

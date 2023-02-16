@@ -29,6 +29,16 @@ export const useProductStore = defineStore('ProductStore', {
       localStorage.setItem('cart',JSON.stringify(this.myItems));
     },
 
+    addItems(items){
+      this.myItems = items;
+
+      localStorage.setItem('cart',JSON.stringify(this.myItems));
+    },
+
+
+
+
+
     deleteItem(itemId){
       // console.log(itemId+'AA');
 
@@ -47,6 +57,8 @@ export const useProductStore = defineStore('ProductStore', {
       localStorage.removeItem("cart");
       this.myItems=[];
     }
+
+
 
   },
 })
