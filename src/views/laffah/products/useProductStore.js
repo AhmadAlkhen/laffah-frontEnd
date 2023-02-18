@@ -17,7 +17,7 @@ export const useProductStore = defineStore('ProductStore', {
   actions: {
     // 👉 Fetch all Invoices
     fetchProducts(data) {
-      return axios.get('http://localhost:8000/api/products/search')
+      return axios.get('/products/search')
     },
 
     addItem(item){

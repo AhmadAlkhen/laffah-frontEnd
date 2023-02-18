@@ -10,7 +10,7 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 // Components
 
-import { useProductStore } from "@/views/apps/products/useProductStore";
+import { useProductStore } from "@/views/laffah/products/useProductStore";
 const ProductStore = useProductStore();
 
 // Store

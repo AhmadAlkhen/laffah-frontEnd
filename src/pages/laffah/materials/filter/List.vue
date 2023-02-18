@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import FilterCard from "@/views/laffah/components/products/filterCard.vue";
-import { useProductStore } from "@/views/apps/products/useProductStore";
+import { useProductStore } from "@/views/laffah/products/useProductStore";
 const productsData = ref("");
 const productsCount = ref("");
 const searchQuery = ref("");

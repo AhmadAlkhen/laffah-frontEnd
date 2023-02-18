@@ -28,27 +28,27 @@ export default defineConfig({
       // ℹ️ We need three routes using single routes so we will ignore generating route for this SFC file
       onRoutesGenerated: routes => [
         // Email filter
-        {
-          path: '/apps/email/:filter',
-          name: 'apps-email-filter',
-          component: '/src/pages/apps/email/index.vue',
-          meta: {
-            navActiveLink: 'apps-email',
-            layoutWrapperClasses: 'layout-content-height-fixed',
-          },
-        },
+        // {
+        //   path: '/apps/email/:filter',
+        //   name: 'apps-email-filter',
+        //   component: '/src/pages/apps/email/index.vue',
+        //   meta: {
+        //     navActiveLink: 'apps-email',
+        //     layoutWrapperClasses: 'layout-content-height-fixed',
+        //   },
+        // },
 
         // Email label
-        {
-          path: '/apps/email/label/:label',
-          name: 'apps-email-label',
-          component: '/src/pages/apps/email/index.vue',
-          meta: {
-            // contentClass: 'email-application',
-            navActiveLink: 'apps-email',
-            layoutWrapperClasses: 'layout-content-height-fixed',
-          },
-        },
+        // {
+        //   path: '/apps/email/label/:label',
+        //   name: 'apps-email-label',
+        //   component: '/src/pages/apps/email/index.vue',
+        //   meta: {
+        //     // contentClass: 'email-application',
+        //     navActiveLink: 'apps-email',
+        //     layoutWrapperClasses: 'layout-content-height-fixed',
+        //   },
+        // },
         ...routes,
       ],
     }),

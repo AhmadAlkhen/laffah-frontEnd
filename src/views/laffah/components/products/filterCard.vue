@@ -1,3 +1,25 @@
+<script setup>
+import { useProductStore } from "@/views/laffah/products/useProductStore";
+import { useToast } from "vue-toastification";
+const toast = useToast();
+
+const ProductStore = useProductStore();
+
+const props = defineProps({
+  product: {
+    type: String,
+    required: true,
+  },
+});
+
+const reserve = (product) => {
+  ProductStore.addItem(product);
+  toast.success("Product added successfully", {
+    timeout: 2000,
+  });
+};
+</script>
+
 <template>
   <VCard :loading="loading" class="px-0" max-width="374" min-height="300">
     <template #progress>
@@ -31,24 +53,3 @@
     </VCardActions>
   </VCard>
 </template>
-<script setup>
-import { useProductStore } from "@/views/apps/products/useProductStore";
-import { useToast } from "vue-toastification";
-const toast = useToast();
-
-const ProductStore = useProductStore();
-
-const props = defineProps({
-  product: {
-    type: String,
-    required: true,
-  },
-});
-
-const reserve = (product) => {
-  ProductStore.addItem(product);
-  toast.success("Product added successfully", {
-    timeout: 2000,
-  });
-};
-</script>
