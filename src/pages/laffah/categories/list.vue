@@ -211,7 +211,6 @@ const uploading = () => {
                     prepend-icon="tabler-arrow-big-down-lines"
                     class="mr-3"
                   >
-                    <!-- !isAllFilled() -->
                     import
                   </VBtn>
                 </template>

@@ -32,6 +32,7 @@ const overlay = ref(false);
 
 // 👉 Fetching products
 const fetchProducts = () => {
+  console.log(selectedCategory.value);
   isLoading.value = true;
   productListStore
     .fetchProducts({
@@ -39,7 +40,7 @@ const fetchProducts = () => {
       status: selectedStatus.value,
       perPage: rowPerPage.value,
       currentPage: currentPage.value,
-      category: selectedCategory.value,
+      category: selectedCategory.value?.value,
     })
     .then((response) => {
       products.value = response.data.data.data;
@@ -234,7 +235,7 @@ onMounted(() => {
   let allCategories = [];
   let categoryItem = [];
   axios
-    .get("/category/index")
+    .get("/category/index", { perPage: 20 })
     .then((res) => {
       allCategories = res.data.data.data;
       allCategories.forEach((category) => {
@@ -348,60 +349,6 @@ onMounted(() => {
             </VCol>
             <!-- end import excel file -->
 
-            <!-- upload the images -->
-            <!--
-            <VCol cols="12" class="" md="2">
-              <VDialog v-model="isImagesDialogVisible" max-width="600">
-              Dialog Activator 
-            <template #activator="{ props }">
-              <VBtn
-                v-bind="props"
-                prepend-icon="tabler-arrow-big-down-lines"
-                class="mr-3"
-              >
-            !isAllFilled()
-                upload
-              </VBtn>
-            </template>
-
-             Dialog close btn
-            <DialogCloseBtn
-              @click="isImagesDialogVisible = !isImagesDialogVisible"
-            />
-
-             Dialog Content 
-                <VCard title="Upload the images">
-                  <VCardText>
-                    <VRow>
-                      <VCol cols="12" sm="12">
-                        <VFileInput
-                          ref="image"
-                          accept="image/*"
-                          label="file"
-                          density="compact"
-                          @change="uploadImages"
-                          multiple
-                        />
-                      </VCol>
-                    </VRow>
-                  </VCardText>
-
-                  <VCardText class="d-flex justify-end flex-wrap gap-3">
-                    <VBtn
-                      variant="tonal"
-                      color="secondary"
-                      @click="isImagesDialogVisible = false"
-                    >
-                      Close
-                    </VBtn>
-                    <VBtn @click="uploadingImages()" :disabled="!images">
-                      Upload
-                    </VBtn>
-                  </VCardText>
-                </VCard>
-              </VDialog>
-            </VCol>-->
-
             <VCol cols="12" class="" md="4">
               <VSelect
                 v-model="selectedStatus"
@@ -413,11 +360,21 @@ onMounted(() => {
             </VCol>
 
             <VCol cols="12" class="" md="4">
-              <VSelect
+              <!-- <VSelect
                 v-model="selectedCategory"
                 label="Select Category"
                 :items="categoriesAll"
                 clearable
+                clear-icon="tabler-x"
+              /> -->
+              <VAutocomplete
+                v-model="selectedCategory"
+                :items="categoriesAll"
+                item-title="title"
+                item-value="value"
+                label="Select category"
+                persistent-hint
+                return-object
                 clear-icon="tabler-x"
               />
             </VCol>
