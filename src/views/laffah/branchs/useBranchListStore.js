@@ -38,5 +38,14 @@ export const useBranchListStore = defineStore('BranchListStore', {
         axios.get(`/branch/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
       })
     },
+
+    // delete Branch
+    deleteBranch(id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/branch/delete/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+
+    
   },
 })

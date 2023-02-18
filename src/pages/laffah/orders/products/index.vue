@@ -106,23 +106,6 @@ const exportProducts = () => {
         timeout: 2000,
       });
     });
-
-  // axios
-  //   .get("/order/products/export", { responseType: "blob" })
-  //   .then((response) => {
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", "Order.xlsx");
-  //     document.body.appendChild(link);
-  //     link.click();
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //     toast.warning(err.response?.data?.message || err.message, {
-  //       timeout: 2000,
-  //     });
-  //   });
 };
 
 onMounted(() => {
@@ -341,7 +324,7 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol md="3">
+            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
               <VBtn
                 block
                 prepend-icon="tabler-icon"

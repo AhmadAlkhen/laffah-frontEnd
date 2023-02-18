@@ -105,6 +105,28 @@ const getBranch = (id) => {
     isUpdateBranchDrawerVisible.value = true;
   });
 };
+// const deleteBranch = (id) => {
+//   const confirmed = window.confirm(
+//     "Are you sure you want to delete this branch?"
+//   );
+//   if (!confirmed) {
+//     return;
+//   }
+//   branchListStore
+//     .deleteBranch(id)
+//     .then((res) => {
+//       toast.success(res.data.message, {
+//         timeout: 2000,
+//       });
+//       fetchBranchs();
+//     })
+//     .catch((err) => {
+//       toast.warning(err.response?.data?.message || err.message, {
+//         timeout: 2000,
+//       });
+//     });
+// };
+
 const updateBranch = (branchData) => {
   branchListStore.updateBranch(branchData).then(() => {
     toast.success("Branch updated successfully", {
@@ -252,7 +274,13 @@ const updateBranch = (branchData) => {
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <!-- <VBtn icon size="x-small" color="default" variant="text">
+                  <!-- <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteBranch(branch.id)"
+                  >
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn> -->
                 </td>
