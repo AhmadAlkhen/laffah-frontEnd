@@ -373,6 +373,7 @@ const subQty = (q1, q2) => {
                 <th scope="col">Sent</th>
                 <th scope="col">Confirm</th>
                 <th scope="col">Return</th>
+                <th scope="col">Total</th>
                 <th scope="col">order Id</th>
                 <th scope="col">Order Status</th>
                 <th
@@ -429,12 +430,28 @@ const subQty = (q1, q2) => {
                     ordProduct.quantity_return
                   }}</span>
                 </td>
+                <!-- 👉 Total  -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    ordProduct.quantity_confirm - ordProduct.quantity_return ==
+                    0
+                      ? ""
+                      : ordProduct.quantity_confirm - ordProduct.quantity_return
+                  }}</span>
+                </td>
 
                 <!-- 👉 order ID -->
                 <td>
-                  <span class="text-capitalize text-base">{{
-                    ordProduct.order_id
-                  }}</span>
+                  <RouterLink
+                    :to="{
+                      name: 'laffah-orders-preview-id',
+                      params: { id: ordProduct.order_id },
+                    }"
+                  >
+                    <span class="text-capitalize text-base">{{
+                      ordProduct.order_id
+                    }}</span>
+                  </RouterLink>
                 </td>
                 <!-- 👉 order Status -->
                 <td>

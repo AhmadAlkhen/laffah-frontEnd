@@ -572,7 +572,11 @@ watch(
                   {{ item.quantity_return }}
                 </td>
                 <td class="text-no-wrap">
-                  {{ item.quantity_confirm - item.quantity_return }}
+                  {{
+                    item.quantity_confirm - item.quantity_return == 0
+                      ? ""
+                      : item.quantity_confirm - item.quantity_return
+                  }}
                 </td>
                 <!-- for Admin & warehouse -->
                 <td
