@@ -15,6 +15,11 @@ const totalCategories = ref(0);
 const categories = ref([]);
 const category = ref({});
 const isLoading = ref(false);
+const isDialogVisible = ref(false);
+const fileImport = ref();
+const fileName = ref({ name: "" });
+const overlay = ref(false);
+
 // 👉 Fetching categories
 const fetchCategories = () => {
   isLoading.value = true;
@@ -113,6 +118,42 @@ const updateCategory = (categoryData) => {
   // refetch Categories
   fetchCategories();
 };
+
+const onFileChange = (e) => {
+  if (e.target.files.length > 0) {
+    fileImport.value = e.target.files[0];
+    fileName.value.name = e.target.files[0].name;
+  } else {
+    fileImport.value = null;
+    fileName.value.name = null;
+  }
+};
+
+// upload excel file
+const uploading = () => {
+  overlay.value = true;
+  categoryListStore
+    .uploadCategoies(fileImport.value)
+    .then(() => {
+      toast.success("Categories added successfully", {
+        timeout: 2000,
+      });
+      fileImport.value = null;
+      fileName.value = { name: "" };
+      isDialogVisible.value = false;
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
+    });
+
+  // refetch products
+  fetchCategories();
+};
 </script>
 
 <template>
@@ -122,47 +163,9 @@ const updateCategory = (categoryData) => {
         <VCard title="Search Filter">
           <!-- 👉 Filters -->
 
-          <!-- <VCardText class="d-flex flex-wrap py-4 gap-4">
-            <div class="me-3" style="width: 80px">
-              <VSelect
-                v-model="rowPerPage"
-                density="compact"
-                variant="outlined"
-                :items="[10, 20, 30, 50]"
-              />
-            </div>
-
-            <VSelect
-              v-model="selectedStatus"
-              label="Select Status"
-              :items="status"
-              clearable
-              clear-icon="tabler-x"
-            />
-
-            <VSpacer />
-
-            <div
-              class="app-user-search-filter d-flex justify-content-end flex-wrap gap-4"
-            >
-              <div style="width: 16rem">
-                <VTextField
-                  v-model="searchQuery"
-                  placeholder="Search"
-                  density="compact"
-                />
-              </div>
-              <VBtn
-                prepend-icon="tabler-plus"
-                @click="isAddNewCategoryDrawerVisible = true"
-              >
-                Add New category
-              </VBtn>
-            </div>
-          </VCardText> -->
           <VRow class="mx-1 my-1">
-            <VCol cols="12" class="" md="3">
-              <div class="" style="width: 80px">
+            <VCol cols="12" class="" md="2">
+              <div class="" style="">
                 <VSelect
                   v-model="rowPerPage"
                   density="compact"
@@ -170,6 +173,7 @@ const updateCategory = (categoryData) => {
                   :items="[10, 20, 30, 50]"
                 /></div
             ></VCol>
+
             <VCol cols="12" class="" md="3">
               <VSelect
                 v-model="selectedStatus"
@@ -195,6 +199,57 @@ const updateCategory = (categoryData) => {
                 Add New category
               </VBtn></VCol
             >
+          </VRow>
+          <VRow class="mx-1 my-1">
+            <!-- import excel file -->
+            <VCol cols="12" class="" md="4">
+              <VDialog v-model="isDialogVisible" max-width="600">
+                <!-- Dialog Activator -->
+                <template #activator="{ props }">
+                  <VBtn
+                    v-bind="props"
+                    prepend-icon="tabler-arrow-big-down-lines"
+                    class="mr-3"
+                  >
+                    <!-- !isAllFilled() -->
+                    import
+                  </VBtn>
+                </template>
+
+                <!-- Dialog close btn -->
+                <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
+
+                <!-- Dialog Content -->
+                <VCard title="Upload a file">
+                  <VCardText>
+                    <VRow>
+                      <VCol cols="12" sm="12">
+                        <VFileInput
+                          accept=".xlsx, .xls, .csv"
+                          label="file"
+                          v-model="fileName"
+                          density="compact"
+                          @change="onFileChange"
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+
+                  <VCardText class="d-flex justify-end flex-wrap gap-3">
+                    <VBtn
+                      variant="tonal"
+                      color="secondary"
+                      @click="isDialogVisible = false"
+                    >
+                      Close
+                    </VBtn>
+                    <VBtn @click="uploading()" :disabled="!fileImport">
+                      Upload
+                    </VBtn>
+                  </VCardText>
+                </VCard>
+              </VDialog>
+            </VCol>
           </VRow>
           <VDivider />
 

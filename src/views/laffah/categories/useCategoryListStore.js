@@ -40,5 +40,18 @@ export const useCategoryListStore = defineStore('CategoryListStore', {
         axios.get(`/category/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
       })
     },
+
+  // 👉 fetch category
+    uploadCategoies(fileImport){
+      return new Promise((resolve, reject) => {
+        
+        const formData = new FormData();
+        formData.append('file',fileImport);
+
+        axios.post('/category/import', formData).then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
+
   },
 })
