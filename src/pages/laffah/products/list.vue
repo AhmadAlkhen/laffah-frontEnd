@@ -231,6 +231,29 @@ const changeStatus = (productId, statu) => {
     });
 };
 
+// delete product
+const deleteProduct = (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this product?"
+  );
+  if (!confirmed) {
+    return;
+  }
+  productListStore
+    .deleteProduct(id)
+    .then((res) => {
+      toast.success(res.data.message, {
+        timeout: 2000,
+      });
+      fetchProducts();
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+
 onMounted(() => {
   let allCategories = [];
   let categoryItem = [];
@@ -477,9 +500,15 @@ onMounted(() => {
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <!-- <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteProduct(product.id)"
+                  >
                     <VIcon size="22" icon="tabler-trash" />
-                  </VBtn> -->
+                  </VBtn>
 
                   <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />

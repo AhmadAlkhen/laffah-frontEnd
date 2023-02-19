@@ -79,12 +79,12 @@ const saveOrderCart = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
         });
-      // Swal.fire("Deleted!", "Your file has been deleted.", "success");
     }
   });
-  // if (confirm("Do you really want to save the order?")) {
-  // }
 };
 
 const resetCart = () => {

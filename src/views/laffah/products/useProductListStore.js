@@ -50,7 +50,6 @@ export const useProductListStore = defineStore('ProductListStore', {
       })
     },
     
-
     uploadProducts(fileImport){
       return new Promise((resolve, reject) => {
         
@@ -71,8 +70,14 @@ export const useProductListStore = defineStore('ProductListStore', {
           .catch(error => reject(error))
       })
 
-    }
+    },
 
+    // delete Product
+    deleteProduct(id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/product/delete/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    }
 
   },
 })

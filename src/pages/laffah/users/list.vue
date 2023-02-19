@@ -160,26 +160,28 @@ const updateUser = (userData) => {
     });
 };
 
-// const branches = computed(() => {
-//   let allBranches = [];
-//   let branchesItem = [];
-//   axios
-//     .get("/branch/index")
-//     .then((res) => {
-//       allBranches = res.data.data.data;
-//       allBranches.forEach((branch) => {
-//         branchesItem.push({
-//           title: branch.name,
-//           value: branch.id,
-//         });
-//       });
-//       branchesAll.value = branchesItem;
-//       return branchesItem;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
+// delete user
+const deleteUser = (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this user?"
+  );
+  if (!confirmed) {
+    return;
+  }
+  userListStore
+    .deleteUser(id)
+    .then((res) => {
+      toast.success(res.data.message, {
+        timeout: 2000,
+      });
+      fetchUsers();
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
 
 onMounted(() => {
   let allBranches = [];
@@ -366,10 +368,15 @@ onMounted(() => {
                   >
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
-                  <!-- 
-                  <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteUser(user.id)"
+                  >
                     <VIcon size="22" icon="tabler-trash" />
-                  </VBtn> -->
+                  </VBtn>
 
                   <!-- <VBtn icon size="x-small" color="default" variant="text">
                     <VIcon size="22" icon="tabler-dots-vertical" />

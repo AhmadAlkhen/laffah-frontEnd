@@ -154,6 +154,29 @@ const uploading = () => {
   // refetch products
   fetchCategories();
 };
+
+// delete category
+const deleteCategory = (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this category?"
+  );
+  if (!confirmed) {
+    return;
+  }
+  categoryListStore
+    .deleteCategory(id)
+    .then((res) => {
+      toast.success(res.data.message, {
+        timeout: 2000,
+      });
+      fetchCategories();
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
 </script>
 
 <template>
@@ -309,13 +332,15 @@ const uploading = () => {
                     <VIcon size="22" icon="tabler-edit" />
                   </VBtn>
 
-                  <!-- <VBtn icon size="x-small" color="default" variant="text">
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteCategory(category.id)"
+                  >
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
-
-                  <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-dots-vertical" />
-                  </VBtn> -->
                 </td>
               </tr>
             </tbody>

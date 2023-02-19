@@ -53,5 +53,12 @@ export const useCategoryListStore = defineStore('CategoryListStore', {
       })
     },
 
+    // delete category
+    deleteCategory(id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/category/delete/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+
   },
 })

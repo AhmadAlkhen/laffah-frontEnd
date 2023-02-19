@@ -69,5 +69,13 @@ export const useUserListStore = defineStore('UserListStore', {
         axios.post('/users/update',userData).then(response => resolve(response)).catch(error => reject(error))
       })
     },
+
+    // delete User
+    deleteUser(id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/users/delete/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    }
+
   },
 })
