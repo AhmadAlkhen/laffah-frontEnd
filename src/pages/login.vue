@@ -104,7 +104,11 @@ const onSubmit = () => {
               ? `Bearer ${accessToken}`
               : "";
 
-            router.replace(route.query.to ? String(route.query.to) : "/");
+            if (role == "admin") {
+              router.replace("/laffah/system");
+            } else {
+              router.replace(route.query.to ? String(route.query.to) : "/");
+            }
             //   .then(() => {
             //     // location.reload();
             //   });
