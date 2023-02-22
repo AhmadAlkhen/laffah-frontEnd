@@ -446,7 +446,7 @@ watch(
                 <VNodeRenderer :nodes="themeConfig.app.logo" class="me-3" />
 
                 <!-- 👉 Title -->
-                <h6 class="font-weight-bold text-xl">
+                <h6 class="font-weight-bold text-xl color-red">
                   {{ themeConfig.app.title }}
                 </h6>
               </div>
@@ -462,7 +462,10 @@ watch(
             <div class="mt-4 ma-sm-4">
               <!-- 👉 Invoice ID -->
               <h6 class="font-weight-medium text-xl mb-6">
-                Order #{{ orderDetails.id }}
+                Order #
+                <span class="color-blue" color="primary"
+                  >{{ orderDetails.id }}
+                </span>
               </h6>
 
               <!-- 👉 Issue Date -->
@@ -883,5 +886,11 @@ watch(
 }
 .border-bottom {
   border-bottom: solid 1px #e9e9eb;
+}
+.color-red {
+  color: #d24552;
+}
+.color-blue {
+  color: #698ed5;
 }
 </style>

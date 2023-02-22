@@ -10,7 +10,7 @@ import card1 from "@images/system/11.jpg";
 <template>
   <VRow class="align-items-lg-center">
     <VCol cols="12" md="6" lg="6">
-      <h2 class="text-cover">Welcome to our System</h2>
+      <h2 class="text-cover">Welcome to Safaqatii System</h2>
       <ul class="system-ul">
         <li>Order Management System</li>
         <li>HR System</li>

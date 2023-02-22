@@ -12,7 +12,7 @@
         target="_blank"
         rel="noopener noreferrer"
         class="text-primary ms-1"
-        >Laffah</a
+        >Safaqatii</a
       >
     </span>
     <!-- 👉 Footer: right content -->

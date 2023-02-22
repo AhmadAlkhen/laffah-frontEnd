@@ -95,7 +95,7 @@ const handleNavScroll = (evt) => {
           <Transition name="vertical-nav-app-title">
             <h1
               v-show="!hideTitleAndIcon"
-              class="app-title font-weight-bold leading-normal text-xl"
+              class="app-title font-weight-bold leading-normal text-xl color-red"
             >
               {{ config.app.title }}
             </h1>
@@ -219,5 +219,10 @@ const handleNavScroll = (evt) => {
       }
     }
   }
+}
+</style>
+<style scoped>
+.color-red {
+  color: #d24552;
 }
 </style>

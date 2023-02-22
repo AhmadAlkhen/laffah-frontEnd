@@ -1,7 +1,7 @@
 export default [
     // { heading: 'Laffah' },
     {
-      title: 'Laffah warehouse',
+      title: 'Safaqatii warehouse',
       icon: { icon: 'tabler-smart-home' },
       to: {name:'dashboard'},
       action: "read",

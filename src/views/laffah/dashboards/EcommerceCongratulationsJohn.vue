@@ -10,7 +10,7 @@ import congoImg from "@images/illustrations/congo-illustration.png";
           <h6 class="text-lg text-no-wrap font-weight-semibold mb-7">
             Welcome ! 🎉
           </h6>
-          <!-- <p class="mb-2">Best seller of the month</p> -->
+          <p class="text-sm">Order Management System</p>
           <h5 class="text-h5 font-weight-semibold text-primary mb-2"></h5>
           <VBtn class="mt-5" :to="{ name: 'laffah-orders-MyOrders' }"
             >View Orders</VBtn

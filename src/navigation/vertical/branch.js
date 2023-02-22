@@ -1,6 +1,6 @@
 export default [
     {
-      title: 'Laffah Branch',
+      title: 'Safaqatii Branch',
       icon: { icon: 'tabler-smart-home' },
       to: {name:'dashboard'},
       action: "read",
