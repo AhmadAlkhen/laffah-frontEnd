@@ -1,4 +1,7 @@
 <script setup>
+import { themeConfig } from "@themeConfig";
+import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
+
 import hr from "@images/system/hr-1.png";
 import OMS from "@images/system/OMS-1.jpg";
 import pms from "@images/system/pms.png";
@@ -10,6 +13,10 @@ import card1 from "@images/system/11.jpg";
 <template>
   <VRow class="align-items-lg-center">
     <VCol cols="12" md="6" lg="6">
+      <div class="text-center">
+        <VNodeRenderer :nodes="themeConfig.app.logo" class="" />
+      </div>
+
       <h2 class="text-cover">Welcome to Safaqatii System</h2>
       <ul class="system-ul">
         <li>Order Management System</li>
