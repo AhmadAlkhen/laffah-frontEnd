@@ -21,7 +21,7 @@ import card1 from "@images/system/11.jpg";
       <ul class="system-ul">
         <li>Order Management System</li>
         <li>HR System</li>
-        <li>PDO System</li>
+        <li>PRO System</li>
       </ul>
       <!-- <h6 class="text-part">Orders Management System</h6>
       <h6 class="text-part">HR System</h6>

@@ -80,6 +80,7 @@ const fetchOrders = () => {
     .fetchOrder(Number(route.params.id))
     .then((response) => {
       orderData.value = response.data.data;
+      orderDataNew.value = response.data.data;
     })
     .catch((error) => {
       console.log(error);
@@ -313,21 +314,6 @@ const addMessage = () => {
       console.log(err);
     });
 };
-// const listMessages = computed(() => {
-//   const orderId = Number(route.params.id);
-
-//   axios
-//     .get("/order/message/list", { orderId })
-//     .then((res) => {
-//       listComments.value = res.data.comments;
-//       // fetchOrders();
-//       comment.value = "";
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-//   return listComments.value;
-// });
 
 const userRole = computed(() => {
   let data = localStorage.getItem("userRole");
@@ -342,7 +328,7 @@ const filterProductsByCategory = () => {
   if (category.value) {
     orderDataNew.value = orderData.value;
     if (category.value.value == "0") {
-      console.log(category.value);
+      // console.log(category.value);
       orderDataNew.value = orderData.value;
     } else {
       const newOrderData = orderData.value.filter(
