@@ -34,6 +34,8 @@ const ability = useAppAbility();
 // const userStore = useUserStore();
 const authStore = useAuthStore();
 
+const overlay = ref(false);
+
 const errors = ref({
   email: undefined,
   password: undefined,
@@ -73,6 +75,7 @@ const onSubmit = () => {
   refVForm.value?.validate().then(({ valid: isValid }) => {
     // if (isValid) login();
     if (isValid) {
+      overlay.value = true;
       const formData = new FormData();
       formData.append("email", email.value);
       formData.append("password", password.value);
@@ -107,7 +110,8 @@ const onSubmit = () => {
             if (role == "admin") {
               router.replace("/laffah/system");
             } else {
-              router.replace(route.query.to ? String(route.query.to) : "/");
+              // router.replace(route.query.to ? String(route.query.to) : "/");
+              router.replace("/");
             }
             //   .then(() => {
             //     // location.reload();
@@ -117,6 +121,9 @@ const onSubmit = () => {
         .catch((err) => {
           errorLogin.value = err.response?.data?.message || err.message;
           // console.log(err.response.data.message);
+        })
+        .finally(() => {
+          overlay.value = false;
         });
     }
   });
@@ -124,6 +131,13 @@ const onSubmit = () => {
 </script>
 
 <template>
+  <VOverlay v-model="overlay" class="align-center justify-center">
+    <VProgressCircular
+      color="primary"
+      indeterminate
+      size="64"
+    ></VProgressCircular>
+  </VOverlay>
   <VRow no-gutters class="auth-wrapper">
     <VCol lg="8" class="d-none d-lg-flex">
       <div class="position-relative auth-bg rounded-lg w-100 ma-8 me-0">

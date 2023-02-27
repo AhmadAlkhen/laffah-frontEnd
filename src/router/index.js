@@ -27,14 +27,14 @@ const router = createRouter({
         return { name: 'dashboard'}
       },
     },
-    {
-      path: '//user-profile',
-      redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
-    },
-    {
-      path: '/pages/account-settings',
-      redirect: () => ({ name: 'pages-account-settings-tab', params: { tab: 'account' } }),
-    },
+    // {
+    //   path: '/user-profile',
+    //   redirect: () => ({ name: 'pages-user-profile-tab', params: { tab: 'profile' } }),
+    // },
+    // {
+    //   path: '/pages/account-settings',
+    //   redirect: () => ({ name: 'pages-account-settings-tab', params: { tab: 'account' } }),
+    // },
     // my route
     // {
     //   path: '/laffah/branches/list',
@@ -120,8 +120,10 @@ router.beforeEach((to, from, next) => {
   // console.log(to.name)
 
   if (to.name !== 'login' && !isLoggedIn){
-    return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
-      //  return next({ name: 'login' }) 
+    // return next({ name: 'login', query: { to: to.name !== 'index' ? to.fullPath : undefined } }) 
+       return next({ name: 'login' }) 
+  }else if(to.name == 'login' && isLoggedIn){
+    return next({ name: 'dashboard' }) 
   }
   else{
     switch (to.name) {
