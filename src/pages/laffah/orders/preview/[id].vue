@@ -124,6 +124,7 @@ const exportOrder = () => {
     });
 };
 
+// Store the Quantity(quantity_send) that send by the warehouse
 const storeQuantitySent = (item, quaSent, index) => {
   const id = item.id;
   const quantity_sent = quaSent;
@@ -148,6 +149,14 @@ const storeQuantitySent = (item, quaSent, index) => {
       console.log(err);
     });
 };
+const handleSentQuantityInput = (event, item, quaSent, index) => {
+  if (event.keyCode === 13) {
+    // "Enter" key was pressed
+    storeQuantitySent(item, quaSent, index);
+  }
+};
+
+// Store the Quantity(quantity_confirm) that confirm by the branch
 const storeQuantityConfirm = (item, quaConfirm, index) => {
   const id = item.id;
   const quantity_confirm = quaConfirm;
@@ -171,6 +180,13 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
       console.log(err);
     });
 };
+const handleConfirmQuantityInput = (event, item, quaConfirm, index) => {
+  if (event.keyCode === 13) {
+    // "Enter" key was pressed
+    storeQuantityConfirm(item, quaConfirm, index);
+  }
+};
+
 const isDisabled = () => {
   let result = false;
   for (let index = 0; index < quantityCount.value; index++) {
@@ -222,6 +238,12 @@ const isProcessing = () => {
 const isAllFilled = () => {
   const allFilled = orderData.value.every(
     (element) => element.quantity_sent !== null
+  );
+  return allFilled;
+};
+const isAllFilledQuantConfirm = () => {
+  const allFilled = orderData.value.every(
+    (element) => element.quantity_confirm !== null
   );
   return allFilled;
 };
@@ -581,6 +603,14 @@ watch(
                     type="number"
                     class=""
                     :disabled="orderDetails.status != 'pending' ? true : false"
+                    @keyup="
+                      handleSentQuantityInput(
+                        $event,
+                        item,
+                        quantitySent[index],
+                        index
+                      )
+                    "
                   />
                 </td>
                 <td
@@ -614,6 +644,14 @@ watch(
                     class=""
                     :disabled="
                       orderDetails.status != 'processing' ? true : false
+                    "
+                    @keyup="
+                      handleConfirmQuantityInput(
+                        $event,
+                        item,
+                        quantityConfirm[index],
+                        index
+                      )
                     "
                   />
                 </td>
@@ -667,7 +705,11 @@ watch(
                   v-bind="props"
                   prepend-icon="tabler-send"
                   class="mr-3"
-                  :disabled="orderDetails.status != 'pending' ? true : false"
+                  :disabled="
+                    orderDetails.status == 'pending' && isAllFilled()
+                      ? false
+                      : true
+                  "
                 >
                   <!-- !isAllFilled() -->
                   Proccess
@@ -731,14 +773,18 @@ watch(
               prepend-icon="tabler-send"
               class="mr-3"
               @click="completedOrder()"
-              :disabled="orderDetails.status != 'processing' ? true : false"
+              :disabled="
+                orderDetails.status == 'processing' && isAllFilledQuantConfirm()
+                  ? false
+                  : true
+              "
             >
               Complete
             </VBtn>
           </VRow>
           <VRow
             class="flex-row-reverse mr-2 my-5 d-print-none"
-            v-if="userRole == 'branch'"
+            v-if="userRole == 'branch' && orderDetails.status == 'completed'"
           >
             <p class="mb-2">
               <span></span>

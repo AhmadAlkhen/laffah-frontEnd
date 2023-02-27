@@ -13,7 +13,7 @@ timeout: 1000,
 headers: {'Content-Type': 'application/form-data','Authorization':token}
 
 })
-
+// http://localhost:8000/api/
 // config.headers.Authorization =  token ? `Bearer ${token}` : '';
 // axios.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';
 export default axiosIns

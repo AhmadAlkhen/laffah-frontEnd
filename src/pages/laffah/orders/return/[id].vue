@@ -81,6 +81,13 @@ const storeQuantityReturn = (item, quaReturn, index) => {
       console.log(err);
     });
 };
+const handleReturnQuantityInput = (event, item, quaReturn, index) => {
+  if (event.keyCode === 13) {
+    // "Enter" key was pressed
+    storeQuantityReturn(item, quaReturn, index);
+  }
+};
+
 const isDisabled = () => {
   let result = false;
   for (let index = 0; index < quantityCount.value; index++) {
@@ -326,6 +333,14 @@ const userName = computed(() => {
                     class=""
                     :disabled="
                       orderDetails.status != 'completed' ? true : false
+                    "
+                    @keyup="
+                      handleReturnQuantityInput(
+                        $event,
+                        item,
+                        quantityReturn[index],
+                        index
+                      )
                     "
                   />
                 </td>
