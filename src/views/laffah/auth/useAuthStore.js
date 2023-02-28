@@ -5,6 +5,8 @@ export const useAuthStore = defineStore('authStore', {
     return {
       accessToken:localStorage.getItem('accessToken')?localStorage.getItem('accessToken'):"",
       userRole:localStorage.getItem('userRole')?localStorage.getItem('userRole'):"",
+      userData:localStorage.getItem('userData')?localStorage.getItem('userData'):"",
+
     }
   },
   
@@ -20,6 +22,9 @@ export const useAuthStore = defineStore('authStore', {
     },
     getAccessToken(state) {
       return state.accessToken 
+    },
+    getUserData(state) {
+      return state.userData 
     },
   },
   actions: {

@@ -42,8 +42,8 @@ const errors = ref({
 });
 
 const refVForm = ref();
-const email = ref("admin@laffah.com");
-const password = ref("Laffah@123");
+const email = ref();
+const password = ref();
 const rememberMe = ref(false);
 const userAbilities = ref([
   {
@@ -101,11 +101,17 @@ const onSubmit = () => {
             authStore.$patch({
               userRole: role,
               accessToken: accessToken,
+              userData: JSON.stringify(res.data.userData),
             });
             // add the token for the API
             axios.defaults.headers.common["Authorization"] = accessToken
               ? `Bearer ${accessToken}`
               : "";
+
+            // if (rememberMe.value) {
+            //   localStorage.setItem("email", email.value);
+            //   localStorage.setItem("password", password.value);
+            // }
 
             if (role == "admin") {
               router.replace("/laffah/system");
