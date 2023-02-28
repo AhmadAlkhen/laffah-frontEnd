@@ -283,8 +283,8 @@ onMounted(() => {
           <!-- <VDivider /> -->
           <!-- <VCardText class="d-flex flex-wrap py-4 gap-4"> -->
           <VSpacer />
-          <VRow class="py-2 px-2">
-            <VCol md="3">
+          <VRow class="py-2 px-2" cols="12">
+            <VCol lg="3" sm="6" cols="12">
               <div class="me-3" style="width: 80px">
                 <VSelect
                   v-model="rowPerPage"
@@ -294,8 +294,8 @@ onMounted(() => {
                 />
               </div>
             </VCol>
-            <VCol md="3"> </VCol>
-            <VCol md="3">
+            <VCol lg="3" sm="6" cols="12"> </VCol>
+            <VCol lg="3" sm="6" cols="12">
               <VSelect
                 v-if="userRole == 'admin' || userRole == 'warehouse'"
                 v-model="selectedBranch"
@@ -305,7 +305,7 @@ onMounted(() => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol md="3">
+            <VCol lg="3" sm="6" cols="12">
               <VSelect
                 v-model="selectedStatus"
                 label="Select Status"

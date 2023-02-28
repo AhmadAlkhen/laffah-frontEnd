@@ -211,22 +211,7 @@ onMounted(() => {
       <VCol cols="12">
         <VCard title="Search Filter">
           <!-- 👉 Filters -->
-          <!-- <VCardText>
-            <VRow>
-               //👉 Select Status 
-              <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedStatus"
-                  label="Select Status"
-                  :items="status"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol>
-            </VRow>
-          </VCardText> -->
-
-          <!-- <VDivider /> -->
+          <!-- 
           <VCardText class="d-flex flex-wrap py-4 gap-4">
             <div class="me-3" style="width: 80px">
               <VSelect
@@ -237,7 +222,6 @@ onMounted(() => {
               />
             </div>
 
-            <!-- 👉 Select Status -->
             <VSelect
               v-model="selectedStatus"
               label="Select Status"
@@ -246,7 +230,6 @@ onMounted(() => {
               clear-icon="tabler-x"
             />
 
-            <!-- 👉 Select Role -->
             <VSelect
               v-model="selectedRole"
               label="Select Role"
@@ -260,7 +243,6 @@ onMounted(() => {
             <div
               class="app-user-search-filter d-flex justify-content-end flex-wrap gap-4"
             >
-              <!-- 👉 Search  -->
               <div style="width: 16rem">
                 <VTextField
                   v-model="searchQuery"
@@ -269,16 +251,6 @@ onMounted(() => {
                 />
               </div>
 
-              <!-- 👉 Export button -->
-              <!-- <VBtn
-                variant="tonal"
-                color="secondary"
-                prepend-icon="tabler-screen-share"
-              >
-                Export
-              </VBtn> -->
-
-              <!-- 👉 Add user button -->
               <VBtn
                 prepend-icon="tabler-plus"
                 @click="isAddNewUserDrawerVisible = true"
@@ -286,8 +258,57 @@ onMounted(() => {
                 Add New User
               </VBtn>
             </div>
-          </VCardText>
+          </VCardText> -->
 
+          <VRow class="py-4 mx-1" cols="12">
+            <VCol class="" cols="12" md="2">
+              <VSelect
+                v-model="rowPerPage"
+                density="compact"
+                variant="outlined"
+                :items="[10, 20, 30, 50]"
+              />
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Select Status -->
+              <VSelect
+                v-model="selectedStatus"
+                label="Select Status"
+                :items="status"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Select Role -->
+              <VSelect
+                v-model="selectedRole"
+                label="Select Role"
+                :items="roles"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Search  -->
+              <div>
+                <VTextField
+                  v-model="searchQuery"
+                  placeholder="Search"
+                  density="compact"
+                />
+              </div>
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Add user button -->
+              <VBtn
+                prepend-icon="tabler-plus"
+                @click="isAddNewUserDrawerVisible = true"
+              >
+                Add New User
+              </VBtn>
+            </VCol>
+          </VRow>
           <VDivider />
 
           <VTable class="text-no-wrap">

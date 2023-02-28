@@ -137,7 +137,7 @@ const onSubmit = () => {
 </script>
 
 <template>
-  <VOverlay v-model="overlay" class="align-center justify-center">
+  <VOverlay v-model="overlay" class="align-center justify-center" persistent>
     <VProgressCircular
       color="primary"
       indeterminate

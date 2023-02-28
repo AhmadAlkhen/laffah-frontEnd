@@ -144,74 +144,39 @@ const updateBranch = (branchData) => {
       <VCol cols="12">
         <VCard title="Search Filter">
           <!-- 👉 Filters -->
-          <!-- <VCardText>
-            <VRow>
-               //👉 Select Status 
-              <VCol cols="12" sm="4">
-                <VSelect
-                  v-model="selectedStatus"
-                  label="Select Status"
-                  :items="status"
-                  clearable
-                  clear-icon="tabler-x"
-                />
-              </VCol>
-            </VRow>
-          </VCardText> -->
 
-          <!-- <VDivider /> -->
+          <VRow class="py-4 mx-1">
+            <VCol class="" md="3" cols="12">
+              <!-- 👉 Select Status -->
 
-          <VCardText class="d-flex flex-wrap py-4 gap-4">
-            <!-- <div class="me-3" style="width: 80px">
               <VSelect
-                v-model="rowPerPage"
-                density="compact"
-                variant="outlined"
-                :items="[10, 20, 30, 50]"
-              />
-            </div> -->
+                v-model="selectedStatus"
+                label="Select Status"
+                :items="status"
+                clearable
+                clear-icon="tabler-x"
+            /></VCol>
 
-            <!-- 👉 Select Status -->
-            <VSelect
-              v-model="selectedStatus"
-              label="Select Status"
-              :items="status"
-              clearable
-              clear-icon="tabler-x"
-            />
-
-            <VSpacer />
-
-            <div
-              class="app-user-search-filter d-flex flex-wrap justify-content-end gap-4"
-            >
+            <VCol class="" md="3" cols="12">
               <!-- 👉 Search  -->
-              <div style="width: 16rem">
+              <div>
                 <VTextField
                   v-model="searchQuery"
                   placeholder="Search"
                   density="compact"
-                />
-              </div>
+                /></div
+            ></VCol>
 
-              <!-- 👉 Export button -->
-              <!-- <VBtn
-                variant="tonal"
-                color="secondary"
-                prepend-icon="tabler-screen-share"
-              >
-                Export
-              </VBtn> -->
-
+            <VCol class="" md="3" cols="12">
               <!-- 👉 Add user button -->
               <VBtn
                 prepend-icon="tabler-plus"
                 @click="isAddNewBranchDrawerVisible = true"
               >
                 Add New Branch
-              </VBtn>
-            </div>
-          </VCardText>
+              </VBtn></VCol
+            >
+          </VRow>
 
           <VDivider />
 

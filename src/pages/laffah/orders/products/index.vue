@@ -279,7 +279,7 @@ const subQty = (q1, q2) => {
           <!-- <VCardText class="d-flex flex-wrap py-4 gap-4"> -->
           <VSpacer />
           <VRow class="py-2 px-2">
-            <VCol md="3">
+            <VCol md="3" cols="12">
               <div class="me-3" style="width: 80px">
                 <VSelect
                   v-model="rowPerPage"
@@ -289,15 +289,15 @@ const subQty = (q1, q2) => {
                 />
               </div>
             </VCol>
-            <VCol md="3"> </VCol>
-            <VCol md="3">
+            <VCol md="3" cols="12"> </VCol>
+            <VCol md="3" cols="12">
               <VTextField
                 v-model="searchQuery"
                 placeholder="Search by product name"
                 density="compact"
               />
             </VCol>
-            <VCol md="3">
+            <VCol md="3" cols="12">
               <VSelect
                 v-model="selectedStatus"
                 label="Select Status"
@@ -307,15 +307,19 @@ const subQty = (q1, q2) => {
               />
             </VCol>
           </VRow>
-          <VRow class="py-2 px-2">
+          <VRow class="py-2 px-2" cols="12">
             <!-- <VCol md="3"> </VCol> -->
-            <VCol md="3">
+            <VCol md="3" cols="12">
               <AppDateTimePicker v-model="startFrom" label="Start From" />
             </VCol>
-            <VCol md="3">
+            <VCol md="3" cols="12">
               <AppDateTimePicker v-model="startTo" label="Start to" />
             </VCol>
-            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
+            <VCol
+              md="3"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+              cols="12"
+            >
               <VSelect
                 v-model="selectedBranch"
                 label="Select branch"
@@ -324,10 +328,14 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol md="3" v-if="userRole == 'admin' || userRole == 'warehouse'">
+            <VCol
+              cols="12"
+              md="3"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+            >
               <VBtn
                 block
-                prepend-icon="tabler-icon"
+                prepend-icon="tabler-screen-share"
                 variant="tonal"
                 color="info"
                 class="mb-2"

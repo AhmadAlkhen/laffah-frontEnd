@@ -28,13 +28,13 @@ import card1 from "@images/system/11.jpg";
       <h6 class="text-part">PDO System</h6> -->
     </VCol>
     <VCol cols="12" md="6" lg="6">
-      <img :src="cover" class="" width="500" />
+      <img :src="cover" class="imageCover" width="500" />
     </VCol>
   </VRow>
 
   <VContainer class="mt-5">
     <h2 class="text-moudle">Select a module :</h2>
-    <VRow class="mb-5">
+    <VRow class="mb-5 div-moudle">
       <VCol cols="12" md="6" lg="6">
         <RouterLink class="d" :to="{ name: 'dashboard' }">
           <div class="card-div">
@@ -130,5 +130,36 @@ meta:
   transition: 0.4s ease-out;
   transition-property: all;
   transition-property: opacity, transform, filter;
+}
+
+@media only screen and (max-width: 600px) {
+  .align-items-lg-center {
+    align-items: center;
+    background-color: #2c3e50;
+    padding-top: 3rem;
+    border-bottom-left-radius: 75px;
+    min-height: 50px;
+    padding-bottom: 2rem;
+  }
+
+  .imageCover {
+    display: none;
+  }
+  .text-cover {
+    font-weight: 600;
+    font-size: 2.1rem;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 2rem;
+  }
+  .div-moudle img {
+    width: 325px;
+  }
+  .system-ul li {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-left: 1rem;
+  }
 }
 </style>

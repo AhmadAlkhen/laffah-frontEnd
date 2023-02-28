@@ -429,7 +429,7 @@ watch(
         <VCol cols="12" md="2" class="d-print-none">
           <VBtn
             block
-            prepend-icon="tabler-icon"
+            prepend-icon="tabler-screen-share"
             variant="tonal"
             color="info"
             class="mb-2"
