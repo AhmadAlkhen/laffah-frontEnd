@@ -149,10 +149,8 @@ const uploading = () => {
     })
     .finally(() => {
       overlay.value = false;
+      fetchCategories();
     });
-
-  // refetch products
-  fetchCategories();
 };
 
 // delete category

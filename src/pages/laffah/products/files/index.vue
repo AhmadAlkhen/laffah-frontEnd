@@ -15,7 +15,7 @@ export default {
       dropzoneOptions: {
         url: "https://api.safaqatii.com/api/product/import/images",
         thumbnailWidth: 150,
-        maxFilesize: 3,
+        maxFilesize: 4,
         acceptedFiles: "image/*",
         headers: { "My-Awesome-Header": "header value" },
         success: (file, response) => {

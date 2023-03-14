@@ -32,7 +32,6 @@ const overlay = ref(false);
 
 // 👉 Fetching products
 const fetchProducts = () => {
-  console.log(selectedCategory.value);
   isLoading.value = true;
   productListStore
     .fetchProducts({
@@ -154,9 +153,8 @@ const updateProduct = (productData) => {
     })
     .finally(() => {
       overlay.value = false;
+      fetchProducts();
     });
-  // refetch Branchs
-  fetchProducts();
 };
 
 // upload excel file
@@ -179,10 +177,8 @@ const uploading = () => {
     })
     .finally(() => {
       overlay.value = false;
+      fetchProducts();
     });
-
-  // refetch products
-  fetchProducts();
 };
 const uploadingImages = () => {
   productListStore

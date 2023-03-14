@@ -9,21 +9,26 @@ const toast = useToast();
 const ProductStore = useProductStore();
 const quantity = ref([]);
 const quantityCount = ref();
-
+const itemsCart = ref([]);
 const btnDis = ref(false);
 
-const cartDataComputed = computed(() => {
-  //   const cartData = ref([]);
-  //   cartData.value = JSON.parse(localStorage.getItem("cart"));
-  //   return cartData.value;
+// const cartDataComputed = computed(() => {
+//   ProductStore.getItemLocalStarage;
+//   quantityCount.value = ProductStore.fetchItemCart().length;
+//   return ProductStore.fetchItemCart();
+// });
+
+onMounted(() => {
   ProductStore.getItemLocalStarage;
   quantityCount.value = ProductStore.fetchItemCart().length;
-  return ProductStore.fetchItemCart();
+  itemsCart.value = ProductStore.fetchItemCart();
 });
 
 const Delete = (cardId) => {
   if (confirm("Do you really want to remove this item?")) {
     ProductStore.deleteItem(cardId);
+    quantityCount.value = ProductStore.fetchItemCart().length;
+    itemsCart.value = ProductStore.fetchItemCart();
     toast.success("Product deleted successfully", {
       timeout: 2000,
     });
@@ -95,14 +100,20 @@ const resetCart = () => {
     });
   }
 };
+// const isDisabled = () => {
+//   for (let index = 0; index < quantityCount.value; index++) {
+//     if (quantity.value[index] === undefined || quantity.value[index] <= 0) {
+//       btnDis.value = true;
+//     } else {
+//       btnDis.value = false;
+//     }
+//   }
+//   return btnDis.value;
+// };
 const isDisabled = () => {
-  // console.log(quantity.value.length);
-  // const len = quantity.value.length;
-  // let result = false;
   for (let index = 0; index < quantityCount.value; index++) {
-    if (quantity.value[index] === undefined || quantity.value[index] <= 0) {
-      // console.log(quantity.value[index]);
-      // console.log("hhhhh");
+    if (isNaN(quantity.value[index]) || quantity.value[index] <= 0) {
+      quantity.value[index] = 0;
       btnDis.value = true;
     } else {
       btnDis.value = false;
@@ -114,60 +125,7 @@ const isDisabled = () => {
 
 <template>
   <VCard>
-    <!-- <div class="d-flex cart" v-if="cartDataComputed.length > 0">
-      <v-container fluid>
-        <v-row v-for="(cart, index) in cartDataComputed" :key="cart.id">
-          <v-col cols="12" sm="6" md="2">
-            <img
-              height="75"
-              width="75"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-              class="ml-2"
-            />
-          </v-col>
-          <v-col cols="12" sm="6" md="3">
-            <b-card-text class="mx-1"> {{ cart.name }} </b-card-text>
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <b-card-text class="mx-1"> {{ cart.unit }} </b-card-text>
-          </v-col>
-          <v-col cols="12" sm="6" md="3">
-            <v-text-field
-              v-model="quantity[index]"
-              :counter="max"
-              type="number"
-              :rules="rules"
-              label="Quantity"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="2">
-            <VBtn
-              @click="Delete(cart.id)"
-              icon
-              size="x-small"
-              color="default"
-              variant="text"
-            >
-              <VIcon size="22" icon="tabler-trash" />
-            </VBtn>
-          </v-col>
-          <VDivider class="mx-4 my-4" />
-        </v-row>
-        <v-row class="d-flex flex-row-reverse">
-          <div>
-            <VBtn
-              color="primary"
-              @click="saveOrderCart()"
-              :disabled="isDisabled()"
-            >
-              Save
-            </VBtn>
-          </div>
-        </v-row>
-      </v-container>
-    </div> -->
-
-    <div class="" v-if="cartDataComputed.length > 0">
+    <div v-if="itemsCart.length > 0">
       <VTable class="text-no-wrap">
         <!-- 👉 table head -->
         <thead>
@@ -182,7 +140,7 @@ const isDisabled = () => {
         <!-- 👉 table body -->
         <tbody>
           <tr
-            v-for="(cart, index) in cartDataComputed"
+            v-for="(cart, index) in itemsCart"
             :key="cart.id"
             style="height: 3.75rem"
           >
@@ -211,7 +169,6 @@ const isDisabled = () => {
                 v-model="quantity[index]"
                 :counter="max"
                 type="number"
-                :rules="rules"
                 label="Quantity"
               ></v-text-field>
             </td>
@@ -232,7 +189,7 @@ const isDisabled = () => {
         </tbody>
 
         <!-- 👉 table footer  -->
-        <tfoot v-show="!cartDataComputed.length">
+        <tfoot v-show="!itemsCart.length">
           <tr>
             <td colspan="7" class="text-center">No data available</td>
           </tr>
