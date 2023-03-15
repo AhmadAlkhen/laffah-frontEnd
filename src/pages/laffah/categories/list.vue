@@ -179,6 +179,13 @@ const deleteCategory = (id) => {
 
 <template>
   <section>
+    <VOverlay v-model="overlay" class="align-center justify-center" persistent>
+      <VProgressCircular
+        color="primary"
+        indeterminate
+        size="64"
+      ></VProgressCircular>
+    </VOverlay>
     <VRow>
       <VCol cols="12">
         <VCard title="Search Filter">

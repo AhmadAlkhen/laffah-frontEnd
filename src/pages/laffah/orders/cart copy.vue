@@ -11,7 +11,6 @@ const quantity = ref([]);
 const quantityCount = ref();
 const itemsCart = ref([]);
 const btnDis = ref(false);
-const overlay = ref(false);
 
 // const cartDataComputed = computed(() => {
 //   ProductStore.getItemLocalStarage;
@@ -47,7 +46,6 @@ const saveOrderCart = () => {
     confirmButtonText: "Yes, confirm!",
   }).then((result) => {
     if (result.isConfirmed) {
-      overlay.value = true;
       let newArraydata = [];
       const myCart = JSON.parse(localStorage.getItem("cart"));
       myCart.forEach((element, index) => {
@@ -68,8 +66,6 @@ const saveOrderCart = () => {
         .then((response) => {
           // console.log(response.status);
           if (response.status == 200 || response.status == true) {
-            overlay.value = false;
-
             ProductStore.resetCart();
             Swal.fire(
               "Added!",
@@ -77,8 +73,6 @@ const saveOrderCart = () => {
               "success"
             );
           }
-        })
-        .then(() => {
           router.replace({ name: "laffah-orders-MyOrders" });
         })
         .catch((err) => {
@@ -94,8 +88,6 @@ const saveOrderCart = () => {
 const resetCart = () => {
   if (confirm("Do you really want to reset the cart?")) {
     ProductStore.resetCart();
-    quantityCount.value = ProductStore.fetchItemCart().length;
-    itemsCart.value = ProductStore.fetchItemCart();
     toast.success("Products deleted successfully", {
       timeout: 2000,
     });
@@ -111,28 +103,21 @@ const resetCart = () => {
 //   }
 //   return btnDis.value;
 // };
-// const isDisabled = () => {
-//   for (let index = 0; index < quantityCount.value; index++) {
-//     if (isNaN(quantity.value[index]) || quantity.value[index] <= 0) {
-//       quantity.value[index] = 0;
-//       btnDis.value = true;
-//     } else {
-//       btnDis.value = false;
-//     }
-//   }
-//   return btnDis.value;
-// };
+const isDisabled = () => {
+  for (let index = 0; index < quantityCount.value; index++) {
+    if (isNaN(quantity.value[index]) || quantity.value[index] <= 0) {
+      quantity.value[index] = 0;
+      btnDis.value = true;
+    } else {
+      btnDis.value = false;
+    }
+  }
+  return btnDis.value;
+};
 </script>
 
 <template>
   <VCard>
-    <VOverlay v-model="overlay" class="align-center justify-center" persistent>
-      <VProgressCircular
-        color="primary"
-        indeterminate
-        size="64"
-      ></VProgressCircular>
-    </VOverlay>
     <div v-if="itemsCart.length > 0">
       <VTable class="text-no-wrap">
         <!-- 👉 table head -->
@@ -205,7 +190,13 @@ const resetCart = () => {
       <VContainer class="">
         <VRow class="d-flex flex-row-reverse my-3">
           <div>
-            <VBtn color="primary" @click="saveOrderCart()"> Save </VBtn>
+            <VBtn
+              color="primary"
+              @click="saveOrderCart()"
+              :disabled="isDisabled()"
+            >
+              Save
+            </VBtn>
             <VBtn color="error" @click="resetCart()" class="mx-2"> Reset </VBtn>
           </div>
         </VRow>
