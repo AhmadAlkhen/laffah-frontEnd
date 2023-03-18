@@ -12,7 +12,7 @@ const quantityCount = ref();
 const itemsCart = ref([]);
 const btnDis = ref(false);
 const overlay = ref(false);
-
+const btnSaveComplete = ref(false);
 // const cartDataComputed = computed(() => {
 //   ProductStore.getItemLocalStarage;
 //   quantityCount.value = ProductStore.fetchItemCart().length;
@@ -37,58 +37,65 @@ const Delete = (cardId) => {
 };
 
 const saveOrderCart = () => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "Do you really want to save the order?!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, confirm!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      overlay.value = true;
-      let newArraydata = [];
-      const myCart = JSON.parse(localStorage.getItem("cart"));
-      myCart.forEach((element, index) => {
-        newArraydata.push({
-          product_id: element.id,
-          quantity: quantity.value[index],
-        });
-      });
-
-      const formData = new FormData();
-      // formData.append("user_id", "1");
-      formData.append("status", "pending");
-      formData.append("productsCount", newArraydata.length);
-      formData.append("products", JSON.stringify(newArraydata));
-
-      axios
-        .post("/order/store", formData)
-        .then((response) => {
-          // console.log(response.status);
-          if (response.status == 200 || response.status == true) {
-            overlay.value = false;
-
-            ProductStore.resetCart();
-            Swal.fire(
-              "Added!",
-              "Your order has been added successfully.",
-              "success"
-            );
-          }
-        })
-        .then(() => {
-          router.replace({ name: "laffah-orders-MyOrders" });
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.warning(err.response?.data?.message || err.message, {
-            timeout: 2000,
+  if (isDisabled()) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to save the order?!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, confirm!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        overlay.value = true;
+        let newArraydata = [];
+        const myCart = JSON.parse(localStorage.getItem("cart"));
+        myCart.forEach((element, index) => {
+          newArraydata.push({
+            product_id: element.id,
+            quantity: quantity.value[index],
           });
         });
-    }
-  });
+
+        const formData = new FormData();
+        // formData.append("user_id", "1");
+        formData.append("status", "pending");
+        formData.append("productsCount", newArraydata.length);
+        formData.append("products", JSON.stringify(newArraydata));
+
+        axios
+          .post("/order/store", formData)
+          .then((response) => {
+            // console.log(response.status);
+            if (response.status == 200 || response.status == true) {
+              overlay.value = false;
+
+              ProductStore.resetCart();
+              Swal.fire(
+                "Added!",
+                "Your order has been added successfully.",
+                "success"
+              );
+            }
+          })
+          .then(() => {
+            router.replace({ name: "laffah-orders-MyOrders" });
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.warning(err.response?.data?.message || err.message, {
+              timeout: 2000,
+            });
+            overlay.value = false;
+          });
+      }
+    });
+  } else {
+    toast.warning("Please fill in all fields", {
+      timeout: 2000,
+    });
+  }
 };
 
 const resetCart = () => {
@@ -111,17 +118,17 @@ const resetCart = () => {
 //   }
 //   return btnDis.value;
 // };
-// const isDisabled = () => {
-//   for (let index = 0; index < quantityCount.value; index++) {
-//     if (isNaN(quantity.value[index]) || quantity.value[index] <= 0) {
-//       quantity.value[index] = 0;
-//       btnDis.value = true;
-//     } else {
-//       btnDis.value = false;
-//     }
-//   }
-//   return btnDis.value;
-// };
+const isDisabled = () => {
+  for (let index = 0; index < quantityCount.value; index++) {
+    if (quantity.value[index] === undefined || quantity.value[index] <= 0) {
+      btnSaveComplete.value = false;
+      break;
+    } else {
+      btnSaveComplete.value = true;
+    }
+  }
+  return btnSaveComplete.value;
+};
 </script>
 
 <template>
@@ -177,6 +184,7 @@ const resetCart = () => {
                 v-model="quantity[index]"
                 label="Quantity"
                 type="number"
+                :min="1"
               />
             </td>
 

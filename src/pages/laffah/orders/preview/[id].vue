@@ -602,6 +602,7 @@ watch(
                     placeholder="Qty Sent"
                     type="number"
                     class=""
+                    :min="0"
                     :disabled="orderDetails.status != 'pending' ? true : false"
                     @keyup="
                       handleSentQuantityInput(
@@ -642,6 +643,7 @@ watch(
                     placeholder="Qty confirm"
                     type="number"
                     class=""
+                    :min="0"
                     :disabled="
                       orderDetails.status != 'processing' ? true : false
                     "

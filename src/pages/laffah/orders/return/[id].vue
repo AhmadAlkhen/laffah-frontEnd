@@ -331,6 +331,7 @@ const userName = computed(() => {
                     placeholder="Qty Returned"
                     type="number"
                     class=""
+                    :min="0"
                     :disabled="
                       orderDetails.status != 'completed' ? true : false
                     "
