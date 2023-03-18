@@ -24,17 +24,10 @@ export default [
       action: "read",
       subject: "Auth", 
       },
-      {
-      title: 'Upload images',
-      to: 'laffah-products-files',
-      action: "read",
-      subject: "Auth", 
-      },
       { title: 'products', to: 'laffah-materials-filter-List',
       action: "read",
       subject: "Auth",
       },
-
       ],
       
     },
@@ -52,6 +45,5 @@ export default [
       action: "read",
       subject: "Auth",
     },
-
   ]
   

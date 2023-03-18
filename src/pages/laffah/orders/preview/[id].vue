@@ -426,7 +426,7 @@ watch(
             return-object
           />
         </VCol>
-        <VCol cols="12" md="2" class="d-print-none">
+        <VCol cols="12" md="2" class="d-print-none" v-if="userRole == 'admin'">
           <VBtn
             block
             prepend-icon="tabler-screen-share"
@@ -819,7 +819,7 @@ watch(
             </VCol>
           </VRow>
 
-          <VCardText>
+          <VCardText class="d-print-none">
             <div
               class="d-flex align-center mb-1 pb-2 border-bottom"
               v-for="comment in listComments"

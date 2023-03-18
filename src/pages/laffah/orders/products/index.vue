@@ -328,11 +328,7 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol
-              cols="12"
-              md="3"
-              v-if="userRole == 'admin' || userRole == 'warehouse'"
-            >
+            <VCol cols="12" md="3" v-if="userRole == 'admin'">
               <VBtn
                 block
                 prepend-icon="tabler-screen-share"

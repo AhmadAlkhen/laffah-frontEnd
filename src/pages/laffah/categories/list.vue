@@ -175,6 +175,12 @@ const deleteCategory = (id) => {
       });
     });
 };
+
+// get userRole
+const userRole = computed(() => {
+  let data = localStorage.getItem("userRole");
+  return data;
+});
 </script>
 
 <template>
@@ -219,7 +225,7 @@ const deleteCategory = (id) => {
                   density="compact"
                 /></div
             ></VCol>
-            <VCol cols="12" class="" md="3">
+            <VCol cols="12" class="" md="3" v-if="userRole == 'admin'">
               <VBtn
                 prepend-icon="tabler-plus"
                 @click="isAddNewCategoryDrawerVisible = true"
@@ -228,7 +234,7 @@ const deleteCategory = (id) => {
               </VBtn></VCol
             >
           </VRow>
-          <VRow class="mx-1 my-1">
+          <VRow class="mx-1 my-1" v-if="userRole == 'admin'">
             <!-- import excel file -->
             <VCol cols="12" class="" md="4">
               <VDialog v-model="isDialogVisible" max-width="600">
@@ -287,7 +293,7 @@ const deleteCategory = (id) => {
                 <th scope="col">#ID</th>
                 <th scope="col">NAME</th>
                 <th scope="col">STATUS</th>
-                <th scope="col">ACTIONS</th>
+                <th scope="col" v-if="userRole == 'admin'">ACTIONS</th>
               </tr>
             </thead>
             <!-- 👉 table body -->
@@ -326,7 +332,11 @@ const deleteCategory = (id) => {
                 </td>
 
                 <!-- 👉 Actions -->
-                <td class="text-center" style="width: 5rem">
+                <td
+                  class="text-center"
+                  style="width: 5rem"
+                  v-if="userRole == 'admin'"
+                >
                   <VBtn
                     icon
                     size="x-small"

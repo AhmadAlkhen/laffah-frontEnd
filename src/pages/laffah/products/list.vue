@@ -270,6 +270,12 @@ onMounted(() => {
       console.log(err);
     });
 });
+
+// get userRole
+const userRole = computed(() => {
+  let data = localStorage.getItem("userRole");
+  return data;
+});
 </script>
 
 <template>
@@ -307,7 +313,7 @@ onMounted(() => {
                   density="compact"
                 /></div
             ></VCol>
-            <VCol cols="12" class="" md="4">
+            <VCol cols="12" class="" md="4" v-if="userRole == 'admin'">
               <VBtn
                 prepend-icon="tabler-plus"
                 @click="isAddNewProductDrawerVisible = true"
@@ -318,7 +324,7 @@ onMounted(() => {
           </VRow>
           <VRow class="mx-1 my-1">
             <!-- import excel file -->
-            <VCol cols="12" class="" md="4">
+            <VCol cols="12" class="" md="4" v-if="userRole == 'admin'">
               <VDialog v-model="isDialogVisible" max-width="600">
                 <!-- Dialog Activator -->
                 <template #activator="{ props }">
@@ -408,7 +414,7 @@ onMounted(() => {
                 <th scope="col">Unit</th>
                 <th scope="col">Category</th>
                 <th scope="col">STATUS</th>
-                <th scope="col">ACTIONS</th>
+                <th scope="col" v-if="userRole == 'admin'">ACTIONS</th>
               </tr>
             </thead>
             <!-- 👉 table body -->
@@ -481,11 +487,16 @@ onMounted(() => {
                     :false-value="0"
                     color="success"
                     @change="changeStatus(product.id, product.status)"
+                    :disabled="userRole == 'admin' ? false : true"
                   />
                 </td>
 
                 <!-- 👉 Actions -->
-                <td class="text-center" style="width: 5rem">
+                <td
+                  class="text-center"
+                  style="width: 5rem"
+                  v-if="userRole == 'admin'"
+                >
                   <VBtn
                     icon
                     size="x-small"
