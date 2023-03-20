@@ -81,6 +81,9 @@ const fetchOrders = () => {
     .then((response) => {
       orderData.value = response.data.data;
       orderDataNew.value = response.data.data;
+      orderDetails.value = response.data.order[0];
+      quantityCount.value = response.data.data.length;
+      listComments.value = response.data.comments;
     })
     .catch((error) => {
       console.log(error);
