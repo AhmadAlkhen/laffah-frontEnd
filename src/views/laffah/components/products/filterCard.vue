@@ -53,3 +53,22 @@ const reserve = (product) => {
     </VCardActions>
   </VCard>
 </template>
+<style scoped>
+.v-card-title {
+  min-height: 70px;
+  display: block;
+  flex: none;
+  font-size: 1.2rem;
+  font-weight: 500;
+  hyphens: auto;
+  letter-spacing: 0.0125em;
+  min-width: 0;
+  overflow-wrap: normal;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  text-transform: none;
+  white-space: normal;
+  word-break: normal;
+  word-wrap: break-word;
+}
+</style>

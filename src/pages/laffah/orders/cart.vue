@@ -4,6 +4,7 @@ import axios from "axios";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 const router = useRouter();
+import moment from "moment";
 
 const toast = useToast();
 const ProductStore = useProductStore();
@@ -13,6 +14,9 @@ const itemsCart = ref([]);
 const btnDis = ref(false);
 const overlay = ref(false);
 const btnSaveComplete = ref(false);
+const orderDate = ref();
+const isInputEnabled = ref(false);
+
 // const cartDataComputed = computed(() => {
 //   ProductStore.getItemLocalStarage;
 //   quantityCount.value = ProductStore.fetchItemCart().length;
@@ -63,6 +67,25 @@ const saveOrderCart = () => {
         formData.append("status", "pending");
         formData.append("productsCount", newArraydata.length);
         formData.append("products", JSON.stringify(newArraydata));
+
+        if (isInputEnabled) {
+          if (orderDate && orderDate.value !== undefined) {
+            const orderDateFormatted = moment(orderDate.value).format(
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            formData.append("order_date", orderDateFormatted);
+          } else {
+            const currentDateFormatted = moment(new Date()).format(
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            formData.append("order_date", currentDateFormatted);
+          }
+        } else {
+          const currentDateFormatted = moment(new Date()).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+          formData.append("order_date", currentDateFormatted);
+        }
 
         axios
           .post("/order/store", formData)
@@ -210,7 +233,16 @@ const isDisabled = () => {
           </tr>
         </tfoot>
       </VTable>
+
       <VContainer class="">
+        <VRow class="d-flex my-3">
+          <VCol cols="12" sm="2">
+            <VCheckbox v-model="isInputEnabled" label="Add date to order" />
+          </VCol>
+          <VCol cols="12" sm="6" v-if="isInputEnabled">
+            <AppDateTimePicker v-model="orderDate" label="Add date to order" />
+          </VCol>
+        </VRow>
         <VRow class="d-flex flex-row-reverse my-3">
           <div>
             <VBtn color="primary" @click="saveOrderCart()"> Save </VBtn>

@@ -363,7 +363,7 @@ onMounted(() => {
                 <th scope="col">Products Count</th>
                 <th scope="col">Carrier</th>
                 <th scope="col">STATUS</th>
-                <th scope="col">Created at</th>
+                <th scope="col">Order Date</th>
                 <th scope="col">ACTIONS</th>
               </tr>
             </thead>
@@ -436,7 +436,7 @@ onMounted(() => {
                 <!-- 👉 Created at -->
                 <td>
                   <span class="text-base">{{
-                    convertCreated(order.created_at)
+                    convertCreated(order.order_date)
                   }}</span>
                 </td>
 
