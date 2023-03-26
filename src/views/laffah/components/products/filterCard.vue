@@ -15,7 +15,7 @@ const props = defineProps({
 const reserve = (product) => {
   ProductStore.addItem(product);
   toast.success("Product added successfully", {
-    timeout: 2000,
+    timeout: 1000,
   });
 };
 </script>

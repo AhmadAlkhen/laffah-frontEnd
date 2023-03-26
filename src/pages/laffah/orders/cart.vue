@@ -40,6 +40,11 @@ const Delete = (cardId) => {
   }
 };
 
+const storeQuantity = (item, quantity) => {
+  // console.log(quantity.value[index]);
+  ProductStore.changeQuantity(item, quantity);
+};
+
 const saveOrderCart = () => {
   if (isDisabled()) {
     Swal.fire({
@@ -58,7 +63,7 @@ const saveOrderCart = () => {
         myCart.forEach((element, index) => {
           newArraydata.push({
             product_id: element.id,
-            quantity: quantity.value[index],
+            quantity: element.quantity,
           });
         });
 
@@ -131,19 +136,26 @@ const resetCart = () => {
     });
   }
 };
+
 // const isDisabled = () => {
+//   const myCart = JSON.parse(localStorage.getItem("cart"));
+
 //   for (let index = 0; index < quantityCount.value; index++) {
 //     if (quantity.value[index] === undefined || quantity.value[index] <= 0) {
-//       btnDis.value = true;
+//       btnSaveComplete.value = false;
+//       break;
 //     } else {
-//       btnDis.value = false;
+//       btnSaveComplete.value = true;
 //     }
 //   }
-//   return btnDis.value;
+//   return btnSaveComplete.value;
 // };
+
 const isDisabled = () => {
-  for (let index = 0; index < quantityCount.value; index++) {
-    if (quantity.value[index] === undefined || quantity.value[index] <= 0) {
+  const myCart = JSON.parse(localStorage.getItem("cart"));
+
+  for (let i = 0; i < myCart.length; i++) {
+    if (myCart[i] === undefined || myCart[i] <= 0 || myCart[i].quantity <= 0) {
       btnSaveComplete.value = false;
       break;
     } else {
@@ -177,11 +189,7 @@ const isDisabled = () => {
         </thead>
         <!-- 👉 table body -->
         <tbody>
-          <tr
-            v-for="(cart, index) in itemsCart"
-            :key="cart.id"
-            style="height: 3.75rem"
-          >
+          <tr v-for="cart in itemsCart" :key="cart.id" style="height: 3.75rem">
             <!-- 👉  -->
             <td v-viewer>
               <img
@@ -204,10 +212,11 @@ const isDisabled = () => {
             <!-- 👉  -->
             <td>
               <VTextField
-                v-model="quantity[index]"
+                v-model="cart.quantity"
                 label="Quantity"
                 type="number"
                 :min="1"
+                @input="storeQuantity(cart, cart.quantity)"
               />
             </td>
 
