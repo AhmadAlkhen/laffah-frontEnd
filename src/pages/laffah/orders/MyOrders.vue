@@ -31,6 +31,7 @@ const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref(route.query.status || null);
 const selectedBranch = ref();
+const ordersDate = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
@@ -49,6 +50,7 @@ const fetchOrders = () => {
       branchId: selectedBranch.value,
       perPage: rowPerPage.value,
       page: currentPage.value,
+      ordersDate: ordersDate.value,
     })
     .then((response) => {
       orders.value = response.data.data.data;
@@ -284,17 +286,20 @@ onMounted(() => {
           <!-- <VCardText class="d-flex flex-wrap py-4 gap-4"> -->
           <VSpacer />
           <VRow class="py-2 px-2" cols="12">
-            <VCol lg="3" sm="6" cols="12">
-              <div class="me-3" style="width: 80px">
-                <VSelect
-                  v-model="rowPerPage"
-                  density="compact"
-                  variant="outlined"
-                  :items="[10, 20, 30, 50]"
-                />
-              </div>
+            <VCol lg="2" sm="6" cols="12">
+              <!-- <div class="me-3" style="width: 80px"> -->
+              <VSelect
+                v-model="rowPerPage"
+                density="compact"
+                variant="outlined"
+                :items="[10, 20, 30, 50]"
+              />
+              <!-- </div> -->
             </VCol>
-            <VCol lg="3" sm="6" cols="12"> </VCol>
+            <VCol lg="3" sm="6" cols="12">
+              <AppDateTimePicker v-model="ordersDate" label="Order date" />
+            </VCol>
+            <VCol lg="2" sm="6" cols="12"> </VCol>
             <VCol lg="3" sm="6" cols="12">
               <VSelect
                 v-if="userRole == 'admin' || userRole == 'warehouse'"
@@ -305,7 +310,7 @@ onMounted(() => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol lg="3" sm="6" cols="12">
+            <VCol lg="2" sm="6" cols="12">
               <VSelect
                 v-model="selectedStatus"
                 label="Select Status"
