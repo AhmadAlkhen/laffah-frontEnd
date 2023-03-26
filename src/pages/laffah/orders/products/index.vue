@@ -386,7 +386,7 @@ const subQty = (q1, q2) => {
                 >
                   Branch
                 </th>
-                <th scope="col">Created at</th>
+                <th scope="col">Order Date</th>
                 <!-- <th scope="col">ACTIONS</th> -->
               </tr>
             </thead>
@@ -476,7 +476,7 @@ const subQty = (q1, q2) => {
                 <!-- 👉 Created at -->
                 <td>
                   <span class="text-base">{{
-                    convertCreated(ordProduct.created_at)
+                    convertCreated(ordProduct.order.order_date)
                   }}</span>
                 </td>
 

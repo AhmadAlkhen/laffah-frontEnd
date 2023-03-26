@@ -483,7 +483,7 @@ watch(
               <p class="mb-2">
                 <span>Date Issued: </span>
                 <span class="font-weight-semibold">{{
-                  convertCreated(orderDetails.created_at)
+                  convertCreated(orderDetails.order_date)
                 }}</span>
               </p>
 
