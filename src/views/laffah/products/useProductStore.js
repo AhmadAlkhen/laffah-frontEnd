@@ -56,6 +56,10 @@ export const useProductStore = defineStore('ProductStore', {
     addItems(items){
       this.myItems = items;
 
+      for (let i = 0; i < this.myItems.length; i++) {
+        this.myItems[i].quantity = 0;
+      }
+    
       localStorage.setItem('cart',JSON.stringify(this.myItems));
     },
 
