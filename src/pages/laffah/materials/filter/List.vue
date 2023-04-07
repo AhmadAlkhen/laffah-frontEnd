@@ -15,6 +15,7 @@ const totalProducts = ref(0);
 const categoriesAll = ref([]);
 const loading = ref(false);
 const overlay = ref(false);
+
 const fetchProductData = () => {
   overlay.value = true;
   const formData = new FormData();
@@ -45,6 +46,10 @@ const fetchProductData = () => {
     });
 };
 watch(fetchProductData, currentPage, { immediate: true });
+
+const changeCategorySelected = (ee) => {
+  console.log("sdf");
+};
 
 onMounted(() => {
   let allCategories = [];
@@ -101,6 +106,7 @@ const paginationData = computed(() => {
             item-text="text"
             return-object
             clearable
+            v-on:change="changeCategorySelected(categorySelected)"
           ></v-autocomplete>
           <!-- <v-select
             v-model="categorySelected"

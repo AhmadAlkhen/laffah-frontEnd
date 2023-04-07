@@ -237,6 +237,32 @@ const isProcessing = () => {
       });
   }
 };
+const inProcess = () => {
+  const status = "inProcess";
+  const orderId = orderDetails.value.id;
+  axios
+    .post("/order/status/inProcess", { status, orderId })
+    .then((res) => {
+      isDialogVisible.value = false;
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
+      fetchOrders();
+      // router.replace({ name: "laffah-orders-MyOrders" });
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
 
 const isAllFilled = () => {
   const allFilled = orderData.value.every(
@@ -441,6 +467,24 @@ watch(
             Export
           </VBtn>
         </VCol>
+
+        <VCol
+          cols="12"
+          md="2"
+          class="d-print-none"
+          v-if="userRole == 'warehouse' && orderDetails.status == 'pending'"
+        >
+          <VBtn
+            block
+            prepend-icon="tabler-analyze"
+            variant="tonal"
+            color="secondary"
+            class="mb-2"
+            @click="inProcess()"
+          >
+            In Process
+          </VBtn>
+        </VCol>
       </VRow>
     </VCard>
     <VRow>
@@ -519,7 +563,9 @@ watch(
                   class="d-print-none"
                   scope="col"
                   v-if="
-                    userRole == 'warehouse' && orderDetails.status == 'pending'
+                    userRole == 'warehouse' &&
+                    (orderDetails.status == 'pending' ||
+                      orderDetails.status == 'inProcess')
                   "
                 >
                   Quantity Sent
@@ -528,7 +574,9 @@ watch(
                   class="d-print-none"
                   scope="col"
                   v-if="
-                    userRole == 'warehouse' && orderDetails.status == 'pending'
+                    userRole == 'warehouse' &&
+                    (orderDetails.status == 'pending' ||
+                      orderDetails.status == 'inProcess')
                   "
                 >
                   Action
@@ -596,7 +644,9 @@ watch(
                 <td
                   class="text-center quantitySent d-print-none"
                   v-if="
-                    userRole == 'warehouse' && orderDetails.status == 'pending'
+                    userRole == 'warehouse' &&
+                    (orderDetails.status == 'pending' ||
+                      orderDetails.status == 'inProcess')
                   "
                 >
                   <VTextField
@@ -606,7 +656,12 @@ watch(
                     type="number"
                     class=""
                     :min="0"
-                    :disabled="orderDetails.status != 'pending' ? true : false"
+                    :disabled="
+                      orderDetails.status != 'pending' &&
+                      orderDetails.status != 'inProcess'
+                        ? true
+                        : false
+                    "
                     @keyup="
                       handleSentQuantityInput(
                         $event,
@@ -620,7 +675,9 @@ watch(
                 <td
                   class="text-center d-print-none"
                   v-if="
-                    userRole == 'warehouse' && orderDetails.status == 'pending'
+                    userRole == 'warehouse' &&
+                    (orderDetails.status == 'pending' ||
+                      orderDetails.status == 'inProcess')
                   "
                 >
                   <VBtn
@@ -628,7 +685,12 @@ watch(
                     variant="text"
                     size="24"
                     @click="storeQuantitySent(item, quantitySent[index], index)"
-                    :disabled="orderDetails.status != 'pending' ? true : false"
+                    :disabled="
+                      orderDetails.status != 'pending' &&
+                      orderDetails.status != 'inProcess'
+                        ? true
+                        : false
+                    "
                   />
                 </td>
                 <!-- end for Admin & warehouse -->
@@ -701,7 +763,11 @@ watch(
           <!-- show btn to proccess the order in warehouse  -->
           <VRow
             class="flex-row-reverse mr-2 my-5 d-print-none"
-            v-if="userRole == 'warehouse' && orderDetails.status == 'pending'"
+            v-if="
+              userRole == 'warehouse' &&
+              (orderDetails.status == 'pending' ||
+                orderDetails.status == 'inProcess')
+            "
           >
             <VDialog v-model="isDialogVisible" max-width="600">
               <!-- Dialog Activator -->
@@ -711,7 +777,9 @@ watch(
                   prepend-icon="tabler-send"
                   class="mr-3"
                   :disabled="
-                    orderDetails.status == 'pending' && isAllFilled()
+                    (orderDetails.status == 'pending' ||
+                      orderDetails.status == 'inProcess') &&
+                    isAllFilled()
                       ? false
                       : true
                   "

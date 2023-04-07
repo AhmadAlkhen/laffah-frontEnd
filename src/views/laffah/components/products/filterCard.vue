@@ -41,6 +41,7 @@ const reserve = (product) => {
     <!-- :src="https://cdn.vuetifyjs.com/images/cards/cooking.png" `http://127.0.0.1:8000/${product.image}` -->
 
     <VCardTitle class="text-base">{{ product.name }}</VCardTitle>
+
     <VDivider class="mx-4" />
     <!-- <VCardText>
       {{ product.name }}
@@ -55,7 +56,7 @@ const reserve = (product) => {
 </template>
 <style scoped>
 .v-card-title {
-  min-height: 70px;
+  min-height: 95px;
   display: block;
   flex: none;
   font-size: 1.2rem;
