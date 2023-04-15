@@ -4,7 +4,6 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 const ProductStore = useProductStore();
-
 const props = defineProps({
   product: {
     type: String,
@@ -12,8 +11,11 @@ const props = defineProps({
   },
 });
 
+const quantity = ref([]);
+
 const reserve = (product) => {
-  ProductStore.addItem(product);
+  let qty = quantity.value[product.id] ? quantity.value[product.id] : 0;
+  ProductStore.addItem(product, qty);
   toast.success("Product added successfully", {
     timeout: 1000,
   });
@@ -51,6 +53,14 @@ const reserve = (product) => {
         <VIcon icon="tabler-shopping-cart-plus" />
         <span class="ms-2">Add to cart</span>
       </VBtn>
+      <VTextField
+        v-model="quantity[product.id]"
+        persistent-placeholder
+        placeholder="Qtu"
+        type="number"
+        class=""
+        :min="0"
+      />
     </VCardActions>
   </VCard>
 </template>

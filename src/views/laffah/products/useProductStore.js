@@ -25,7 +25,7 @@ export const useProductStore = defineStore('ProductStore', {
     //   this.myItems.push(item);
     //   localStorage.setItem('cart',JSON.stringify(this.myItems));
     // },
-    addItem(item) {
+    addItem(item ,qty) {
       // Check if the item already exists in myItems array
       const index = this.myItems.findIndex((el) => el.sku === item.sku);
     
@@ -35,7 +35,7 @@ export const useProductStore = defineStore('ProductStore', {
         return;
       } else {
         // If the item does not exist, add it to the array
-        item.quantity = 0;
+        item.quantity = qty;
         this.myItems.push(item);
       }
     

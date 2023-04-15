@@ -126,7 +126,7 @@ const paginationData = computed(() => {
       ></VProgressCircular>
     </VOverlay>
     <VRow>
-      <VCol v-for="product in productsData" :key="product.id" md="3">
+      <VCol v-for="product in productsData" :key="product.id" md="3" sm="12">
         <FilterCard :product="product" />
       </VCol>
     </VRow>
