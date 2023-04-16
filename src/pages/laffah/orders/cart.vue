@@ -11,11 +11,14 @@ const ProductStore = useProductStore();
 const quantity = ref([]);
 const quantityCount = ref();
 const itemsCart = ref([]);
+const itemsCartSearch = ref([]);
+
 const btnDis = ref(false);
 const overlay = ref(false);
 const btnSaveComplete = ref(false);
 const orderDate = ref();
 const isInputEnabled = ref(false);
+const searchQuery = ref("");
 
 // const cartDataComputed = computed(() => {
 //   ProductStore.getItemLocalStarage;
@@ -27,6 +30,7 @@ onMounted(() => {
   ProductStore.getItemLocalStarage;
   quantityCount.value = ProductStore.fetchItemCart().length;
   itemsCart.value = ProductStore.fetchItemCart();
+  itemsCartSearch.value = ProductStore.fetchItemCart();
 });
 
 const Delete = (cardId) => {
@@ -164,6 +168,19 @@ const isDisabled = () => {
   }
   return btnSaveComplete.value;
 };
+
+// watch the Search
+watchEffect(() => {
+  if (searchQuery.value) {
+    const searchResult = itemsCart.value.filter(
+      (item) =>
+        item.name.toLowerCase().indexOf(searchQuery.value.toLowerCase()) !== -1
+    );
+    itemsCartSearch.value = searchResult;
+  } else {
+    itemsCartSearch.value = itemsCart.value;
+  }
+});
 </script>
 
 <template>
@@ -176,6 +193,18 @@ const isDisabled = () => {
       ></VProgressCircular>
     </VOverlay>
     <div v-if="itemsCart.length > 0">
+      <VCard class="my-4 py-5 px-2">
+        <VRow class="pt-2">
+          <VCol class="" md="6">
+            <VTextField
+              v-model="searchQuery"
+              prepend-inner-icon="tabler-search"
+              label="Search"
+              placeholder="Search"
+            />
+          </VCol>
+        </VRow>
+      </VCard>
       <VTable class="text-no-wrap">
         <!-- 👉 table head -->
         <thead>
@@ -189,7 +218,11 @@ const isDisabled = () => {
         </thead>
         <!-- 👉 table body -->
         <tbody>
-          <tr v-for="cart in itemsCart" :key="cart.id" style="height: 3.75rem">
+          <tr
+            v-for="cart in itemsCartSearch"
+            :key="cart.id"
+            style="height: 3.75rem"
+          >
             <!-- 👉  -->
             <td v-viewer>
               <img

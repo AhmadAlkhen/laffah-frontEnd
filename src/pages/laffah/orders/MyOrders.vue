@@ -133,6 +133,10 @@ const status = [
     value: "pending",
   },
   {
+    title: "inProcess",
+    value: "inProcess",
+  },
+  {
     title: "Processing",
     value: "processing",
   },

@@ -184,6 +184,10 @@ const status = [
     value: "pending",
   },
   {
+    title: "inProcess",
+    value: "inProcess",
+  },
+  {
     title: "Processing",
     value: "processing",
   },
@@ -192,8 +196,12 @@ const status = [
     value: "completed",
   },
   {
-    title: "Closed",
-    value: "closed",
+    title: "Returned",
+    value: "returned",
+  },
+  {
+    title: "Canceled",
+    value: "Canceled",
   },
 ];
 
