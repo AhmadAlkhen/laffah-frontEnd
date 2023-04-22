@@ -326,30 +326,6 @@ onMounted(() => {
 
             <!-- <VCol md="3"> </VCol> -->
           </VRow>
-          <!-- <div class="me-3" style="width: 250px"></div>
-            <div
-              class="app-user-search-filter d-flex align-center flex-wrap gap-4"
-            >
-               👉 Search  
-              <div style="width: 10rem">
-                <VTextField
-                  v-model="searchQuery"
-                  placeholder="Search"
-                  density="compact"
-                />
-              </div>
-
-               👉 Export button 
-              <VBtn
-                variant="tonal"
-                color="secondary"
-                prepend-icon="tabler-screen-share"
-              >
-                Export
-              </VBtn>
-            </div> -->
-          <!-- </VCardText> -->
-
           <VDivider />
 
           <VTable class="text-no-wrap">

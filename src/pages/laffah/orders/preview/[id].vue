@@ -36,6 +36,7 @@ const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
 const categories = ref([]);
 const category = ref();
+const searchQuery = ref("");
 
 const isCarrierSelected = ref(false);
 const isDialogVisible = ref(false);
@@ -395,27 +396,23 @@ watch(
     filterProductsByCategory();
   }
 );
-
-// onMounted(() => {
-//   let allCategories = [];
-//   let categoryItem = [];
-//   axios
-//     .get("/category/index")
-//     .then((res) => {
-//       allCategories = res.data.data.data;
-//       allCategories.forEach((category) => {
-//         categoryItem.push({
-//           title: category.name,
-//           value: category.id,
-//         });
-//       });
-//       categories.value = categoryItem;
-//       return categoryItem;
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// });
+const filterProductsByProduct = () => {
+  if (searchQuery.value) {
+    orderDataNew.value = orderData.value;
+    const newOrderData = orderData.value.filter((item) =>
+      item.product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+    orderDataNew.value = newOrderData;
+  } else {
+    orderDataNew.value = orderData.value;
+  }
+};
+watch(
+  () => searchQuery.value,
+  () => {
+    filterProductsByProduct();
+  }
+);
 </script>
 
 <template>
@@ -444,7 +441,7 @@ watch(
             Print
           </VBtn>
         </VCol>
-        <VCol cols="3" class="d-print-none">
+        <VCol cols="3" md="2" sm="12" class="d-print-none">
           <VAutocomplete
             v-model="category"
             :items="categories"
@@ -466,6 +463,14 @@ watch(
           >
             Export
           </VBtn>
+        </VCol>
+        <VCol cols="12" md="2" class="d-print-none">
+          <VTextField
+            v-model="searchQuery"
+            prepend-inner-icon="tabler-search"
+            label="Search"
+            placeholder="Search"
+          />
         </VCol>
 
         <VCol
@@ -613,6 +618,7 @@ watch(
                     :src="item.product.image"
                     class="mt-1 rounded my-2"
                     width="80px"
+                    height="80px"
                   />
                 </td>
                 <td class="text-no-wrap">
