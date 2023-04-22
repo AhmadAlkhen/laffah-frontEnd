@@ -282,7 +282,11 @@ watchEffect(() => {
             <VCheckbox v-model="isInputEnabled" label="Add date to order" />
           </VCol>
           <VCol cols="12" sm="6" v-if="isInputEnabled">
-            <AppDateTimePicker v-model="orderDate" label="Add date to order" />
+            <AppDateTimePicker
+              v-model="orderDate"
+              label="Add date to order"
+              :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+            />
           </VCol>
         </VRow>
         <VRow class="d-flex flex-row-reverse my-3">

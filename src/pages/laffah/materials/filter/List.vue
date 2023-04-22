@@ -47,9 +47,14 @@ const fetchProductData = () => {
 };
 watch(fetchProductData, currentPage, { immediate: true });
 
-const changeCategorySelected = (ee) => {
-  console.log("sdf");
-};
+watch(
+  [searchQuery, categorySelected],
+  () => {
+    currentPage.value = 1;
+    fetchProductData();
+  },
+  { immediate: false }
+);
 
 onMounted(() => {
   let allCategories = [];
@@ -106,7 +111,7 @@ const paginationData = computed(() => {
             item-text="text"
             return-object
             clearable
-            v-on:change="changeCategorySelected(categorySelected)"
+            @change="onOptionSelected"
           ></v-autocomplete>
           <!-- <v-select
             v-model="categorySelected"

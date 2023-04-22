@@ -60,7 +60,14 @@ watchEffect(fetchProducts);
 watchEffect(() => {
   if (currentPage.value > totalPage.value) currentPage.value = totalPage.value;
 });
-
+watch(
+  [searchQuery, selectedCategory, selectedStatus],
+  () => {
+    currentPage.value = 1;
+    fetchProducts();
+  },
+  { immediate: false }
+);
 // 👉 search filters
 
 const status = [
