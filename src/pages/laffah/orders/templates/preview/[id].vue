@@ -3,6 +3,7 @@ import { useTemplateStore } from "@/views/laffah/products/useTemplateStore";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
+const route = useRoute();
 const router = useRouter();
 import moment from "moment";
 
@@ -23,33 +24,26 @@ const templateName = ref("");
 const description = ref("");
 
 onMounted(() => {
-  TemplateStore.getItemLocalStarage;
-  quantityCount.value = TemplateStore.fetchItemCart().length;
-  itemsCart.value = TemplateStore.fetchItemCart();
-  itemsCartSearch.value = TemplateStore.fetchItemCart();
-});
-
-const Delete = (cardId) => {
-  if (confirm("Do you really want to remove this item?")) {
-    TemplateStore.deleteItem(cardId);
-    quantityCount.value = TemplateStore.fetchItemCart().length;
-    itemsCart.value = TemplateStore.fetchItemCart();
-    toast.success("Product deleted successfully", {
-      timeout: 2000,
+  TemplateStore.fetchTemplate(route.params.id)
+    .then((response) => {
+      itemsCart.value = response.data.data;
+      quantityCount.value = response.data.template.productsCount;
+      templateName.value = response.data.template.name;
+      itemsCartSearch.value = response.data.data;
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  }
-};
-
-const storeQuantity = (item, quantity) => {
-  // console.log(quantity.value[index]);
-  TemplateStore.changeQuantity(item, quantity);
-};
+  //   quantityCount.value = TemplateStore.fetchItemCart().length;
+  //   itemsCart.value = TemplateStore.fetchItemCart();
+  //   itemsCartSearch.value = TemplateStore.fetchItemCart();
+});
 
 const saveOrderCart = () => {
   if (isDisabled()) {
     Swal.fire({
       title: "Are you sure?",
-      text: "Do you really want to save the template?!",
+      text: "Do you really want to save the order?!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -59,39 +53,56 @@ const saveOrderCart = () => {
       if (result.isConfirmed) {
         overlay.value = true;
         let newArraydata = [];
-        const myCart = JSON.parse(localStorage.getItem("template"));
+        const myCart = itemsCart.value;
         myCart.forEach((element, index) => {
           newArraydata.push({
-            product_id: element.id,
+            product_id: element.product_id,
             quantity: element.quantity,
           });
         });
 
         const formData = new FormData();
-        formData.append("name", templateName.value);
+        // formData.append("user_id", "1");
+        formData.append("status", "pending");
         formData.append("productsCount", newArraydata.length);
-        if (description) {
-          formData.append("description", description.value);
-        }
         formData.append("products", JSON.stringify(newArraydata));
 
+        if (isInputEnabled) {
+          if (orderDate && orderDate.value !== undefined) {
+            const orderDateFormatted = moment(orderDate.value).format(
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            formData.append("order_date", orderDateFormatted);
+          } else {
+            const currentDateFormatted = moment(new Date()).format(
+              "YYYY-MM-DD HH:mm:ss"
+            );
+            formData.append("order_date", currentDateFormatted);
+          }
+        } else {
+          const currentDateFormatted = moment(new Date()).format(
+            "YYYY-MM-DD HH:mm:ss"
+          );
+          formData.append("order_date", currentDateFormatted);
+        }
+
         axios
-          .post("/template/store", formData)
+          .post("/order/store", formData)
           .then((response) => {
             // console.log(response.status);
             if (response.status == 200 || response.status == true) {
               overlay.value = false;
 
-              TemplateStore.resetCart();
+              //   ProductStore.resetCart();
               Swal.fire(
                 "Added!",
-                "Your template has been added successfully.",
+                "Your order has been added successfully.",
                 "success"
               );
             }
           })
           .then(() => {
-            // router.replace({ name: "laffah-orders-templates" });
+            router.replace({ name: "laffah-orders-MyOrders" });
           })
           .catch((err) => {
             console.log(err);
@@ -109,26 +120,11 @@ const saveOrderCart = () => {
   }
 };
 
-const resetCart = () => {
-  if (confirm("Do you really want to reset the template?")) {
-    TemplateStore.resetCart();
-    quantityCount.value = TemplateStore.fetchItemCart().length;
-    itemsCart.value = TemplateStore.fetchItemCart();
-    toast.success("Products deleted successfully", {
-      timeout: 2000,
-    });
-  }
-};
-
 const isDisabled = () => {
-  const myCart = JSON.parse(localStorage.getItem("template"));
-
-  for (let i = 0; i < myCart.length; i++) {
+  for (let i = 0; i < itemsCart.value.length; i++) {
     if (
-      myCart[i] === undefined ||
-      myCart[i] <= 0 ||
-      myCart[i].quantity <= 0 ||
-      templateName.vale
+      itemsCart.value[i].quantity === undefined ||
+      itemsCart.value[i].quantity <= 0
     ) {
       btnSaveComplete.value = false;
       break;
@@ -144,7 +140,12 @@ watchEffect(() => {
   if (searchQuery.value) {
     const searchResult = itemsCart.value.filter(
       (item) =>
-        item.name.toLowerCase().indexOf(searchQuery.value.toLowerCase()) !== -1
+        item.product.name
+          .toLowerCase()
+          .indexOf(searchQuery.value.toLowerCase()) !== -1 ||
+        item.product.sku
+          .toLowerCase()
+          .indexOf(searchQuery.value.toLowerCase()) !== -1
     );
     itemsCartSearch.value = searchResult;
   } else {
@@ -162,16 +163,13 @@ watchEffect(() => {
         size="64"
       ></VProgressCircular>
     </VOverlay>
-    <div v-if="itemsCart.length > 0">
+    <div v-if="itemsCart.length">
       <VCard class="my-4 py-5 px-2">
         <VRow class="pt-2">
-          <VCol class="" md="6">
-            <VTextField
-              v-model="templateName"
-              persistent-placeholder
-              placeholder="template Name"
-              class=""
-            />
+          <VCol class="" md="12">
+            <VAlert variant="outlined" color="success">
+              {{ templateName }}
+            </VAlert>
           </VCol>
         </VRow>
       </VCard>
@@ -187,6 +185,7 @@ watchEffect(() => {
           </VCol>
         </VRow>
       </VCard>
+
       <VTable class="text-no-wrap">
         <!-- 👉 table head -->
         <thead>
@@ -194,7 +193,7 @@ watchEffect(() => {
             <th scope="col">Product</th>
             <th scope="col">Unit</th>
             <th scope="col">Quantity</th>
-            <th scope="col">ACTIONS</th>
+            <!-- <th scope="col">ACTIONS</th> -->
           </tr>
         </thead>
         <!-- 👉 table body -->
@@ -220,24 +219,28 @@ watchEffect(() => {
                   size="38"
                   v-viewer
                 >
-                  <VImg v-if="cart.image" :src="cart.image" />
-                  <span v-else>{{ avatarText(cart.name) }}</span>
+                  <VImg v-if="cart.product.image" :src="cart.product.image" />
+                  <span v-else>{{ avatarText(cart.product.name) }}</span>
                 </VAvatar>
 
                 <div class="d-flex flex-column">
                   <h6 class="text-base">
                     <h3 class="font-weight-medium user-list-name">
-                      {{ cart.name }}
+                      {{ cart.product.name }}
                     </h3>
                   </h6>
-                  <span class="text-sm text-disabled">{{ cart.sku }}</span>
+                  <span class="text-sm text-disabled">{{
+                    cart.product.sku
+                  }}</span>
                 </div>
               </div>
             </td>
 
             <!-- 👉  -->
             <td>
-              <span class="text-capitalize text-base">{{ cart.unit }}</span>
+              <span class="text-capitalize text-base">{{
+                cart.product.unit
+              }}</span>
             </td>
 
             <!-- 👉  -->
@@ -247,12 +250,11 @@ watchEffect(() => {
                 label="Quantity"
                 type="number"
                 :min="1"
-                @input="storeQuantity(cart, cart.quantity)"
               />
             </td>
 
             <!-- 👉  -->
-            <td>
+            <!-- <td>
               <VBtn
                 @click="Delete(cart.id)"
                 icon
@@ -262,7 +264,7 @@ watchEffect(() => {
               >
                 <VIcon size="22" icon="tabler-trash" />
               </VBtn>
-            </td>
+            </td> -->
           </tr>
         </tbody>
 
@@ -275,30 +277,32 @@ watchEffect(() => {
       </VTable>
 
       <VContainer class="">
+        <VRow class="d-flex my-3">
+          <VCol cols="12" sm="2">
+            <VCheckbox v-model="isInputEnabled" label="Add date to order" />
+          </VCol>
+          <VCol cols="12" sm="6" v-if="isInputEnabled">
+            <AppDateTimePicker
+              v-model="orderDate"
+              label="Add date to order"
+              :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+            />
+          </VCol>
+        </VRow>
         <VRow class="d-flex flex-row-reverse my-3">
           <div>
-            <VBtn color="primary" @click="saveOrderCart()"> Save </VBtn>
-            <VBtn color="error" @click="resetCart()" class="mx-2"> Reset </VBtn>
+            <VBtn color="primary" @click="saveOrderCart()"> Save Order</VBtn>
+            <!-- <VBtn color="error" @click="resetCart()" class="mx-2"> Reset </VBtn> -->
           </div>
         </VRow>
       </VContainer>
     </div>
 
-    <div v-else>
-      <!-- <v-alert border="right" colored-border type="error" elevation="2">
-        there are no products in the cart.
-      </v-alert> -->
+    <!-- <div>
       <VAlert border="start" border-color="error">
-        there are no products in the template, Go to the
-        <RouterLink
-          class="text-primary ms-2"
-          :to="{ name: 'laffah-materials-filter-List' }"
-        >
-          products page
-        </RouterLink>
-        and enable Template mode
+        there are no products in the template.
       </VAlert>
-    </div>
+    </div> -->
   </VCard>
 </template>
 

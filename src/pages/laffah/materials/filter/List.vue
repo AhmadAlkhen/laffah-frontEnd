@@ -15,6 +15,7 @@ const totalProducts = ref(0);
 const categoriesAll = ref([]);
 const loading = ref(false);
 const overlay = ref(false);
+const templateSwitch = ref(false);
 
 const fetchProductData = () => {
   overlay.value = true;
@@ -106,7 +107,6 @@ const paginationData = computed(() => {
             item-text="text"
             return-object
             clearable
-            v-on:change="changeCategorySelected(categorySelected)"
           ></v-autocomplete>
           <!-- <v-select
             v-model="categorySelected"
@@ -127,7 +127,7 @@ const paginationData = computed(() => {
     </VOverlay>
     <VRow>
       <VCol v-for="product in productsData" :key="product.id" md="3" sm="12">
-        <FilterCard :product="product" />
+        <FilterCard :product="productsData" :templateSwitch="templateSwitch" />
       </VCol>
     </VRow>
 
@@ -156,5 +156,8 @@ const paginationData = computed(() => {
         </v-container> -->
       </v-col>
     </v-row>
+    <div class="demo-space-x">
+      <VSwitch v-model="templateSwitch" label="Template mode" />
+    </div>
   </VContainer>
 </template>

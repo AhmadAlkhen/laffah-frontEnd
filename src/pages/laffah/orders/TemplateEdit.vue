@@ -1,5 +1,5 @@
 <script setup>
-import { useTemplateStore } from "@/views/laffah/products/useTemplateStore";
+import { useTemplateEditStore } from "@/views/laffah/products/useTemplateEditStore";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
@@ -7,7 +7,7 @@ const router = useRouter();
 import moment from "moment";
 
 const toast = useToast();
-const TemplateStore = useTemplateStore();
+const TemplateStore = useTemplateEditStore();
 const quantity = ref([]);
 const quantityCount = ref();
 const itemsCart = ref([]);
@@ -21,12 +21,34 @@ const isInputEnabled = ref(false);
 const searchQuery = ref("");
 const templateName = ref("");
 const description = ref("");
+const templateInfo = ref({});
+const template = ref({});
 
 onMounted(() => {
-  TemplateStore.getItemLocalStarage;
-  quantityCount.value = TemplateStore.fetchItemCart().length;
-  itemsCart.value = TemplateStore.fetchItemCart();
-  itemsCartSearch.value = TemplateStore.fetchItemCart();
+  templateInfo.value = localStorage.getItem("templateInfo")
+    ? JSON.parse(localStorage.getItem("templateInfo"))
+    : {};
+
+  if (JSON.stringify(templateInfo.value) !== "{}") {
+    // quantityCount.value = templateInfo.value.products.length;
+    // itemsCart.value = templateInfo.value.products;
+    // itemsCartSearch.value = templateInfo.value.products;
+    // template.value = templateInfo.value.template;
+    TemplateStore.getItemLocalStarage;
+    TemplateStore.getTemplateLocalStarage;
+    quantityCount.value = TemplateStore.fetchItemCart().length;
+    itemsCart.value = TemplateStore.fetchItemCart();
+    template.value = TemplateStore.fetchTemplate();
+    itemsCartSearch.value = TemplateStore.fetchItemCart();
+    console.log(itemsCart.value);
+    console.log(template.value);
+  } else {
+    console.log("empty");
+  }
+  // TemplateStore.getItemLocalStarage;
+  // quantityCount.value = TemplateStore.fetchItemCart().length;
+  // itemsCart.value = TemplateStore.fetchItemCart();
+  // itemsCartSearch.value = TemplateStore.fetchItemCart();
 });
 
 const Delete = (cardId) => {
@@ -166,8 +188,9 @@ watchEffect(() => {
       <VCard class="my-4 py-5 px-2">
         <VRow class="pt-2">
           <VCol class="" md="6">
+            {{ template.value }}
             <VTextField
-              v-model="templateName"
+              v-model="template.name"
               persistent-placeholder
               placeholder="template Name"
               class=""
@@ -289,14 +312,7 @@ watchEffect(() => {
         there are no products in the cart.
       </v-alert> -->
       <VAlert border="start" border-color="error">
-        there are no products in the template, Go to the
-        <RouterLink
-          class="text-primary ms-2"
-          :to="{ name: 'laffah-materials-filter-List' }"
-        >
-          products page
-        </RouterLink>
-        and enable Template mode
+        there are no products in the template.
       </VAlert>
     </div>
   </VCard>

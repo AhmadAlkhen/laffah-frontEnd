@@ -1,6 +1,5 @@
-import axios from '@axios';
+import axios from 'axios';
 import { defineStore } from 'pinia';
-
 export const useTemplateStore = defineStore('TemplateStore', {
 
   state: () => ({ myItems: []  }),
@@ -15,10 +14,17 @@ export const useTemplateStore = defineStore('TemplateStore', {
     },
   },
   actions: {
-    // 👉 Fetch all Invoices
-    fetchProducts(data) {
-      return axios.get('/products/search')
+
+    // 👉 Fetch all Templates
+     fetchTemplates(params) {
+
+    return  axios.get('/template/myTemplates',{ params });
     },
+    // fetchTemplates(params) {
+    //   return new Promise((resolve, reject) => {
+    //     axios.get('/template/myTemplates',{params}).then(response => resolve(response)).catch(error => reject(error))
+    //   })
+    // },
     addItem(item ,qty) {
       // Check if the item already exists in myItems array
       const index = this.myItems.findIndex((el) => el.sku === item.sku);
@@ -73,9 +79,43 @@ export const useTemplateStore = defineStore('TemplateStore', {
     resetCart(){
       localStorage.removeItem("template");
       this.myItems=[];
-    }
+    },
 
+    fetchTemplate(id) {
+      return new Promise((resolve, reject) => {
+        axios.get(`/template/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
 
+    updateTemplate(id){
+      let products=[];
+      let productsCart=[];
+      let template={};
+      let templateInfo={};
+      // this.resetCart();
+      axios.get(`/template/preview/${id}`).then((res)=>{
+        productsCart=res.data.data;
+        template=res.data.template;
 
+        productsCart.forEach(element => {
+          element.product.quantity=element.quantity;
+          products.push(element.product);
+        });
+        // console.log(template);
+
+        templateInfo.products=products;
+        templateInfo.template=template;
+        localStorage.setItem('templateInfo', JSON.stringify(templateInfo));
+
+      }).catch((error)=>{});
+
+    },
+
+    deleteTemplate(id) {
+      return new Promise((resolve, reject) => {
+        axios.delete(`/template/delete/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+    
   },
 })

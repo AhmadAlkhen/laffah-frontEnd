@@ -21,6 +21,23 @@ export default [
       subject: "Auth",
     },
     {
+      title: 'Templates',
+      icon: { icon: 'tabler-air-balloon' },
+      children: [
+      {
+      title: 'All Templates',
+      to: 'laffah-orders-templates',
+      action: "read",
+      subject: "Auth", 
+      },
+      { title: 'Add template', to: 'laffah-orders-Template',
+      action: "read",
+      subject: "Auth",
+      },
+
+      ],
+    },
+    {
       title: 'Order products ',
       icon: { icon: 'tabler-eye' },
       to: 'laffah-orders-products',

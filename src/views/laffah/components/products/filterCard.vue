@@ -1,14 +1,20 @@
 <script setup>
 import { useProductStore } from "@/views/laffah/products/useProductStore";
 import { useTemplateStore } from "@/views/laffah/products/useTemplateStore";
+import { useTemplateEditStore } from "@/views/laffah/products/useTemplateEditStore";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 
 const ProductStore = useProductStore();
 const TemplateStore = useTemplateStore();
+const TemplateEditStore = useTemplateEditStore();
 const props = defineProps({
   product: {
     type: String,
+    required: true,
+  },
+  templateSwitch: {
+    type: Boolean,
     required: true,
   },
 });
@@ -26,6 +32,7 @@ const reserve = (product) => {
 const reserveTemplate = (product) => {
   let qty = qtyTemplate.value[product.id] ? qtyTemplate.value[product.id] : 0;
   TemplateStore.addItem(product, qty);
+  // TemplateEditStore.addItem(product, qty);
   toast.success("Product added successfully", {
     timeout: 500,
   });
@@ -58,7 +65,10 @@ const reserveTemplate = (product) => {
     <!-- <VCardText>
       {{ product.name }}
     </VCardText> -->
-    <VCardActions class="justify-space-between mt-2">
+    <VCardActions
+      class="justify-space-between flex-column-reverse mt-2"
+      v-if="!templateSwitch"
+    >
       <VBtn @click="reserve(product)">
         <VIcon icon="tabler-shopping-cart-plus" />
         <span class="ms-2">Add to cart</span>
@@ -72,7 +82,10 @@ const reserveTemplate = (product) => {
         :min="0"
       />
     </VCardActions>
-    <VCardActions class="justify-space-between mt-2">
+    <VCardActions
+      class="justify-space-between flex-column-reverse mt-2"
+      v-if="templateSwitch"
+    >
       <VBtn @click="reserveTemplate(product)">
         <VIcon icon="tabler-shopping-cart-plus" />
         <span class="ms-2">Add to template</span>
