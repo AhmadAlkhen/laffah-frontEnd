@@ -330,7 +330,7 @@ const userName = computed(() => {
                     persistent-placeholder
                     placeholder="Qty Returned"
                     type="number"
-                    class=""
+                    class="qtyReturn"
                     :min="0"
                     :disabled="
                       orderDetails.status != 'completed' ? true : false
@@ -520,5 +520,10 @@ const userName = computed(() => {
 }
 .border-bottom {
   border-bottom: solid 1px #e9e9eb;
+}
+.qtyReturn {
+  display: flex;
+  grid-area: auto;
+  width: 130px;
 }
 </style>

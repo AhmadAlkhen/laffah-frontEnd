@@ -417,7 +417,7 @@ watch(
 
 <template>
   <section v-if="orderData && orderDetails">
-    <VCard class="my-2">
+    <VCard class="my-2 order-preview">
       <VRow class="my-1 ml-1">
         <VCol cols="12" md="2" class="d-print-none">
           <VBtn
@@ -660,7 +660,7 @@ watch(
                     persistent-placeholder
                     placeholder="Qty Sent"
                     type="number"
-                    class=""
+                    class="qtySent"
                     :min="0"
                     :disabled="
                       orderDetails.status != 'pending' &&
@@ -713,7 +713,7 @@ watch(
                     persistent-placeholder
                     placeholder="Qty confirm"
                     type="number"
-                    class=""
+                    class="qtyConfirm"
                     :min="0"
                     :disabled="
                       orderDetails.status != 'processing' ? true : false
@@ -1003,5 +1003,11 @@ watch(
 }
 .color-blue {
   color: #698ed5;
+}
+.qtySent,
+.qtyConfirm {
+  display: flex;
+  grid-area: auto;
+  width: 130px;
 }
 </style>
