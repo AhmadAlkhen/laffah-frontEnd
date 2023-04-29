@@ -5,14 +5,6 @@ export const useOrderListStore = defineStore('OrderListStore', {
   actions: {
     // 👉 Fetch users data
     fetchOrders(params) {
-      
-      // let order=null;
-      
-      //  axios.get('/order/myOrder').then((response) => {
-      //   console.log(response.data);
-      //   order=response.data
-      // }).catch((err)=>{console.log(err)})
-      
     
     return axios.get('/order/myOrder',{ params });
     },
