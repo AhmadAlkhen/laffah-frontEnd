@@ -17,13 +17,22 @@ const overlay = ref(false);
 onMounted(() => {
   overlay.value = true;
 
-  dashboardStore.fetchStatistics().then((res) => {
-    console.log(res.data.orderStatus);
-    orderStatus.value = res.data.orderStatus;
-    products.value = res.data.products;
-    categories.value = res.data.categories;
-    overlay.value = false;
-  });
+  dashboardStore
+    .fetchStatistics()
+    .then((res) => {
+      orderStatus.value = res.data.orderStatus;
+      products.value = res.data.products;
+      categories.value = res.data.categories;
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
+    });
 });
 </script>
 

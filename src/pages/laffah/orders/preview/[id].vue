@@ -555,7 +555,7 @@ watch(
           <VTable fixed-header>
             <thead>
               <tr>
-                <th scope="col">ITEM</th>
+                <th scope="col" class="d-print-none">ITEM</th>
                 <th scope="col">Product</th>
                 <th scope="col">Unit</th>
                 <th scope="col">Quantity</th>
@@ -613,7 +613,7 @@ watch(
 
             <tbody>
               <tr v-for="(item, index) in orderDataNew" :key="item.id">
-                <td class="text-no-wrap" v-viewer>
+                <td class="text-no-wrap d-print-none" v-viewer>
                   <VImg
                     :src="item.product.image"
                     class="mt-1 rounded my-2"
