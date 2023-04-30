@@ -31,8 +31,11 @@ onMounted(() => {
       templateName.value = response.data.template.name;
       itemsCartSearch.value = response.data.data;
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
   //   quantityCount.value = TemplateStore.fetchItemCart().length;
   //   itemsCart.value = TemplateStore.fetchItemCart();

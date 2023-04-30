@@ -47,8 +47,11 @@ const fetchOrders = () => {
     .then((response) => {
       orderData.value = response.data.data;
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
 };
 

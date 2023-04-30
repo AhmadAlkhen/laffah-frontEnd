@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import FilterCard from "@/views/laffah/components/products/filterCard.vue";
 import { useProductStore } from "@/views/laffah/products/useProductStore";
+import { useToast } from "vue-toastification";
+const toast = useToast();
 const productsData = ref("");
 const productsCount = ref("");
 const searchQuery = ref("");
@@ -41,6 +43,9 @@ const fetchProductData = () => {
     })
     .catch((err) => {
       console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     })
     .finally(() => {
       overlay.value = false;

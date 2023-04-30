@@ -86,8 +86,11 @@ const fetchOrders = () => {
       quantityCount.value = response.data.data.length;
       listComments.value = response.data.comments;
     })
-    .catch((error) => {
-      console.log(error);
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
 };
 

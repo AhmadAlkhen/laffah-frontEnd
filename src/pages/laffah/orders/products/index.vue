@@ -53,8 +53,11 @@ const fetchProductsOrder = () => {
       totalOrderProducts.value = response.data.data.total;
       // totalPage.value = Math.round(totalOrders.value / rowPerPage.value);
     })
-    .catch((error) => {
-      console.error(error);
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     })
     .finally(() => {
       isLoading.value = false;

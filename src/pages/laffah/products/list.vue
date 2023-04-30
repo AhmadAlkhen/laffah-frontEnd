@@ -46,8 +46,11 @@ const fetchProducts = () => {
       totalPage.value = response.data.data.last_page;
       totalProducts.value = response.data.data.total;
     })
-    .catch((error) => {
-      console.error(error);
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     })
     .finally(() => {
       isLoading.value = false;
