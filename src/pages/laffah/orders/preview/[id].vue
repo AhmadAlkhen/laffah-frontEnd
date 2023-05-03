@@ -144,12 +144,15 @@ const storeQuantitySent = (item, quaSent, index) => {
           timeout: 2000,
         });
       } else {
+        if (category.value === undefined || category.value.value == 0) {
+          fetchOrders();
+        }
         toast.success(res.data.message, {
           timeout: 2000,
         });
       }
 
-      fetchOrders();
+      // fetchOrders();
       quantitySent.value[index] = "";
     })
     .catch((err) => {
@@ -176,11 +179,13 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
           timeout: 2000,
         });
       } else {
+        if (category.value === undefined || category.value.value == 0) {
+          fetchOrders();
+        }
         toast.success(res.data.message, {
           timeout: 2000,
         });
       }
-      fetchOrders();
       quantityConfirm.value[index] = "";
     })
     .catch((err) => {
@@ -384,6 +389,7 @@ const filterProductsByCategory = () => {
     orderDataNew.value = orderData.value;
     if (category.value.value == "0") {
       // console.log(category.value);
+      fetchOrders();
       orderDataNew.value = orderData.value;
     } else {
       const newOrderData = orderData.value.filter(

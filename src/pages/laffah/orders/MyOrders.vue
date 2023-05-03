@@ -270,16 +270,16 @@ onMounted(() => {
       branches.value.forEach((element) => {
         branchesAll.push({ title: element.name, value: element.id });
       });
-      console.log(branchesAll);
+      // console.log(branchesAll);
       branches.value = branchesAll;
     })
     .catch((error) => {
       console.error(error);
     });
 });
-onMounted(() => {
-  console.log(route.query.status);
-});
+// onMounted(() => {
+//   console.log(route.query.status);
+// });
 </script>
 
 <template>
