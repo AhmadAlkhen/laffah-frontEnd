@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 
 import AddNewUserDrawer from "@/views/laffah/users/AddNewUserDrawer.vue";
 import UpdateUserDrawer from "@/views/laffah/users/UpdateUserDrawer.vue";
+import UpdateUserCategoryDrawer from "@/views/laffah/users/UpdateUserCategoryDrawer.vue";
 import { useUserListStore } from "@/views/laffah/users/useUserListStore";
 import { avatarText } from "@core/utils/formatters";
 import axios from "axios";
@@ -19,8 +20,11 @@ const totalPage = ref(1);
 const totalUsers = ref(0);
 const users = ref([]);
 const branchesAll = ref([]);
+const categories = ref([]);
 const userData = ref({});
+const userCategoryData = ref({});
 const isLoading = ref(false);
+const user_Id = ref();
 // 👉 Fetching users
 const fetchUsers = () => {
   isLoading.value = true;
@@ -47,6 +51,15 @@ const fetchUsers = () => {
       isLoading.value = false;
     });
 };
+
+const selectedCountry = ref("");
+const isDialogVisible = ref(false);
+const countryList = [
+  {
+    label: "Bahamas, The",
+    value: "bahamas",
+  },
+];
 
 watchEffect(fetchUsers);
 
@@ -116,6 +129,7 @@ const convertStatus = (status) => {
 
 const isAddNewUserDrawerVisible = ref(false);
 const isUpdateUserDrawerVisible = ref(false);
+const isUpdateUserCategoryDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
@@ -143,6 +157,24 @@ const getUser = (userId) => {
   userListStore.getUser(userId).then((res) => {
     userData.value = res.data.data[0];
     isUpdateUserDrawerVisible.value = true;
+  });
+};
+const getUserCategory = (userId) => {
+  let userCategories = [];
+  let userCategoriesAll = [];
+  let userCategoriesObj = {};
+  userListStore.getUserCategory(userId).then((res) => {
+    userCategoriesAll = res.data.data;
+
+    userCategoriesAll.forEach((el) => {
+      userCategories.push({ tilte: el.category.name, value: el.category.id });
+    });
+
+    userCategoriesObj.data = userCategories;
+    userCategoryData.value = userCategoriesObj;
+
+    user_Id.value = userId;
+    isUpdateUserCategoryDrawerVisible.value = true;
   });
 };
 const updateUser = (userData) => {
@@ -201,6 +233,29 @@ onMounted(() => {
       });
       branchesAll.value = branchesItem;
       return branchesItem;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+onMounted(() => {
+  let allCategories = [];
+  let categoriesItem = [];
+  axios
+    .get("/category/index")
+    .then((res) => {
+      allCategories = res.data.data.data;
+      allCategories.forEach((category) => {
+        categoriesItem.push({
+          text: category.name,
+          value: category.id,
+        });
+      });
+      // console.log(categoriesItem);
+
+      categories.value = categoriesItem;
+      return categoriesItem;
     })
     .catch((err) => {
       console.log(err);
@@ -397,6 +452,15 @@ onMounted(() => {
                     size="x-small"
                     color="default"
                     variant="text"
+                    @click="getUserCategory(user.id)"
+                  >
+                    <VIcon size="22" icon="tabler-eye" />
+                  </VBtn>
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
                     @click="deleteUser(user.id)"
                   >
                     <VIcon size="22" icon="tabler-trash" />
@@ -451,6 +515,14 @@ onMounted(() => {
       :branches="branchesAll"
       :user="userData"
       @user-data="updateUser"
+    />
+
+    <!-- 👉 Update UserCategory Drawer -->
+    <UpdateUserCategoryDrawer
+      v-model:isDrawerOpen="isUpdateUserCategoryDrawerVisible"
+      :userCategory="userCategoryData"
+      :user="userData"
+      :user_Id="user_Id"
     />
   </section>
 </template>
