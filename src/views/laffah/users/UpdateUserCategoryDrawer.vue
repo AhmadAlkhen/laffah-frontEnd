@@ -21,6 +21,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  isStore: {
+    type: Boolean,
+    required: true,
+  },
   user_Id: {
     required: true,
   },
@@ -38,7 +42,6 @@ const password = ref("");
 const categoriesSelected = ref();
 const categoriesAll = ref([]);
 const userCategoriesAll = ref([]);
-
 // 👉 drawer close
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
@@ -51,35 +54,67 @@ const closeNavigationDrawer = () => {
 const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
-      let categoriesVar = [];
-      props.userCategory.data.forEach((el) => {
-        categoriesVar.push(el.value ? el.value : el);
-      });
-
-      let category_ids = categoriesVar;
-      // let user_id = props.user.id;
-      let user_id = props.user_Id;
-      axios
-        .post("/users/categories/store", { category_ids, user_id })
-        .then((res) => {
-          if (res.status != 200) {
-            toast.warning(res.data.message, {
-              timeout: 2000,
-            });
-          } else {
-            closeNavigationDrawer();
-            toast.success(res.data.message, {
-              timeout: 2000,
-            });
-            // fetchOrders();
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.warning(err.response?.data?.message || err.message, {
-            timeout: 2000,
-          });
+      if (props.isStore) {
+        let categoriesVar = [];
+        props.userCategory.data.forEach((el) => {
+          categoriesVar.push(el.value ? el.value : el);
         });
+
+        let category_ids = categoriesVar;
+        // let user_id = props.user.id;
+        let user_id = props.user_Id;
+        axios
+          .post("/users/categories/store", { category_ids, user_id })
+          .then((res) => {
+            if (res.status != 200) {
+              toast.warning(res.data.message, {
+                timeout: 2000,
+              });
+            } else {
+              closeNavigationDrawer();
+              toast.success(res.data.message, {
+                timeout: 2000,
+              });
+              // fetchOrders();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.warning(err.response?.data?.message || err.message, {
+              timeout: 2000,
+            });
+          });
+      } else {
+        let categoriesVar = [];
+        props.userCategory.data.forEach((el) => {
+          categoriesVar.push(el.value ? el.value : el);
+        });
+
+        let category_ids = categoriesVar;
+        // let user_id = props.user.id;
+        let user_id = props.user_Id;
+        axios
+          .post("/users/categories/update", { category_ids, user_id })
+          .then((res) => {
+            if (res.status != 200) {
+              toast.warning(res.data.message, {
+                timeout: 2000,
+              });
+            } else {
+              closeNavigationDrawer();
+              toast.success(res.data.message, {
+                timeout: 2000,
+              });
+              // fetchOrders();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            toast.warning(err.response?.data?.message || err.message, {
+              timeout: 2000,
+            });
+          });
+      }
 
       // emit("userData", {
       //   // id: 0,
@@ -156,7 +191,6 @@ onMounted(() => {
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
-              {{ userCategory.data }}
               <!-- 👉 Categories   VAutocomplete-->
               <VCol cols="10">
                 <VAutocomplete
@@ -175,7 +209,8 @@ onMounted(() => {
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">
-                <VBtn type="submit" class="me-3"> Submit </VBtn>
+                <VBtn type="submit" class="me-3" v-if="isStore"> Save </VBtn>
+                <VBtn type="submit" class="me-3" v-if="!isStore"> Update </VBtn>
                 <VBtn
                   type="reset"
                   variant="tonal"

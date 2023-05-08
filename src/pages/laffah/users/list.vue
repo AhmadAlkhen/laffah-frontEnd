@@ -25,6 +25,8 @@ const userData = ref({});
 const userCategoryData = ref({});
 const isLoading = ref(false);
 const user_Id = ref();
+const isStore = ref(true);
+
 // 👉 Fetching users
 const fetchUsers = () => {
   isLoading.value = true;
@@ -172,7 +174,7 @@ const getUserCategory = (userId) => {
 
     userCategoriesObj.data = userCategories;
     userCategoryData.value = userCategoriesObj;
-
+    isStore.value = userCategoriesAll.length > 0 ? false : true;
     user_Id.value = userId;
     isUpdateUserCategoryDrawerVisible.value = true;
   });
@@ -452,18 +454,19 @@ onMounted(() => {
                     size="x-small"
                     color="default"
                     variant="text"
-                    @click="getUserCategory(user.id)"
+                    @click="deleteUser(user.id)"
                   >
-                    <VIcon size="22" icon="tabler-eye" />
+                    <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
                   <VBtn
+                    v-if="user.role == 'branch'"
                     icon
                     size="x-small"
                     color="default"
                     variant="text"
-                    @click="deleteUser(user.id)"
+                    @click="getUserCategory(user.id)"
                   >
-                    <VIcon size="22" icon="tabler-trash" />
+                    <VIcon size="22" icon="tabler-api-app" />
                   </VBtn>
 
                   <!-- <VBtn icon size="x-small" color="default" variant="text">
@@ -523,6 +526,7 @@ onMounted(() => {
       :userCategory="userCategoryData"
       :user="userData"
       :user_Id="user_Id"
+      :isStore="isStore"
     />
   </section>
 </template>
