@@ -43,15 +43,26 @@ const isLoading = ref(false);
 // 👉 Fetching orders
 const fetchOrders = () => {
   isLoading.value = true;
+
+  const params = {
+    perPage: rowPerPage.value,
+    page: currentPage.value,
+  };
+  if (selectedStatus.value) {
+    params.status = selectedStatus.value;
+  }
+  if (selectedBranch.value) {
+    params.branchId = selectedBranch.value;
+  }
+  if (ordersDate.value) {
+    params.ordersDate = ordersDate.value;
+  }
+  if (searchQuery.value) {
+    params.q = searchQuery.value;
+  }
+
   orderListStore
-    .fetchOrders({
-      q: searchQuery.value,
-      status: selectedStatus.value,
-      branchId: selectedBranch.value,
-      perPage: rowPerPage.value,
-      page: currentPage.value,
-      ordersDate: ordersDate.value,
-    })
+    .fetchOrders(params)
     .then((response) => {
       orders.value = response.data.data.data;
       totalPage.value = response.data.data.last_page;
@@ -304,7 +315,11 @@ onMounted(() => {
               <!-- </div> -->
             </VCol>
             <VCol lg="3" sm="6" cols="12">
-              <AppDateTimePicker v-model="ordersDate" label="Order date" />
+              <AppDateTimePicker
+                v-model="ordersDate"
+                label="Order date"
+                clear-icon="tabler-x"
+              />
             </VCol>
             <VCol lg="2" sm="6" cols="12"> </VCol>
             <VCol lg="3" sm="6" cols="12">
