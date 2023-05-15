@@ -26,6 +26,7 @@ const router = useRouter();
 const orderData = ref([]);
 const orderDataNew = ref([]);
 const orderDetails = ref();
+const quantityOrder = ref([]);
 const quantitySent = ref([]);
 const quantityConfirm = ref([]);
 const quantityCount = ref();
@@ -37,12 +38,38 @@ const carriers = ref([]);
 const categories = ref([]);
 const category = ref();
 const searchQuery = ref("");
-
 const isCarrierSelected = ref(false);
 const isDialogVisible = ref(false);
-
 const isAllQtySentFilled = ref(false);
+const statusSelected = ref("");
 
+const isEdit = ref(false);
+const status = [
+  {
+    title: "Pending",
+    value: "pending",
+  },
+  {
+    title: "inProcess",
+    value: "inProcess",
+  },
+  {
+    title: "Processing",
+    value: "processing",
+  },
+  {
+    title: "Completed",
+    value: "completed",
+  },
+  {
+    title: "Returned",
+    value: "returned",
+  },
+  {
+    title: "Canceled",
+    value: "Canceled",
+  },
+];
 // 👉 fetchInvoice
 orderListStore
   .fetchOrder(Number(route.params.id))
@@ -131,7 +158,41 @@ const exportOrder = () => {
     });
 };
 
-// Store the Quantity(quantity_send) that send by the warehouse
+// Store the Quantity(quantity) that order from the branch / admin
+const storeQuantityOrer = (item, qtyOrder, index) => {
+  const id = item.id;
+  const quantity = qtyOrder;
+
+  axios
+    .post("/order/quantity/order", { id, quantity })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        if (category.value === undefined || category.value.value == 0) {
+          fetchOrders();
+        }
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+const handleOrderQuantityInput = (event, item, quaOrder, index) => {
+  if (event.keyCode === 13) {
+    storeQuantityOrer(item, quaOrder, index);
+  }
+};
+
+// Store the Quantity(quantity_send) that send by the warehouse / admin
 const storeQuantitySent = (item, quaSent, index) => {
   const id = item.id;
   const quantity_sent = quaSent;
@@ -157,16 +218,18 @@ const storeQuantitySent = (item, quaSent, index) => {
     })
     .catch((err) => {
       console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
 };
 const handleSentQuantityInput = (event, item, quaSent, index) => {
   if (event.keyCode === 13) {
-    // "Enter" key was pressed
     storeQuantitySent(item, quaSent, index);
   }
 };
 
-// Store the Quantity(quantity_confirm) that confirm by the branch
+// Store the Quantity(quantity_confirm) that confirm by the branch / admin
 const storeQuantityConfirm = (item, quaConfirm, index) => {
   const id = item.id;
   const quantity_confirm = quaConfirm;
@@ -190,13 +253,184 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
     })
     .catch((err) => {
       console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
 };
 const handleConfirmQuantityInput = (event, item, quaConfirm, index) => {
   if (event.keyCode === 13) {
-    // "Enter" key was pressed
     storeQuantityConfirm(item, quaConfirm, index);
   }
+};
+
+// Store the Quantity(quantity_Return) that reurn from the branch by admin
+const storeQuantityReturn = (item, quaReturn, index) => {
+  const id = item.id;
+  const quantity_return = quaReturn;
+  axios
+    .post("/order/quantity/return", { id, quantity_return })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        if (category.value === undefined || category.value.value == 0) {
+          fetchOrders();
+        }
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+const handleReturnQuantityInput = (event, item, quaReturn, index) => {
+  if (event.keyCode === 13) {
+    storeQuantityReturn(item, quaReturn, index);
+  }
+};
+
+// changeRate by branch / admin
+const changeRate = (item, rated) => {
+  const id = item.id;
+  const rate = rated;
+
+  axios
+    .post("/order/quantity/rate", { id, rate })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+
+// delete product from the order by admin only
+const deleteProduct = (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this product from the order?"
+  );
+  if (!confirmed) {
+    return;
+  }
+  axios
+    .delete(`/order/product/delete/${id}`)
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 2000,
+        });
+        fetchOrders();
+      }
+    })
+    .catch((err) => {
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+
+// update Order Date by admin
+const updateOrderDate = (orderId, orderDate) => {
+  console.log(orderId);
+  const order_date = orderDate;
+  const order_id = orderId;
+  axios
+    .post("/order/date/update", { order_id, order_date })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+
+// update order status by admin
+const updtateOrderStatus = (orderId, orderStatus) => {
+  const status = orderStatus;
+  const order_id = orderId;
+  axios
+    .post("/order/status/update", { order_id, status })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+// update carrier  by admin
+const updtateOrderCarrier = (orderId, carrierId) => {
+  console.log(orderId);
+  console.log(carrierId);
+  const carrier_id = carrierId.id;
+  const order_id = orderId;
+  axios
+    .post("/order/carrier/update", { order_id, carrier_id })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
 };
 
 const isDisabled = () => {
@@ -323,31 +557,6 @@ const completedOrder = () => {
   });
 };
 
-const changeRate = (item, rated) => {
-  const id = item.id;
-  const rate = rated;
-
-  axios
-    .post("/order/quantity/rate", { id, rate })
-    .then((res) => {
-      if (res.status != 200) {
-        toast.warning(res.data.message, {
-          timeout: 2000,
-        });
-      } else {
-        toast.success(res.data.message, {
-          timeout: 2000,
-        });
-        // fetchOrders();
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
-      });
-    });
-};
 const addMessage = () => {
   const orderId = orderDetails.value.id;
 
@@ -416,6 +625,8 @@ const filterProductsByProduct = () => {
     orderDataNew.value = orderData.value;
   }
 };
+
+// watch the searchQuery input
 watch(
   () => searchQuery.value,
   () => {
@@ -443,23 +654,12 @@ watch(
             block
             prepend-icon="tabler-scan"
             variant="tonal"
-            color="info"
+            color="success"
             class="mb-2"
             @click="printInvoice"
           >
             Print
           </VBtn>
-        </VCol>
-        <VCol cols="3" md="2" sm="12" class="d-print-none">
-          <VAutocomplete
-            v-model="category"
-            :items="categories"
-            item-title="title"
-            item-value="value"
-            label="Select category"
-            persistent-hint
-            return-object
-          />
         </VCol>
         <VCol cols="12" md="2" class="d-print-none" v-if="userRole == 'admin'">
           <VBtn
@@ -473,15 +673,18 @@ watch(
             Export
           </VBtn>
         </VCol>
-        <VCol cols="12" md="2" class="d-print-none">
-          <VTextField
-            v-model="searchQuery"
-            prepend-inner-icon="tabler-search"
-            label="Search"
-            placeholder="Search"
-          />
+        <VCol cols="12" md="2" class="d-print-none" v-if="userRole == 'admin'">
+          <VBtn
+            block
+            prepend-icon="tabler-edit"
+            variant="tonal"
+            color="danger"
+            class="mb-2"
+            @click="isEdit = !isEdit"
+          >
+            {{ !isEdit ? "Update" : "Done" }}
+          </VBtn>
         </VCol>
-
         <VCol
           cols="12"
           md="2"
@@ -498,6 +701,27 @@ watch(
           >
             In Process
           </VBtn>
+        </VCol>
+      </VRow>
+      <VRow class="my-1 mx-1">
+        <VCol cols="12" md="6" sm="12" class="d-print-none">
+          <VAutocomplete
+            v-model="category"
+            :items="categories"
+            item-title="title"
+            item-value="value"
+            label="Select category"
+            persistent-hint
+            return-object
+          />
+        </VCol>
+        <VCol cols="12" md="6" sm="12" class="d-print-none">
+          <VTextField
+            v-model="searchQuery"
+            prepend-inner-icon="tabler-search"
+            label="Search"
+            placeholder="Search"
+          />
         </VCol>
       </VRow>
     </VCard>
@@ -522,9 +746,24 @@ watch(
               <!-- 👉 Address -->
               <p class="mb-0">User: {{ orderDetails.user.name }}</p>
               <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
-              <p class="mb-0" v-if="orderDetails.carrier != null">
+              <p class="mb-0" v-if="orderDetails.carrier != null && !isEdit">
                 Carrier: # {{ orderDetails.carrier.name }}
               </p>
+              <div v-if="isEdit">
+                <VAutocomplete
+                  v-model="orderDetails.carrier"
+                  :items="carriers"
+                  item-title="name"
+                  item-value="id"
+                  label="Select Carrier"
+                  persistent-hint
+                  return-object
+                  class="my-3"
+                  :onUpdate:modelValue="
+                    (newValue) => updtateOrderCarrier(orderDetails.id, newValue)
+                  "
+                />
+              </div>
             </div>
 
             <!-- 👉 Right Content -->
@@ -538,30 +777,201 @@ watch(
               </h6>
 
               <!-- 👉 Issue Date -->
-              <p class="mb-2">
-                <span>Date Issued: </span>
+              <p class="mb-2" v-if="!isEdit">
                 <span class="font-weight-semibold">{{
                   convertCreated(orderDetails.order_date)
                 }}</span>
               </p>
+              <div class="w-200 mb-1 d-flex align-items-center" v-else>
+                <AppDateTimePicker
+                  v-model="orderDetails.order_date"
+                  label="Date Issued"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+                />
+                <VIcon
+                  size="22"
+                  class="ml-1"
+                  icon="tabler-refresh"
+                  @click="
+                    updateOrderDate(orderDetails.id, orderDetails.order_date)
+                  "
+                />
+              </div>
+              <!-- 👉 end Issue Date -->
 
-              <!-- 👉 Due Date -->
-              <p class="mb-2">
+              <!-- 👉 order status -->
+              <p class="mb-2" v-if="!isEdit">
                 <span>status: </span>
                 <span class="font-weight-semibold">{{
                   orderDetails.status
                 }}</span>
               </p>
-              <!-- 👉 Due Date -->
+              <div v-else class="my-3">
+                <VSelect
+                  v-model="orderDetails.status"
+                  label="Select Status"
+                  :items="status"
+                  :onUpdate:modelValue="
+                    (newValue) => updtateOrderStatus(orderDetails.id, newValue)
+                  "
+                />
+              </div>
+              <!-- 👉 end order status -->
             </div>
           </VCardText>
           <!-- !SECTION -->
 
-          <VDivider />
+          <!-- <VDivider /> -->
 
           <!-- 👉 Table -->
           <VDivider />
-          <VTable fixed-header>
+          <VTable fixed-header v-if="userRole == 'admin'">
+            <thead>
+              <tr>
+                <th scope="col" class="d-print-none">ITEM</th>
+                <th scope="col">Product</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Sent</th>
+                <th scope="col">Confirm</th>
+                <th scope="col">Return</th>
+                <th scope="col">Total</th>
+                <th class="d-print-none" scope="col">Rate</th>
+                <th class="d-print-none" scope="col" v-if="isEdit">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(item, index) in orderDataNew" :key="item.id">
+                <td class="text-no-wrap d-print-none" v-viewer>
+                  <VImg
+                    :src="item.product.image"
+                    class="mt-1 rounded my-2"
+                    width="80px"
+                    height="80px"
+                  />
+                </td>
+                <td class="text-no-wrap">
+                  {{ item.product.name }}
+                </td>
+                <td class="text-no-wrap">
+                  {{ item.product.unit }}
+                </td>
+                <td class="text-no-wrap" v-if="!isEdit">
+                  {{ item.quantity }}
+                </td>
+                <td class="text-no-wrap" v-else>
+                  <VTextField
+                    v-model="item.quantity"
+                    persistent-placeholder
+                    placeholder="Qty Order"
+                    type="number"
+                    class="qtySent"
+                    :min="0"
+                    @keyup="
+                      handleOrderQuantityInput(
+                        $event,
+                        item,
+                        item.quantity,
+                        index
+                      )
+                    "
+                  />
+                </td>
+                <td class="text-no-wrap" v-if="!isEdit">
+                  {{ item.quantity_sent }}
+                </td>
+                <td class="text-no-wrap" v-else>
+                  <VTextField
+                    v-model="item.quantity_sent"
+                    persistent-placeholder
+                    placeholder="Qty Sent"
+                    type="number"
+                    class="qtySent"
+                    :min="0"
+                    @keyup="
+                      handleSentQuantityInput(
+                        $event,
+                        item,
+                        item.quantity_sent,
+                        index
+                      )
+                    "
+                  />
+                </td>
+                <td class="text-no-wrap" v-if="!isEdit">
+                  {{ item.quantity_confirm }}
+                </td>
+                <td class="text-no-wrap" v-else>
+                  <VTextField
+                    v-model="item.quantity_confirm"
+                    persistent-placeholder
+                    placeholder="Qty Confirm"
+                    type="number"
+                    class="qtySent"
+                    :min="0"
+                    @keyup="
+                      handleConfirmQuantityInput(
+                        $event,
+                        item,
+                        item.quantity_confirm,
+                        index
+                      )
+                    "
+                  />
+                </td>
+                <td class="text-no-wrap" v-if="!isEdit">
+                  {{ item.quantity_return }}
+                </td>
+                <td class="text-no-wrap" v-else>
+                  <VTextField
+                    v-model="item.quantity_return"
+                    persistent-placeholder
+                    placeholder="Qty Return"
+                    type="number"
+                    class="qtySent"
+                    :min="0"
+                    @keyup="
+                      handleReturnQuantityInput(
+                        $event,
+                        item,
+                        item.quantity_return,
+                        index
+                      )
+                    "
+                  />
+                </td>
+                <td class="text-no-wrap">
+                  {{
+                    item.quantity_confirm - item.quantity_return == 0
+                      ? ""
+                      : item.quantity_confirm - item.quantity_return
+                  }}
+                </td>
+                <td class="d-print-none">
+                  <VRating
+                    hover
+                    v-model="item.rate"
+                    color="warning"
+                    @change="changeRate(item, item.rate)"
+                  />
+                </td>
+                <td>
+                  <VBtn
+                    v-if="isEdit"
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteProduct(item.id)"
+                  >
+                    <VIcon size="22" icon="tabler-trash" />
+                  </VBtn>
+                </td>
+              </tr>
+            </tbody>
+          </VTable>
+          <VTable fixed-header v-else>
             <thead>
               <tr>
                 <th scope="col" class="d-print-none">ITEM</th>
@@ -1018,5 +1428,10 @@ watch(
   display: flex;
   grid-area: auto;
   width: 130px;
+}
+.w-200 {
+  width: 200px;
+  display: flex;
+  align-items: center;
 }
 </style>
