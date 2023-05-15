@@ -674,7 +674,7 @@ watch(
           </VBtn>
         </VCol>
         <VCol cols="12" md="2" class="d-print-none" v-if="userRole == 'admin'">
-          <VBtn
+          <!-- <VBtn
             block
             prepend-icon="tabler-edit"
             variant="tonal"
@@ -683,7 +683,7 @@ watch(
             @click="isEdit = !isEdit"
           >
             {{ !isEdit ? "Update" : "Done" }}
-          </VBtn>
+          </VBtn> -->
         </VCol>
         <VCol
           cols="12"
