@@ -315,12 +315,7 @@ onMounted(() => {
               <!-- </div> -->
             </VCol>
             <VCol lg="3" sm="6" cols="12">
-              <AppDateTimePicker
-                v-model="ordersDate"
-                label="Order date"
-                clearable
-                clear-icon="tabler-x"
-              />
+              <AppDateTimePicker v-model="ordersDate" label="Order date" />
             </VCol>
             <VCol lg="2" sm="6" cols="12"> </VCol>
             <VCol lg="3" sm="6" cols="12">
@@ -329,6 +324,8 @@ onMounted(() => {
                 v-model="selectedBranch"
                 label="Select branch"
                 :items="branches"
+                clearable
+                clear-icon="tabler-x"
               />
             </VCol>
             <VCol lg="2" sm="6" cols="12">
