@@ -36,7 +36,7 @@ const listComments = ref([]);
 const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
 const categories = ref([]);
-const category = ref();
+const category = ref([]);
 const searchQuery = ref("");
 const isCarrierSelected = ref(false);
 const isDialogVisible = ref(false);
@@ -81,7 +81,8 @@ orderListStore
     listComments.value = response.data.comments;
   })
   .then(() => {
-    let categoriesSpec = [{ title: "All", value: "0" }];
+    // let categoriesSpec = [{ title: "All", value: "0" }];
+    let categoriesSpec = [];
     orderData.value.forEach((item) => {
       const category = {
         title: item.product.category.name,
@@ -593,21 +594,42 @@ const userName = computed(() => {
   return data.name;
 });
 
+// const filterProductsByCategory = () => {
+//   if (category.value) {
+//     orderDataNew.value = orderData.value;
+//     if (category.value.value == "0") {
+//       // console.log(category.value);
+//       fetchOrders();
+//       orderDataNew.value = orderData.value;
+//     } else {
+//       const newOrderData = orderData.value.filter(
+//         (item) => item.product.category_id === category.value.value
+//       );
+//       orderDataNew.value = newOrderData;
+//     }
+//   }
+// };
 const filterProductsByCategory = () => {
-  if (category.value) {
+  if (category.value && category.value.length > 0) {
     orderDataNew.value = orderData.value;
-    if (category.value.value == "0") {
-      // console.log(category.value);
+    if (category.value.some((cat) => cat.value == 0)) {
       fetchOrders();
+      // orderDataNew.value = orderData.value;
+      // category.value = [{ title: "Select All", value: 0 }, ...categories.value];
       orderDataNew.value = orderData.value;
     } else {
-      const newOrderData = orderData.value.filter(
-        (item) => item.product.category_id === category.value.value
-      );
+      const selectedCategoryValues = category.value.map((cat) => cat.value);
+      const newOrderData = orderData.value.filter((item) => {
+        return selectedCategoryValues.includes(item.product.category_id);
+      });
       orderDataNew.value = newOrderData;
     }
+  } else {
+    fetchOrders();
+    orderDataNew.value = orderData.value;
   }
 };
+
 watch(
   () => category.value,
   () => {
@@ -713,6 +735,8 @@ watch(
             label="Select category"
             persistent-hint
             return-object
+            multiple
+            clearable
           />
         </VCol>
         <VCol cols="12" md="6" sm="12" class="d-print-none">
@@ -954,6 +978,7 @@ watch(
                     v-model="item.rate"
                     color="warning"
                     @change="changeRate(item, item.rate)"
+                    :readonly="!isEdit"
                   />
                 </td>
                 <td>
