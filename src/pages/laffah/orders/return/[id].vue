@@ -525,7 +525,6 @@ const userName = computed(() => {
   border-bottom: solid 1px #e9e9eb;
 }
 .qtyReturn {
-  display: flex;
   grid-area: auto;
   width: 130px;
 }

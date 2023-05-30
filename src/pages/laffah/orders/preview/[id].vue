@@ -160,7 +160,7 @@ const exportOrder = () => {
 };
 
 // Store the Quantity(quantity) that order from the branch / admin
-const storeQuantityOrer = (item, qtyOrder, index) => {
+const storeQuantityOrder = (item, qtyOrder, index) => {
   const id = item.id;
   const quantity = qtyOrder;
 
@@ -172,7 +172,8 @@ const storeQuantityOrer = (item, qtyOrder, index) => {
           timeout: 2000,
         });
       } else {
-        if (category.value === undefined || category.value.value == 0) {
+        // if (category.value === undefined || category.value.value == 0) {
+        if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
@@ -189,7 +190,7 @@ const storeQuantityOrer = (item, qtyOrder, index) => {
 };
 const handleOrderQuantityInput = (event, item, quaOrder, index) => {
   if (event.keyCode === 13) {
-    storeQuantityOrer(item, quaOrder, index);
+    storeQuantityOrder(item, quaOrder, index);
   }
 };
 
@@ -206,7 +207,7 @@ const storeQuantitySent = (item, quaSent, index) => {
           timeout: 2000,
         });
       } else {
-        if (category.value === undefined || category.value.value == 0) {
+        if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
@@ -243,7 +244,7 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
           timeout: 2000,
         });
       } else {
-        if (category.value === undefined || category.value.value == 0) {
+        if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
@@ -277,7 +278,7 @@ const storeQuantityReturn = (item, quaReturn, index) => {
           timeout: 2000,
         });
       } else {
-        if (category.value === undefined || category.value.value == 0) {
+        if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
@@ -1450,7 +1451,6 @@ watch(
 }
 .qtySent,
 .qtyConfirm {
-  display: flex;
   grid-area: auto;
   width: 130px;
 }
