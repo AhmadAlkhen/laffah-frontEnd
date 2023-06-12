@@ -78,7 +78,7 @@ const reserveTemplate = (product) => {
         persistent-placeholder
         placeholder="Qtu"
         type="number"
-        class=""
+        class="w-100"
         :min="0"
       />
     </VCardActions>
@@ -95,7 +95,7 @@ const reserveTemplate = (product) => {
         persistent-placeholder
         placeholder="Qtu"
         type="number"
-        class=""
+        class="w-100"
         :min="0"
       />
     </VCardActions>

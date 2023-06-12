@@ -30,9 +30,13 @@ export const useProductStore = defineStore('ProductStore', {
       const index = this.myItems.findIndex((el) => el.sku === item.sku);
     
       if (index >= 0) {
+        this.myItems[index].quantity=qty;
+      
+        // this.myItems.push(item);
+        // console.log(this.myItems[index]);
         // If the item exists, increase its quantity by 1
-        alert("The item is already in the cart");
-        return;
+        // alert("The item is already in the cart");
+        // return;
       } else {
         // If the item does not exist, add it to the array
         item.quantity = qty;
