@@ -29,6 +29,13 @@ const reserve = (product) => {
     timeout: 1000,
   });
 };
+
+const handleReserveInput = (event, product) => {
+  if (event.keyCode === 13) {
+    reserve(product);
+  }
+};
+
 const reserveTemplate = (product) => {
   let qty = qtyTemplate.value[product.id] ? qtyTemplate.value[product.id] : 0;
   TemplateStore.addItem(product, qty);
@@ -80,6 +87,7 @@ const reserveTemplate = (product) => {
         type="number"
         class="w-100"
         :min="0"
+        @keyup="handleReserveInput($event, product)"
       />
     </VCardActions>
     <VCardActions

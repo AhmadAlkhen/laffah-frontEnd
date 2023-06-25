@@ -526,7 +526,7 @@ const subQty = (q1, q2) => {
             <VPagination
               v-model="currentPage"
               size="small"
-              :total-visible="5"
+              :total-visible="3"
               :length="totalPage"
             />
           </VCardText>
