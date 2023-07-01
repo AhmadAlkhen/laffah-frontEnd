@@ -39,6 +39,7 @@ const totalOrders = ref(0);
 const orders = ref([]);
 const branches = ref([]);
 const isLoading = ref(false);
+const assignedTo = ref();
 
 // 👉 Fetching orders
 const fetchOrders = () => {
@@ -59,6 +60,9 @@ const fetchOrders = () => {
   }
   if (searchQuery.value) {
     params.q = searchQuery.value;
+  }
+  if (assignedTo.value || assignedTo.value == 0) {
+    params.assignedTo = assignedTo.value;
   }
 
   orderListStore
@@ -168,6 +172,17 @@ const status = [
   },
 ];
 
+const AssignedToItems = [
+  {
+    value: 1,
+    title: "Assigned",
+  },
+  {
+    value: 0,
+    title: "Not assigned",
+  },
+];
+
 const resolveUserRoleVariant = (role) => {
   if (role === "subscriber")
     return {
@@ -261,10 +276,14 @@ const canceledOrder = (order_id) => {
           toast.success(res.data.message, {
             timeout: 2000,
           });
+          fetchOrders();
           // router.push({ name: "laffah-orders-MyOrders" });
         })
         .catch((err) => {
           console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
         });
     }
   });
@@ -317,7 +336,15 @@ onMounted(() => {
             <VCol lg="3" sm="6" cols="12">
               <AppDateTimePicker v-model="ordersDate" label="Order date" />
             </VCol>
-            <VCol lg="2" sm="6" cols="12"> </VCol>
+            <VCol lg="2" sm="6" cols="12">
+              <VSelect
+                v-model="assignedTo"
+                label="Select if assigned"
+                :items="AssignedToItems"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
             <VCol lg="3" sm="6" cols="12">
               <VSelect
                 v-if="userRole == 'admin' || userRole == 'warehouse'"
@@ -359,6 +386,7 @@ onMounted(() => {
                 >
                   Branch
                 </th>
+                <th scope="col">Assign To</th>
                 <th scope="col">Products Count</th>
                 <th scope="col">Carrier</th>
                 <th scope="col">STATUS</th>
@@ -386,6 +414,13 @@ onMounted(() => {
                 <td v-if="userRole == 'admin' || userRole == 'warehouse'">
                   <span class="text-capitalize text-base">{{
                     order.user.branch.name
+                  }}</span>
+                </td>
+
+                <!-- 👉 Assign to branch name  -->
+                <td>
+                  <span class="text-capitalize text-base">{{
+                    order.branch ? order.branch.name : "--"
                   }}</span>
                 </td>
 

@@ -96,8 +96,11 @@ orderListStore
     });
     categories.value = categoriesSpec;
   })
-  .catch((error) => {
-    console.log(error);
+  .catch((err) => {
+    console.log(err);
+    toast.warning(err.response?.data?.message || err.message, {
+      timeout: 2000,
+    });
   });
 
 orderListStore.fetchCarriers().then((res) => {
@@ -771,6 +774,9 @@ watch(
               <!-- 👉 Address -->
               <p class="mb-0">User: {{ orderDetails.user.name }}</p>
               <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
+              <p class="mb-0" v-if="orderDetails.branch != null">
+                Assign to: # {{ orderDetails.branch.name }}
+              </p>
               <p class="mb-0" v-if="orderDetails.carrier != null && !isEdit">
                 Carrier: # {{ orderDetails.carrier.name }}
               </p>

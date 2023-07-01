@@ -14,6 +14,7 @@ const searchQuery = ref("");
 const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref();
+const selectedIsCreator = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
 const totalPage = ref(1);
@@ -37,6 +38,7 @@ const fetchUsers = () => {
       role: selectedRole.value,
       perPage: rowPerPage.value,
       currentPage: currentPage.value,
+      isCreator: selectedIsCreator.value,
     })
     .then((response) => {
       users.value = response.data.data.data;
@@ -56,12 +58,6 @@ const fetchUsers = () => {
 
 const selectedCountry = ref("");
 const isDialogVisible = ref(false);
-const countryList = [
-  {
-    label: "Bahamas, The",
-    value: "bahamas",
-  },
-];
 
 watchEffect(fetchUsers);
 
@@ -94,6 +90,17 @@ const roles = [
   {
     title: "Carrier",
     value: "carrier",
+  },
+];
+
+const isCreatorItems = [
+  {
+    title: "True",
+    value: 1,
+  },
+  {
+    title: "False",
+    value: 0,
   },
 ];
 
@@ -194,6 +201,25 @@ const updateUser = (userData) => {
       toast.error("check your values and try again!", {
         timeout: 2000,
       });
+    });
+};
+
+const changeIsCreator = (userId, creator) => {
+  const id = userId;
+  const isCreator = creator;
+
+  axios
+    .post("/users/isCreator", { id, isCreator })
+    .then(() => {
+      toast.success("Changed successfully", {
+        timeout: 1000,
+      });
+      // alert("added successfuly");
+      // fetchOrders();
+      // quantityConfirm.value[index] = "";
+    })
+    .catch((err) => {
+      console.log(err);
     });
 };
 
@@ -329,7 +355,7 @@ onMounted(() => {
                 :items="[10, 20, 30, 50]"
               />
             </VCol>
-            <VCol class="" cols="12" md="3">
+            <VCol class="" cols="12" md="2">
               <!-- 👉 Select Status -->
               <VSelect
                 v-model="selectedStatus"
@@ -339,12 +365,22 @@ onMounted(() => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol class="" cols="12" md="3">
+            <VCol class="" cols="12" md="2">
               <!-- 👉 Select Role -->
               <VSelect
                 v-model="selectedRole"
                 label="Select Role"
                 :items="roles"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <!-- 👉 Select isCreator -->
+            <VCol class="" cols="12" md="2">
+              <VSelect
+                v-model="selectedIsCreator"
+                label="Select isCreator"
+                :items="isCreatorItems"
                 clearable
                 clear-icon="tabler-x"
               />
@@ -378,6 +414,7 @@ onMounted(() => {
                 <th scope="col">User</th>
                 <th scope="col">Branch</th>
                 <th scope="col">Role</th>
+                <th scope="col">Is Creator</th>
                 <th scope="col">STATUS</th>
                 <th scope="col">ACTIONS</th>
               </tr>
@@ -424,6 +461,17 @@ onMounted(() => {
                     class="text-capitalize text-base font-weight-semibold"
                     >{{ user.role }}</span
                   >
+                </td>
+
+                <!-- 👉 is Craetor -->
+                <td>
+                  <VSwitch
+                    v-model="user.isCreator"
+                    :true-value="1"
+                    :false-value="0"
+                    color="success"
+                    @change="changeIsCreator(user.id, user.isCreator)"
+                  />
                 </td>
 
                 <!-- 👉 Status -->

@@ -1,5 +1,7 @@
 <script setup>
 import { useProductStore } from "@/views/laffah/products/useProductStore";
+import { useProductOrderStore } from "@/views/laffah/orders/useProductOrderStore";
+
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
@@ -8,6 +10,8 @@ import moment from "moment";
 
 const toast = useToast();
 const ProductStore = useProductStore();
+const productOrderStore = useProductOrderStore();
+
 const quantity = ref([]);
 const quantityCount = ref();
 const itemsCart = ref([]);
@@ -19,12 +23,11 @@ const btnSaveComplete = ref(false);
 const orderDate = ref();
 const isInputEnabled = ref(false);
 const searchQuery = ref("");
+const isCreator = ref(false);
+const userIsCreator = ref(false);
 
-// const cartDataComputed = computed(() => {
-//   ProductStore.getItemLocalStarage;
-//   quantityCount.value = ProductStore.fetchItemCart().length;
-//   return ProductStore.fetchItemCart();
-// });
+const branches = ref([]);
+const branchesOptions = {};
 
 onMounted(() => {
   ProductStore.getItemLocalStarage;
@@ -49,6 +52,42 @@ const storeQuantity = (item, quantity) => {
   ProductStore.changeQuantity(item, quantity);
 };
 
+// const userIsCreator = computed(() => {
+//   let data = localStorage.getItem("userData");
+//   let userData = JSON.parse(data);
+//   console.log(userData.isCreator);
+//   return false;
+//   // return userData.isCreator;
+// });
+onMounted(() => {
+  axios
+    .get("/users/isCreator")
+    .then((response) => {
+      console.log(response.data.data.isCreator);
+      isCreator.value = response.data.data.isCreator;
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+});
+const checkIsCreator = () => {
+  axios
+    .get("/users/isCreator")
+    .then((response) => {
+      console.log(response.data.data.isCreator);
+      isCreator.value = response.data.data.isCreator;
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+
 const saveOrderCart = () => {
   if (isDisabled()) {
     Swal.fire({
@@ -59,6 +98,9 @@ const saveOrderCart = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, confirm!",
+      showDenyButton: isCreator.value,
+      denyButtonColor: "#3a9853",
+      denyButtonText: "Assign to branch",
     }).then((result) => {
       if (result.isConfirmed) {
         overlay.value = true;
@@ -95,7 +137,6 @@ const saveOrderCart = () => {
           );
           formData.append("order_date", currentDateFormatted);
         }
-
         axios
           .post("/order/store", formData)
           .then((response) => {
@@ -121,6 +162,83 @@ const saveOrderCart = () => {
             });
             overlay.value = false;
           });
+        // ------------------------------ Choose another Branch   --------------------------------------
+      } else if (result.isDenied) {
+        Swal.fire({
+          title: "Select a branch",
+          input: "select",
+          inputOptions: {
+            ...branchesOptions,
+          },
+          inputPlaceholder: "Select a branch",
+          showCancelButton: true,
+        }).then((result) => {
+          if (result.value) {
+            overlay.value = true;
+            let newArraydata = [];
+            const myCart = JSON.parse(localStorage.getItem("cart"));
+            myCart.forEach((element, index) => {
+              newArraydata.push({
+                product_id: element.id,
+                quantity: element.quantity,
+              });
+            });
+
+            const formData = new FormData();
+            // formData.append("user_id", "1");
+            formData.append("assign_branch_id", result.value);
+            formData.append("status", "pending");
+            formData.append("productsCount", newArraydata.length);
+            formData.append("products", JSON.stringify(newArraydata));
+
+            if (isInputEnabled) {
+              if (orderDate && orderDate.value !== undefined) {
+                const orderDateFormatted = moment(orderDate.value).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                );
+                formData.append("order_date", orderDateFormatted);
+              } else {
+                const currentDateFormatted = moment(new Date()).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                );
+                formData.append("order_date", currentDateFormatted);
+              }
+            } else {
+              const currentDateFormatted = moment(new Date()).format(
+                "YYYY-MM-DD HH:mm:ss"
+              );
+              formData.append("order_date", currentDateFormatted);
+            }
+            axios
+              .post("/order/store", formData)
+              .then((response) => {
+                // console.log(response.status);
+                if (response.status == 200 || response.status == true) {
+                  overlay.value = false;
+
+                  ProductStore.resetCart();
+                  Swal.fire(
+                    "Added!",
+                    "Your order has been added successfully.",
+                    "success"
+                  );
+                }
+              })
+              .then(() => {
+                router.replace({ name: "laffah-orders-MyOrders" });
+              })
+              .catch((err) => {
+                console.log(err);
+                toast.warning(err.response?.data?.message || err.message, {
+                  timeout: 2000,
+                });
+                overlay.value = false;
+              });
+            // ------------------------------ Choose another Branch   --------------------------------------
+
+            // Swal.fire(`You selected: ${result.value}`);
+          }
+        });
       }
     });
   } else {
@@ -180,6 +298,21 @@ watchEffect(() => {
   } else {
     itemsCartSearch.value = itemsCart.value;
   }
+});
+
+onMounted(() => {
+  productOrderStore
+    .fetchBranches({
+      perPage: 50,
+      page: 1,
+    })
+    .then((response) => {
+      const branchesData = response.data.data.data;
+
+      branchesData.forEach((branch) => {
+        branchesOptions[branch.id] = branch.name;
+      });
+    });
 });
 </script>
 
