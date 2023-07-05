@@ -640,12 +640,25 @@ watch(
     filterProductsByCategory();
   }
 );
+// const filterProductsByProduct = () => {
+//   if (searchQuery.value) {
+//     orderDataNew.value = orderData.value;
+//     const newOrderData = orderData.value.filter((item) =>
+//       item.product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+//     );
+//     orderDataNew.value = newOrderData;
+//   } else {
+//     orderDataNew.value = orderData.value;
+//   }
+// };
 const filterProductsByProduct = () => {
   if (searchQuery.value) {
     orderDataNew.value = orderData.value;
-    const newOrderData = orderData.value.filter((item) =>
-      item.product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+    const searchWords = searchQuery.value.toLowerCase().split(" ");
+    const newOrderData = orderData.value.filter((item) => {
+      const productName = item.product.name.toLowerCase();
+      return searchWords.every((word) => productName.includes(word));
+    });
     orderDataNew.value = newOrderData;
   } else {
     orderDataNew.value = orderData.value;
