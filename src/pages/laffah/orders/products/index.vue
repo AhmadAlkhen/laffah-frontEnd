@@ -33,6 +33,7 @@ const totalOrderProducts = ref(0);
 const orderProducts = ref([]);
 const branches = ref([]);
 const isLoading = ref(false);
+const shortage = ref();
 
 // 👉 Fetching orders
 const fetchProductsOrder = () => {
@@ -44,6 +45,7 @@ const fetchProductsOrder = () => {
       perPage: rowPerPage.value,
       page: currentPage.value,
       branchId: selectedBranch.value,
+      shortage: shortage.value,
       startFrom: startFrom.value,
       startTo: startTo.value,
     })
@@ -208,6 +210,17 @@ const status = [
   },
 ];
 
+const shortageItems = [
+  {
+    title: "100% shortage",
+    value: 0,
+  },
+  {
+    title: "less than 100%",
+    value: 1,
+  },
+];
+
 const resolveUserRoleVariant = (role) => {
   if (role === "subscriber")
     return {
@@ -300,7 +313,15 @@ const subQty = (q1, q2) => {
                 />
               </div>
             </VCol>
-            <VCol md="3" cols="12"> </VCol>
+            <VCol md="3" cols="12">
+              <VSelect
+                v-model="shortage"
+                label="Select shortage"
+                :items="shortageItems"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
             <VCol md="3" cols="12">
               <VTextField
                 v-model="searchQuery"
