@@ -33,7 +33,8 @@ const totalOrderProducts = ref(0);
 const orderProducts = ref([]);
 const branches = ref([]);
 const isLoading = ref(false);
-const shortage = ref();
+const overlay = ref(false);
+const selectedShortage = ref();
 
 // 👉 Fetching orders
 const fetchProductsOrder = () => {
@@ -45,7 +46,7 @@ const fetchProductsOrder = () => {
       perPage: rowPerPage.value,
       page: currentPage.value,
       branchId: selectedBranch.value,
-      shortage: shortage.value,
+      shortage: selectedShortage.value,
       startFrom: startFrom.value,
       startTo: startTo.value,
     })
@@ -88,12 +89,20 @@ const getUserRole = computed(() => {
 
 // export Products
 const exportProducts = () => {
+  overlay.value = true;
   const from = startFrom.value ? startFrom.value : "";
   const to = startTo.value ? startTo.value : "";
-
+  const q = searchQuery.value ? searchQuery.value : "";
+  const status = selectedStatus.value ? selectedStatus.value : "";
+  const branchId = selectedBranch.value ? selectedBranch.value : "";
+  const shortage = selectedShortage.value
+    ? selectedShortage.value
+    : selectedShortage.value == "0"
+    ? 0
+    : "";
   axios
     .get("/order/products/export", {
-      params: { from, to },
+      params: { from, to, q, status, branchId, shortage },
       responseType: "blob",
     })
     .then((response) => {
@@ -110,6 +119,9 @@ const exportProducts = () => {
       toast.warning(err.response?.data?.message || err.message, {
         timeout: 2000,
       });
+    })
+    .finally(() => {
+      overlay.value = false;
     });
 };
 
@@ -294,6 +306,13 @@ const subQty = (q1, q2) => {
 
 <template>
   <section>
+    <VOverlay v-model="overlay" class="align-center justify-center" persistent>
+      <VProgressCircular
+        color="primary"
+        indeterminate
+        size="64"
+      ></VProgressCircular>
+    </VOverlay>
     <VRow>
       <VCol cols="12">
         <VCard title="Search Filter">
@@ -315,7 +334,7 @@ const subQty = (q1, q2) => {
             </VCol>
             <VCol md="3" cols="12">
               <VSelect
-                v-model="shortage"
+                v-model="selectedShortage"
                 label="Select shortage"
                 :items="shortageItems"
                 clearable
