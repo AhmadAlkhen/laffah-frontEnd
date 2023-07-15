@@ -360,7 +360,7 @@ const deleteProduct = (id) => {
 
 // update Order Date by admin
 const updateOrderDate = (orderId, orderDate) => {
-  console.log(orderId);
+  // console.log(orderId);
   const order_date = orderDate;
   const order_id = orderId;
   axios
@@ -462,8 +462,14 @@ const isProcessing = () => {
     const status = "processing";
     const orderId = orderDetails.value.id;
     const carrier_id = carrierId;
+    const processing_date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
     axios
-      .post("/order/status/processing", { status, orderId, carrier_id })
+      .post("/order/status/processing", {
+        status,
+        orderId,
+        carrier_id,
+        processing_date,
+      })
       .then((res) => {
         isDialogVisible.value = false;
         if (res.status != 200) {
@@ -538,8 +544,10 @@ const completedOrder = () => {
     if (res.isConfirmed) {
       const status = "completed";
       const orderId = orderDetails.value.id;
+      const completed_date = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
       axios
-        .post("/order/status/completed", { status, orderId })
+        .post("/order/status/completed", { status, orderId, completed_date })
         .then((res) => {
           if (res.status != 200) {
             toast.warning(res.data.message, {
@@ -822,6 +830,7 @@ watch(
 
               <!-- 👉 Issue Date -->
               <p class="mb-2" v-if="!isEdit">
+                <span>Order date : </span>
                 <span class="font-weight-semibold">{{
                   convertCreated(orderDetails.order_date)
                 }}</span>
@@ -842,6 +851,22 @@ watch(
                 />
               </div>
               <!-- 👉 end Issue Date -->
+
+              <!-- 👉 Processing Date -->
+              <p class="mb-2 v" v-if="orderDetails.processing_date">
+                <span>Processing date : </span>
+                <span class="font-weight-semibold">{{
+                  convertCreated(orderDetails.processing_date)
+                }}</span>
+              </p>
+
+              <!-- 👉 Completed Date -->
+              <p class="mb-2 v" v-if="orderDetails.processing_date">
+                <span>Completed date : </span>
+                <span class="font-weight-semibold">{{
+                  convertCreated(orderDetails.completed_date)
+                }}</span>
+              </p>
 
               <!-- 👉 order status -->
               <p class="mb-2" v-if="!isEdit">

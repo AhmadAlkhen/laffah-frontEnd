@@ -84,7 +84,10 @@ const fetchOrders = () => {
     });
 };
 const convertCreated = (value) => {
-  return moment(value).format("YYYY-MM-DD");
+  if (value) {
+    return moment(value).format("YYYY-MM-DD");
+  } else return null;
+  // return moment(value).format("YYYY-MM-DD hh:mm");
 };
 
 const getUserRole = computed(() => {
@@ -391,6 +394,8 @@ onMounted(() => {
                 <th scope="col">Carrier</th>
                 <th scope="col">STATUS</th>
                 <th scope="col">Order Date</th>
+                <th scope="col">Processing Date</th>
+                <th scope="col">Completed Date</th>
                 <th scope="col">ACTIONS</th>
               </tr>
             </thead>
@@ -471,6 +476,20 @@ onMounted(() => {
                 <td>
                   <span class="text-base">{{
                     convertCreated(order.order_date)
+                  }}</span>
+                </td>
+
+                <!-- 👉 Processing Date -->
+                <td>
+                  <span class="text-base">{{
+                    convertCreated(order.processing_date)
+                  }}</span>
+                </td>
+
+                <!-- 👉 Completed Date -->
+                <td>
+                  <span class="text-base">{{
+                    convertCreated(order.completed_date)
                   }}</span>
                 </td>
 

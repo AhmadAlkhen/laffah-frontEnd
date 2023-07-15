@@ -231,6 +231,10 @@ const shortageItems = [
     title: "less than 100%",
     value: 1,
   },
+  {
+    title: "Both",
+    value: 2,
+  },
 ];
 
 const resolveUserRoleVariant = (role) => {
@@ -437,8 +441,13 @@ const subQty = (q1, q2) => {
                 >
                   Branch
                 </th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'warehouse'"
+                >
+                  User
+                </th>
                 <th scope="col">Order Date</th>
-                <!-- <th scope="col">ACTIONS</th> -->
               </tr>
             </thead>
             <!-- 👉 table body -->
@@ -524,23 +533,21 @@ const subQty = (q1, q2) => {
                   >
                 </td>
 
+                <!-- 👉 User  -->
+                <td v-if="userRole == 'admin' || userRole == 'warehouse'">
+                  <span
+                    class="text-capitalize text-base"
+                    v-if="ordProduct.order.user.branch.name != undefined"
+                    >{{ ordProduct.order.user.name }}</span
+                  >
+                </td>
+
                 <!-- 👉 Created at -->
                 <td>
                   <span class="text-base">{{
                     convertCreated(ordProduct.order.order_date)
                   }}</span>
                 </td>
-
-                <!-- 👉 Actions -->
-                <!-- <td class="text-center" style="width: 5rem">
-                  <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-edit" />
-                  </VBtn>
-
-                  <VBtn icon size="x-small" color="default" variant="text">
-                    <VIcon size="22" icon="tabler-trash" />
-                  </VBtn>
-                </td> -->
               </tr>
             </tbody>
 
