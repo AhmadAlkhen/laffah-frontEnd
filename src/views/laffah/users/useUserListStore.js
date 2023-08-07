@@ -43,11 +43,12 @@ export const useUserListStore = defineStore('UserListStore', {
         const formData = new FormData();
         formData.append('name',userData.name);
         formData.append('email',userData.email);
+        formData.append('phone',userData.phone);
         formData.append('password',userData.password);
         formData.append('role',userData.role);
         formData.append('branch_id',userData.branch);
         formData.append('status',userData.status);
-        console.log(userData.status)
+        // console.log(userData.status)
         axios.post('/users/store', formData).then(response => resolve(response))
           .catch(error =>{
             // reject(error)

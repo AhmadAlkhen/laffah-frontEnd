@@ -606,21 +606,7 @@ const userName = computed(() => {
   return data.name;
 });
 
-// const filterProductsByCategory = () => {
-//   if (category.value) {
-//     orderDataNew.value = orderData.value;
-//     if (category.value.value == "0") {
-//       // console.log(category.value);
-//       fetchOrders();
-//       orderDataNew.value = orderData.value;
-//     } else {
-//       const newOrderData = orderData.value.filter(
-//         (item) => item.product.category_id === category.value.value
-//       );
-//       orderDataNew.value = newOrderData;
-//     }
-//   }
-// };
+
 const filterProductsByCategory = () => {
   if (category.value && category.value.length > 0) {
     orderDataNew.value = orderData.value;
@@ -641,24 +627,15 @@ const filterProductsByCategory = () => {
     orderDataNew.value = orderData.value;
   }
 };
-
 watch(
   () => category.value,
   () => {
     filterProductsByCategory();
   }
 );
-// const filterProductsByProduct = () => {
-//   if (searchQuery.value) {
-//     orderDataNew.value = orderData.value;
-//     const newOrderData = orderData.value.filter((item) =>
-//       item.product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-//     );
-//     orderDataNew.value = newOrderData;
-//   } else {
-//     orderDataNew.value = orderData.value;
-//   }
-// };
+
+
+
 const filterProductsByProduct = () => {
   if (searchQuery.value) {
     orderDataNew.value = orderData.value;
@@ -672,7 +649,6 @@ const filterProductsByProduct = () => {
     orderDataNew.value = orderData.value;
   }
 };
-
 // watch the searchQuery input
 watch(
   () => searchQuery.value,

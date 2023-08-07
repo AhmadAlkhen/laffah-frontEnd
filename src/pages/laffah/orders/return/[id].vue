@@ -18,6 +18,8 @@ import axios from "axios";
 const orderListStore = useOrderListStore();
 const route = useRoute();
 const orderData = ref([]);
+const orderDataNew = ref([]);
+
 const orderDetails = ref();
 const quantitySent = ref([]);
 const quantityReturn = ref([]);
@@ -26,6 +28,10 @@ const rating = ref([]);
 const comment = ref("");
 const listComments = ref([]);
 
+const category = ref([]);
+const categories = ref([]);
+
+const searchQuery = ref("");
 const isAllQtySentFilled = ref(false);
 
 // 👉 fetchInvoice
@@ -33,19 +39,52 @@ orderListStore
   .fetchOrder(Number(route.params.id))
   .then((response) => {
     orderData.value = response.data.data;
+    orderDataNew.value = response.data.data;
     orderDetails.value = response.data.order[0];
     quantityCount.value = response.data.data.length;
     listComments.value = response.data.comments;
+  })
+  .then(() => {
+    let categoriesSpec = [];
+    orderData.value.forEach((item) => {
+      const category = {
+        title: item.product.category.name,
+        value: item.product.category.id,
+      };
+
+      // check if category already exists in categoriesSpec array
+      if (!categoriesSpec.some((c) => c.value === category.value)) {
+        categoriesSpec.push(category);
+      }
+    });
+    categories.value = categoriesSpec;
   })
   .catch((error) => {
     console.log(error);
   });
 
+// const fetchOrders = () => {
+//   orderListStore
+//     .fetchOrder(Number(route.params.id))
+//     .then((response) => {
+//       orderData.value = response.data.data;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       toast.warning(err.response?.data?.message || err.message, {
+//         timeout: 2000,
+//       });
+//     });
+// };
 const fetchOrders = () => {
   orderListStore
     .fetchOrder(Number(route.params.id))
     .then((response) => {
       orderData.value = response.data.data;
+      orderDataNew.value = response.data.data;
+      orderDetails.value = response.data.order[0];
+      quantityCount.value = response.data.data.length;
+      listComments.value = response.data.comments;
     })
     .catch((err) => {
       console.log(err);
@@ -198,10 +237,81 @@ const userName = computed(() => {
   let data = JSON.parse(localStorage.getItem("userData"));
   return data.name;
 });
+
+const filterProductsByCategory = () => {
+  if (category.value && category.value.length > 0) {
+    orderDataNew.value = orderData.value;
+    if (category.value.some((cat) => cat.value == 0)) {
+      fetchOrders();
+      // orderDataNew.value = orderData.value;
+      // category.value = [{ title: "Select All", value: 0 }, ...categories.value];
+      orderDataNew.value = orderData.value;
+    } else {
+      const selectedCategoryValues = category.value.map((cat) => cat.value);
+      const newOrderData = orderData.value.filter((item) => {
+        return selectedCategoryValues.includes(item.product.category_id);
+      });
+      orderDataNew.value = newOrderData;
+    }
+  } else {
+    fetchOrders();
+    orderDataNew.value = orderData.value;
+  }
+};
+watch(
+  () => category.value,
+  () => {
+    filterProductsByCategory();
+  }
+);
+
+const filterProductsByProduct = () => {
+  if (searchQuery.value) {
+    orderDataNew.value = orderData.value;
+    const searchWords = searchQuery.value.toLowerCase().split(" ");
+    const newOrderData = orderData.value.filter((item) => {
+      const productName = item.product.name.toLowerCase();
+      return searchWords.every((word) => productName.includes(word));
+    });
+    orderDataNew.value = newOrderData;
+  } else {
+    orderDataNew.value = orderData.value;
+  }
+};
+// watch the searchQuery input
+watch(
+  () => searchQuery.value,
+  () => {
+    filterProductsByProduct();
+  }
+);
 </script>
 
 <template>
   <section v-if="orderData && orderDetails">
+    <VRow class="my-1 mx-1">
+      <VCol cols="12" md="6" sm="12" class="d-print-none">
+        <VAutocomplete
+          v-model="category"
+          :items="categories"
+          item-title="title"
+          item-value="value"
+          label="Select category"
+          persistent-hint
+          return-object
+          multiple
+          clearable
+        />
+      </VCol>
+      <VCol cols="12" md="6" sm="12" class="d-print-none">
+        <VTextField
+          v-model="searchQuery"
+          prepend-inner-icon="tabler-search"
+          label="Search"
+          placeholder="Search"
+        />
+      </VCol>
+    </VRow>
     <VRow>
       <VCol cols="12" md="12">
         <VCard>
@@ -287,7 +397,7 @@ const userName = computed(() => {
             </thead>
 
             <tbody>
-              <tr v-for="(item, index) in orderData" :key="item.id">
+              <tr v-for="(item, index) in orderDataNew" :key="item.id">
                 <td class="text-no-wrap">
                   <!-- <VAvatar
                     variant="tonal"

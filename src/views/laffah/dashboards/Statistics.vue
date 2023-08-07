@@ -14,7 +14,7 @@ const props = defineProps({
     </template>
     <VCardText class="pt-6">
       <VRow>
-        <VCol cols="6" md="3">
+        <VCol cols="6" md="2">
           <div class="d-flex">
             <VAvatar color="warning" variant="tonal" size="42" class="me-3">
               <VIcon size="24" icon="tabler-chart-pie-2" />
@@ -36,7 +36,7 @@ const props = defineProps({
             </div>
           </div>
         </VCol>
-        <VCol cols="6" md="3">
+        <VCol cols="6" md="2">
           <div class="d-flex">
             <VAvatar color="success" variant="tonal" size="42" class="me-3">
               <VIcon size="24" icon="tabler-shopping-cart" />
@@ -58,7 +58,7 @@ const props = defineProps({
             </div>
           </div>
         </VCol>
-        <VCol cols="6" md="3">
+        <VCol cols="6" md="2">
           <div class="d-flex">
             <VAvatar color="info" variant="tonal" size="42" class="me-3">
               <VIcon size="24" icon="tabler-check" />
@@ -80,9 +80,9 @@ const props = defineProps({
             </div>
           </div>
         </VCol>
-        <VCol cols="6" md="3">
+        <VCol cols="6" md="2">
           <div class="d-flex">
-            <VAvatar color="secondary" variant="tonal" size="42" class="me-3">
+            <VAvatar color="info" variant="tonal" size="42" class="me-3">
               <VIcon size="24" icon="tabler-arrow-back" />
             </VAvatar>
 
@@ -99,6 +99,49 @@ const props = defineProps({
               </RouterLink>
 
               <span class="text-caption">Returned </span>
+            </div>
+          </div>
+        </VCol>
+        <VCol cols="6" md="2">
+          <div class="d-flex">
+            <VAvatar color="secondary" variant="tonal" size="42" class="me-3">
+              <VIcon size="24" icon="tabler-alert-triangle" />
+            </VAvatar>
+
+            <div class="d-flex flex-column">
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                  query: { status: 'canceled' },
+                }"
+              >
+                <span class="text-h6 font-weight-medium">{{
+                  orderStatus.canceledTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Canceled </span>
+            </div>
+          </div>
+        </VCol>
+        <VCol cols="6" md="2">
+          <div class="d-flex">
+            <VAvatar color="success" variant="tonal" size="42" class="me-3">
+              <VIcon size="27" icon="tabler-activity" />
+            </VAvatar>
+
+            <div class="d-flex flex-column">
+              <RouterLink
+                :to="{
+                  name: 'laffah-orders-MyOrders',
+                }"
+              >
+                <span class="text-h5 font-weight-medium">{{
+                  orderStatus.ordersTotal
+                }}</span>
+              </RouterLink>
+
+              <span class="text-caption">Total </span>
             </div>
           </div>
         </VCol>

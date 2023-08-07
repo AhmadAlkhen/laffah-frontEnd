@@ -19,6 +19,7 @@ const isFormValid = ref(false);
 const refForm = ref();
 const name = ref("");
 const email = ref("");
+const phone = ref("");
 const password = ref("");
 const role = ref();
 const branch = ref("");
@@ -40,6 +41,7 @@ const onSubmit = () => {
         // id: 0,
         name: name.value,
         email: email.value,
+        phone: phone.value,
         password: password.value,
         role: role.value,
         branch: branch.value,
@@ -116,6 +118,15 @@ const handleDrawerModelValueUpdate = (val) => {
                   :rules="[requiredValidator]"
                   label="Password"
                   type="password"
+                />
+              </VCol>
+
+              <!-- 👉 Phone -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="phone"
+                  :rules="[requiredValidator]"
+                  label="Phone"
                 />
               </VCol>
 

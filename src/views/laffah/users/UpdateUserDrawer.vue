@@ -41,6 +41,7 @@ const onSubmit = () => {
         id: props.user.id,
         name: props.user.name,
         email: props.user.email,
+        phone: props.user.phone,
         password: password.value,
         role: props.user.role,
         branch_id: props.user.branch_id,
@@ -116,6 +117,14 @@ const handleDrawerModelValueUpdate = (val) => {
                   v-model="password"
                   label="Password"
                   type="password"
+                />
+              </VCol>
+              <!-- 👉 Phone -->
+              <VCol cols="12">
+                <VTextField
+                  v-model="user.phone"
+                  :rules="[requiredValidator]"
+                  label="Phone"
                 />
               </VCol>
               <!-- 👉 Role -->

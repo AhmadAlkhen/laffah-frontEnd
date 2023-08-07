@@ -412,6 +412,7 @@ onMounted(() => {
             <thead>
               <tr>
                 <th scope="col">User</th>
+                <th scope="col">Phone</th>
                 <th scope="col">Branch</th>
                 <th scope="col">Role</th>
                 <th scope="col">Is Creator</th>
@@ -448,6 +449,13 @@ onMounted(() => {
                   </div>
                 </td>
 
+                <!-- 👉 phone -->
+                <td>
+                  <span
+                    class="text-capitalize text-base font-weight-semibold"
+                    >{{ user.phone }}</span
+                  >
+                </td>
                 <!-- 👉 branch -->
                 <td>
                   <span
