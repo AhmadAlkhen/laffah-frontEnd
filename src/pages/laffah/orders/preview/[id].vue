@@ -789,7 +789,7 @@ watch(
             placeholder="Search"
           />
         </VCol>
-        <VCol cols="12" md="4" sm="12" class="d-print-none">
+        <VCol cols="12" md="4" sm="12" class="d-print-none"  v-if="userRole == 'admin' || userRole == 'warehouse' " >
             <VAutocomplete
               v-model="selectedAssistant"
               :items="assistants"
