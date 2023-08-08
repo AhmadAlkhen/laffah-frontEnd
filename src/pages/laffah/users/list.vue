@@ -88,6 +88,10 @@ const roles = [
     value: "warehouse",
   },
   {
+    title: "Assistant",
+    value: "assistant",
+  },
+  {
     title: "Carrier",
     value: "carrier",
   },
@@ -515,7 +519,7 @@ onMounted(() => {
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
                   <VBtn
-                    v-if="user.role == 'branch'"
+                    v-if="user.role == 'branch' || user.role == 'assistant' "
                     icon
                     size="x-small"
                     color="default"

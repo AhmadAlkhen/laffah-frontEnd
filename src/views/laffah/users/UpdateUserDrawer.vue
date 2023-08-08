@@ -136,6 +136,7 @@ const handleDrawerModelValueUpdate = (val) => {
                   :items="[
                     { title: 'Branch', value: 'branch' },
                     { title: 'Warehouse', value: 'warehouse' },
+                    { title: 'Assistant', value: 'assistant' },
                     { title: 'Carrier', value: 'carrier' },
                   ]"
                 />

@@ -35,6 +35,10 @@ const comment = ref("");
 const listComments = ref([]);
 const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
+const assistants = ref([]);
+const selectedAssistant = ref({ name: "", id: "" });
+const assistantCategories = ref([]);
+
 const categories = ref([]);
 const category = ref([]);
 const searchQuery = ref("");
@@ -105,6 +109,10 @@ orderListStore
 
 orderListStore.fetchCarriers().then((res) => {
   carriers.value = res.data.data;
+});
+
+orderListStore.fetchAssistants().then((res) => {
+  assistants.value = res.data.data;
 });
 
 const fetchOrders = () => {
@@ -634,8 +642,6 @@ watch(
   }
 );
 
-
-
 const filterProductsByProduct = () => {
   if (searchQuery.value) {
     orderDataNew.value = orderData.value;
@@ -656,6 +662,41 @@ watch(
     filterProductsByProduct();
   }
 );
+
+
+const filterProductsByAssistant = () => {
+  if (selectedAssistant.value) {
+    const assistantId = selectedAssistant.value.id;
+    
+    orderDataNew.value = orderData.value;
+    orderListStore.fetchAssistantCategories(assistantId).then((res) => {
+      const assistantCategoriesData = res.data.data;
+      assistantCategories.value = assistantCategoriesData;
+      // console.log(assistantCategoriesData);
+
+      // Filter the orderDataNew.value based on category_id present in assistantCategoriesData
+      const newOrderData = orderDataNew.value.filter((item) => {
+        const categoryIds = assistantCategoriesData.map((category) => category.category_id);
+        return categoryIds.includes(item.product.category_id);
+      });
+
+      // Use the newOrderData as needed
+      // console.log(newOrderData);
+       orderDataNew.value = newOrderData;
+    });
+  }else{
+    orderDataNew.value = orderData.value;
+  }
+};
+// watch the searchQuery input
+watch(
+  () => selectedAssistant.value,
+  () => {
+    filterProductsByAssistant();
+  }
+);
+
+
 </script>
 
 <template>
@@ -727,7 +768,7 @@ watch(
         </VCol>
       </VRow>
       <VRow class="my-1 mx-1">
-        <VCol cols="12" md="6" sm="12" class="d-print-none">
+        <VCol cols="12" md="4" sm="12" class="d-print-none">
           <VAutocomplete
             v-model="category"
             :items="categories"
@@ -740,13 +781,25 @@ watch(
             clearable
           />
         </VCol>
-        <VCol cols="12" md="6" sm="12" class="d-print-none">
+        <VCol cols="12" md="4" sm="12" class="d-print-none">
           <VTextField
             v-model="searchQuery"
             prepend-inner-icon="tabler-search"
             label="Search"
             placeholder="Search"
           />
+        </VCol>
+        <VCol cols="12" md="4" sm="12" class="d-print-none">
+            <VAutocomplete
+              v-model="selectedAssistant"
+              :items="assistants"
+              item-title="name"
+              item-value="id"
+              label="Select assistant"
+              persistent-hint
+              return-object
+              clearable
+            />
         </VCol>
       </VRow>
     </VCard>
@@ -769,13 +822,13 @@ watch(
                 </h6>
               </div>
               <!-- 👉 Address -->
-              <p class="mb-0">User: {{ orderDetails.user.name }}</p>
+              <p class="mb-0">User: {{ orderDetails.user.name }} <span v-if="orderDetails.user.phone">, {{  orderDetails.user.phone }}</span></p>
               <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
               <p class="mb-0" v-if="orderDetails.branch != null">
                 Assign to: # {{ orderDetails.branch.name }}
               </p>
               <p class="mb-0" v-if="orderDetails.carrier != null && !isEdit">
-                Carrier: # {{ orderDetails.carrier.name }}
+                Carrier: # {{ orderDetails.carrier.name }}  <span v-if="orderDetails.carrier.phone">, {{  orderDetails.carrier.phone }}</span>
               </p>
               <div v-if="isEdit">
                 <VAutocomplete
@@ -837,7 +890,7 @@ watch(
               </p>
 
               <!-- 👉 Completed Date -->
-              <p class="mb-2 v" v-if="orderDetails.processing_date">
+              <p class="mb-2 v" v-if="orderDetails.completed_date">
                 <span>Completed date : </span>
                 <span class="font-weight-semibold">{{
                   convertCreated(orderDetails.completed_date)

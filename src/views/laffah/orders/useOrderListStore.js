@@ -13,6 +13,13 @@ export const useOrderListStore = defineStore('OrderListStore', {
     fetchCarriers(){
       return axios.get('/users/carriers');
     },
+    fetchAssistants(){
+      return axios.get('/users/assistants');
+    },
+
+    fetchAssistantCategories(id){
+      return axios.get(`/users/assistant/categories/${id}`);
+    },
 
     // 👉 fetch single user
     fetchOrder(id) {
