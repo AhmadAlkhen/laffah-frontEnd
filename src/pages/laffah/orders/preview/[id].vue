@@ -845,6 +845,11 @@ watch(
                   "
                 />
               </div>
+           
+               <p class="mb-0" v-if="selectedAssistant">
+                picker :  <b >{{ selectedAssistant.name }} </b>
+              </p>
+           
             </div>
 
             <!-- 👉 Right Content -->
