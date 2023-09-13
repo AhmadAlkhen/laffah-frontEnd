@@ -336,24 +336,11 @@ onMounted(() => {
               />
               <!-- </div> -->
             </VCol>
-            <VCol lg="3" sm="6" cols="12">
-              <AppDateTimePicker v-model="ordersDate" label="Order date" />
-            </VCol>
             <VCol lg="2" sm="6" cols="12">
               <VSelect
                 v-model="assignedTo"
                 label="Select if assigned"
                 :items="AssignedToItems"
-                clearable
-                clear-icon="tabler-x"
-              />
-            </VCol>
-            <VCol lg="3" sm="6" cols="12">
-              <VSelect
-                v-if="userRole == 'admin' || userRole == 'warehouse'"
-                v-model="selectedBranch"
-                label="Select branch"
-                :items="branches"
                 clearable
                 clear-icon="tabler-x"
               />
@@ -366,6 +353,30 @@ onMounted(() => {
                 clearable
                 clear-icon="tabler-x"
               />
+            </VCol>
+            <VCol lg="3" sm="6" cols="12">
+              <AppDateTimePicker v-model="ordersDate" label="Order date" />
+            </VCol>
+
+            <VCol lg="3" sm="6" cols="12">
+              <VSelect
+                v-if="userRole == 'admin' || userRole == 'warehouse'"
+                v-model="selectedBranch"
+                label="Select branch"
+                :items="branches"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Search  -->
+              <div>
+                <VTextField
+                  v-model="searchQuery"
+                  placeholder="Search by order ID"
+                  density="compact"
+                />
+              </div>
             </VCol>
 
             <!-- <VCol md="3"> </VCol> -->
