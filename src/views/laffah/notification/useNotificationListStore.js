@@ -15,21 +15,20 @@ export const useNotificationListStore = defineStore('NotificationListStore', {
   actions: {
     // 👉 fetch Notifications
     fetchNotifications() {
-     axios.get('/notification/index').then((res)=>{
-      this.notifications = res.data.notification;
-    })
+      axios.get('/notifications/unread').then((res)=>{
+        this.notifications = res.data.unreadNotifications;
+      })
     },
 
-    // 👉 fetch Notifications
-    changeIsRead(id) {
-     axios.post("/notification/isRead", { id: id });
+    // 👉 markAsRead 
+    markAsRead(id) {
+     axios.post(`/notifications/${id}/read`);
      this.fetchNotifications();  
     },
     readAllNotifications() {
-     axios.post("/readAllNotifications" );
+     axios.post("/notifications/read" );
      this.fetchNotifications();  
     },
-
 
     // 👉 fetch Notifications
     // fetchNotifications() {

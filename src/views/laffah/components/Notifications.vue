@@ -22,8 +22,8 @@ const props = defineProps({
   },
 });
 
-const changeIsRead = (id) => {
-  NotificationStore.changeIsRead(id);
+const markAsRead = (id) => {
+  NotificationStore.markAsRead(id);
   // axios.post("/notification/isRead", { id: id });
 };
 const readAllNotifications = () => {
@@ -44,9 +44,10 @@ const readAllNotifications = () => {
 
       <VMenu
         activator="parent"
-        width="380px"
+        width="390px"
         :location="props.location"
         offset="14px"
+        height="450px"
       >
         <VList class="py-0">
           <!-- 👉 Header -->
@@ -71,21 +72,21 @@ const readAllNotifications = () => {
           <!-- 👉 Notifications list -->
           <template
             v-for="notification in props.notifications"
-            :key="notification.title"
+            :key="notification.id"
           >
             <RouterLink
               :to="{
                 name: 'laffah-orders-preview-id',
-                params: { id: notification.order_id },
+                params: { id: notification.data.order_id },
               }"
             >
               <VListItem
-                :title="notification.user.branch.name"
-                :subtitle="notification.message"
+                :title="notification.data.branch"
+                :subtitle="notification.data.message"
                 link
                 lines="one"
                 min-height="66px"
-                @click="changeIsRead(notification.id)"
+                @click="markAsRead(notification.id)"
               >
                 <!-- Slot: Prepend -->
                 <!-- Handles Avatar: Image, Icon, Text -->
@@ -98,8 +99,8 @@ const readAllNotifications = () => {
                       size="40"
                       variant="tonal"
                     >
-                      <span v-if="notification.user.name">{{
-                        avatarText(notification.user.name)
+                      <span v-if="notification.data.user">{{
+                        avatarText(notification.data.user)
                       }}</span>
                     </VAvatar>
                   </VListItemAction>
@@ -117,10 +118,16 @@ const readAllNotifications = () => {
           </template>
 
           <!-- 👉 Footer -->
-          <VListItem class="notification-section">
+          <VListItem
+            v-if="props.notifications.length > 0"
+            class="notification-section"
+          >
             <VBtn block @click="readAllNotifications()">
               READ ALL NOTIFICATIONS
             </VBtn>
+          </VListItem>
+          <VListItem class="notification-section" v-else>
+            <span>There are no notifications</span>
           </VListItem>
         </VList>
       </VMenu>
@@ -131,5 +138,18 @@ const readAllNotifications = () => {
 <style lang="scss">
 .notification-section {
   padding: 14px !important;
+}
+.v-list-item--one-line .v-list-item-subtitle {
+  -webkit-line-clamp: 2;
+}
+.v-list-item-subtitle {
+  margin-right: 2px;
+  font-size: 0.86rem;
+}
+</style>
+<style scoped>
+.v-list-item--density-default:not(.v-list-item--nav).v-list-item--one-line {
+  padding-inline-start: 4px;
+  padding-inline-end: 4px;
 }
 </style>

@@ -35,7 +35,7 @@ const { appRouteTransition } = useThemeConfig();
       <!-- <NavBarI18n /> -->
       <NavbarThemeSwitcher />
       <!-- <NavbarShortcuts /> -->
-      <!-- <NavBarNotifications class="me-2" /> -->
+      <NavBarNotifications class="me-2" />
       <UserProfile />
     </template>
 

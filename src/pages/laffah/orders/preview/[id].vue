@@ -74,38 +74,42 @@ const status = [
     value: "Canceled",
   },
 ];
-// 👉 fetchInvoice
-orderListStore
-  .fetchOrder(Number(route.params.id))
-  .then((response) => {
-    orderData.value = response.data.data;
-    orderDataNew.value = response.data.data;
-    orderDetails.value = response.data.order[0];
-    quantityCount.value = response.data.data.length;
-    listComments.value = response.data.comments;
-  })
-  .then(() => {
-    // let categoriesSpec = [{ title: "All", value: "0" }];
-    let categoriesSpec = [];
-    orderData.value.forEach((item) => {
-      const category = {
-        title: item.product.category.name,
-        value: item.product.category.id,
-      };
 
-      // check if category already exists in categoriesSpec array
-      if (!categoriesSpec.some((c) => c.value === category.value)) {
-        categoriesSpec.push(category);
-      }
+// 👉 fetchOrder
+const fetchOrder = () => {
+  orderListStore
+    .fetchOrder(Number(route.params.id))
+    .then((response) => {
+      orderData.value = response.data.data;
+      orderDataNew.value = response.data.data;
+      orderDetails.value = response.data.order[0];
+      quantityCount.value = response.data.data.length;
+      listComments.value = response.data.comments;
+    })
+    .then(() => {
+      // let categoriesSpec = [{ title: "All", value: "0" }];
+      let categoriesSpec = [];
+      orderData.value.forEach((item) => {
+        const category = {
+          title: item.product.category.name,
+          value: item.product.category.id,
+        };
+
+        // check if category already exists in categoriesSpec array
+        if (!categoriesSpec.some((c) => c.value === category.value)) {
+          categoriesSpec.push(category);
+        }
+      });
+      categories.value = categoriesSpec;
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
     });
-    categories.value = categoriesSpec;
-  })
-  .catch((err) => {
-    console.log(err);
-    toast.warning(err.response?.data?.message || err.message, {
-      timeout: 2000,
-    });
-  });
+};
+watch(() => route.params.id, fetchOrder, { immediate: true });
 
 orderListStore.fetchCarriers().then((res) => {
   carriers.value = res.data.data;
@@ -115,6 +119,7 @@ orderListStore.fetchAssistants().then((res) => {
   assistants.value = res.data.data;
 });
 
+// this for update
 const fetchOrders = () => {
   orderListStore
     .fetchOrder(Number(route.params.id))
@@ -614,7 +619,6 @@ const userName = computed(() => {
   return data.name;
 });
 
-
 const filterProductsByCategory = () => {
   if (category.value && category.value.length > 0) {
     orderDataNew.value = orderData.value;
@@ -663,11 +667,10 @@ watch(
   }
 );
 
-
 const filterProductsByAssistant = () => {
   if (selectedAssistant.value) {
     const assistantId = selectedAssistant.value.id;
-    
+
     orderDataNew.value = orderData.value;
     orderListStore.fetchAssistantCategories(assistantId).then((res) => {
       const assistantCategoriesData = res.data.data;
@@ -676,27 +679,26 @@ const filterProductsByAssistant = () => {
 
       // Filter the orderDataNew.value based on category_id present in assistantCategoriesData
       const newOrderData = orderDataNew.value.filter((item) => {
-        const categoryIds = assistantCategoriesData.map((category) => category.category_id);
+        const categoryIds = assistantCategoriesData.map(
+          (category) => category.category_id
+        );
         return categoryIds.includes(item.product.category_id);
       });
 
       // Use the newOrderData as needed
       // console.log(newOrderData);
-       orderDataNew.value = newOrderData;
+      orderDataNew.value = newOrderData;
     });
-  }else{
+  } else {
     orderDataNew.value = orderData.value;
   }
 };
-// watch the searchQuery input
 watch(
   () => selectedAssistant.value,
   () => {
     filterProductsByAssistant();
   }
 );
-
-
 </script>
 
 <template>
@@ -789,17 +791,23 @@ watch(
             placeholder="Search"
           />
         </VCol>
-        <VCol cols="12" md="4" sm="12" class="d-print-none"  v-if="userRole == 'admin' || userRole == 'warehouse' " >
-            <VAutocomplete
-              v-model="selectedAssistant"
-              :items="assistants"
-              item-title="name"
-              item-value="id"
-              label="Select assistant"
-              persistent-hint
-              return-object
-              clearable
-            />
+        <VCol
+          cols="12"
+          md="4"
+          sm="12"
+          class="d-print-none"
+          v-if="userRole == 'admin' || userRole == 'warehouse'"
+        >
+          <VAutocomplete
+            v-model="selectedAssistant"
+            :items="assistants"
+            item-title="name"
+            item-value="id"
+            label="Select assistant"
+            persistent-hint
+            return-object
+            clearable
+          />
         </VCol>
       </VRow>
     </VCard>
@@ -822,13 +830,21 @@ watch(
                 </h6>
               </div>
               <!-- 👉 Address -->
-              <p class="mb-0">User: {{ orderDetails.user.name }} <span v-if="orderDetails.user.phone">, {{  orderDetails.user.phone }}</span></p>
+              <p class="mb-0">
+                User: {{ orderDetails.user.name }}
+                <span v-if="orderDetails.user.phone"
+                  >, {{ orderDetails.user.phone }}</span
+                >
+              </p>
               <p class="mb-0">Branch: # {{ orderDetails.user.branch.name }}</p>
               <p class="mb-0" v-if="orderDetails.branch != null">
                 Assign to: # {{ orderDetails.branch.name }}
               </p>
               <p class="mb-0" v-if="orderDetails.carrier != null && !isEdit">
-                Carrier: # {{ orderDetails.carrier.name }}  <span v-if="orderDetails.carrier.phone">, {{  orderDetails.carrier.phone }}</span>
+                Carrier: # {{ orderDetails.carrier.name }}
+                <span v-if="orderDetails.carrier.phone"
+                  >, {{ orderDetails.carrier.phone }}</span
+                >
               </p>
               <div v-if="isEdit">
                 <VAutocomplete
@@ -845,11 +861,9 @@ watch(
                   "
                 />
               </div>
-           
-               <p class="mb-0" v-if="selectedAssistant">
-                picker :  <b >{{ selectedAssistant.name }} </b>
+              <p class="mb-0" v-if="selectedAssistant?.name">
+                picker : <b>{{ selectedAssistant.name }} </b>
               </p>
-           
             </div>
 
             <!-- 👉 Right Content -->

@@ -43,7 +43,7 @@ const { width: windowWidth } = useWindowSize();
         <!-- <NavBarI18n /> -->
         <NavbarThemeSwitcher />
         <!-- <NavbarShortcuts /> -->
-        <!-- <NavBarNotifications class="me-2" /> -->
+        <NavBarNotifications class="me-2" />
         <NavBarCart class="me-2" />
         <UserProfile />
       </div>
