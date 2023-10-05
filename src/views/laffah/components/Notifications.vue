@@ -47,7 +47,8 @@ const readAllNotifications = () => {
         width="390px"
         :location="props.location"
         offset="14px"
-        height="450px"
+        min-height="70px"
+        max-height="450px"
       >
         <VList class="py-0">
           <!-- 👉 Header -->
@@ -75,6 +76,7 @@ const readAllNotifications = () => {
             :key="notification.id"
           >
             <RouterLink
+              v-if="notification.data.order_id != 0"
               :to="{
                 name: 'laffah-orders-preview-id',
                 params: { id: notification.data.order_id },
@@ -113,6 +115,41 @@ const readAllNotifications = () => {
                 </template>
               </VListItem>
             </RouterLink>
+
+            <a v-else :href="notification.data.full_url" target="_blank">
+              <VListItem
+                :title="notification.data.branch"
+                :subtitle="notification.data.message"
+                link
+                lines="one"
+                min-height="66px"
+                @click="markAsRead(notification.id)"
+              >
+                <!-- Slot: Prepend -->
+                <!-- Handles Avatar: Image, Icon, Text -->
+                <template #prepend>
+                  <VListItemAction start>
+                    <VAvatar
+                      :color="notification.color || 'primary'"
+                      :image="notification.img || undefined"
+                      :icon="notification.icon || undefined"
+                      size="40"
+                      variant="tonal"
+                    >
+                      <span v-if="notification.data.user">{{
+                        avatarText(notification.data.user)
+                      }}</span>
+                    </VAvatar>
+                  </VListItemAction>
+                </template>
+                <!-- Slot: Append -->
+                <template #append>
+                  <small class="whitespace-no-wrap text-medium-emphasis">{{
+                    moment(notification.created_at).fromNow()
+                  }}</small>
+                </template>
+              </VListItem>
+            </a>
 
             <VDivider />
           </template>

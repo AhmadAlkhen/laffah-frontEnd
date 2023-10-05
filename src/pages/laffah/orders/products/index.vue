@@ -124,6 +124,38 @@ const exportProducts = () => {
       overlay.value = false;
     });
 };
+const exportFullReport = () => {
+  overlay.value = true;
+  // const from = startFrom.value ? startFrom.value : "";
+  // const to = startTo.value ? startTo.value : "";
+  // const q = searchQuery.value ? searchQuery.value : "";
+  // const status = selectedStatus.value ? selectedStatus.value : "";
+  // const branchId = selectedBranch.value ? selectedBranch.value : "";
+  // const shortage = selectedShortage.value
+  //   ? selectedShortage.value
+  //   : selectedShortage.value == "0"
+  //   ? 0
+  //   : "";
+  axios
+    .get("/order/products/export/full", {
+      // params: { from, to, q, status, branchId, shortage },
+      // responseType: "blob",
+    })
+    .then((response) => {
+      toast.success(response.data.message, {
+        timeout: 2000,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
+    });
+};
 
 onMounted(() => {
   productOrderStore
@@ -137,7 +169,7 @@ onMounted(() => {
       branches.value.forEach((element) => {
         branchesAll.push({ title: element.name, value: element.id });
       });
-      console.log(branchesAll);
+      // console.log(branchesAll);
       branches.value = branchesAll;
     })
     .catch((error) => {
@@ -326,8 +358,8 @@ const subQty = (q1, q2) => {
           <!-- <VCardText class="d-flex flex-wrap py-4 gap-4"> -->
           <VSpacer />
           <VRow class="py-2 px-2">
-            <VCol md="3" cols="12">
-              <div class="me-3" style="width: 80px">
+            <VCol md="2" cols="12">
+              <div class="me-3">
                 <VSelect
                   v-model="rowPerPage"
                   density="compact"
@@ -352,11 +384,24 @@ const subQty = (q1, q2) => {
                 density="compact"
               />
             </VCol>
-            <VCol md="3" cols="12">
+            <VCol md="2" cols="12">
               <VSelect
                 v-model="selectedStatus"
                 label="Select Status"
                 :items="status"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol
+              md="2"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+              cols="12"
+            >
+              <VSelect
+                v-model="selectedBranch"
+                label="Select branch"
+                :items="branches"
                 clearable
                 clear-icon="tabler-x"
               />
@@ -371,7 +416,7 @@ const subQty = (q1, q2) => {
               <AppDateTimePicker v-model="startTo" label="Start to" />
             </VCol>
             <VCol
-              md="3"
+              md="2"
               v-if="userRole == 'admin' || userRole == 'warehouse'"
               cols="12"
             >
@@ -383,7 +428,7 @@ const subQty = (q1, q2) => {
                 clear-icon="tabler-x"
               />
             </VCol>
-            <VCol cols="12" md="3" v-if="userRole == 'admin'">
+            <VCol cols="12" md="2" v-if="userRole == 'admin'">
               <VBtn
                 block
                 prepend-icon="tabler-screen-share"
@@ -391,10 +436,23 @@ const subQty = (q1, q2) => {
                 color="info"
                 class="mb-2"
                 @click="exportProducts"
+                :disabled="!(startFrom && startTo)"
               >
                 Export
               </VBtn>
             </VCol>
+            <!-- <VCol cols="12" md="2" v-if="userRole == 'admin'">
+              <VBtn
+                block
+                prepend-icon="tabler-report"
+                variant="tonal"
+                color="info"
+                class="mb-2"
+                @click="exportFullReport"
+              >
+                Export Full
+              </VBtn>
+            </VCol> -->
           </VRow>
 
           <!-- <div class="me-3" style="width: 250px"></div>

@@ -22,6 +22,7 @@ import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
 export const pusher_key = "d0bf58ecdb684e1b98d7";
 export const pusher_authEndpoint = "http://localhost:8000/broadcasting/auth";
+// export const pusher_authEndpoint = "https://api.safaqatii.com/broadcasting/auth";
 
 
 // import store from './store'

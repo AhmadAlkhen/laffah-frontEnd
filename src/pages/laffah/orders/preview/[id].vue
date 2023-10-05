@@ -397,6 +397,58 @@ const updateOrderDate = (orderId, orderDate) => {
       });
     });
 };
+// update Processin Date by admin
+const updateProcessingDate = (orderId, orderDate) => {
+  // console.log(orderId);
+  const processin_date = orderDate;
+  const order_id = orderId;
+  axios
+    .post("/order/processin-date/update", { order_id, processin_date })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
+// update Completed Date by admin
+const updateCompletedDate = (orderId, orderDate) => {
+  // console.log(orderId);
+  const completed_date = orderDate;
+  const order_id = orderId;
+  axios
+    .post("/order/completed-date/update", { order_id, completed_date })
+    .then((res) => {
+      if (res.status != 200) {
+        toast.warning(res.data.message, {
+          timeout: 2000,
+        });
+      } else {
+        toast.success(res.data.message, {
+          timeout: 1000,
+        });
+        // fetchOrders();
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    });
+};
 
 // update order status by admin
 const updtateOrderStatus = (orderId, orderStatus) => {
@@ -740,7 +792,7 @@ watch(
           </VBtn>
         </VCol>
         <VCol cols="12" md="2" class="d-print-none" v-if="userRole == 'admin'">
-          <!-- <VBtn
+          <VBtn
             block
             prepend-icon="tabler-edit"
             variant="tonal"
@@ -749,7 +801,7 @@ watch(
             @click="isEdit = !isEdit"
           >
             {{ !isEdit ? "Update" : "Done" }}
-          </VBtn> -->
+          </VBtn>
         </VCol>
         <VCol
           cols="12"
@@ -876,7 +928,7 @@ watch(
                 </span>
               </h6>
 
-              <!-- 👉 Issue Date -->
+              <!-- 👉 Order Date -->
               <p class="mb-2" v-if="!isEdit">
                 <span>Order date : </span>
                 <span class="font-weight-semibold">{{
@@ -901,20 +953,63 @@ watch(
               <!-- 👉 end Issue Date -->
 
               <!-- 👉 Processing Date -->
-              <p class="mb-2 v" v-if="orderDetails.processing_date">
-                <span>Processing date : </span>
-                <span class="font-weight-semibold">{{
-                  convertCreated(orderDetails.processing_date)
-                }}</span>
-              </p>
+              <div v-if="!isEdit">
+                <p class="mb-2 v" v-if="orderDetails.processing_date">
+                  <span>Processing date : </span>
+                  <span class="font-weight-semibold">{{
+                    convertCreated(orderDetails.processing_date)
+                  }}</span>
+                </p>
+              </div>
+              <div class="w-200 my-4 d-flex align-items-center" v-else>
+                <AppDateTimePicker
+                  v-model="orderDetails.processing_date"
+                  label="Processing Date"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+                />
+                <VIcon
+                  size="22"
+                  class="ml-1"
+                  icon="tabler-refresh"
+                  @click="
+                    updateProcessingDate(
+                      orderDetails.id,
+                      orderDetails.processing_date
+                    )
+                  "
+                />
+              </div>
+              <!-- 👉 End Processing Date -->
 
               <!-- 👉 Completed Date -->
-              <p class="mb-2 v" v-if="orderDetails.completed_date">
-                <span>Completed date : </span>
-                <span class="font-weight-semibold">{{
-                  convertCreated(orderDetails.completed_date)
-                }}</span>
-              </p>
+              <div v-if="!isEdit">
+                <p class="mb-2 v" v-if="orderDetails.completed_date">
+                  <span>Completed date : </span>
+                  <span class="font-weight-semibold">{{
+                    convertCreated(orderDetails.completed_date)
+                  }}</span>
+                </p>
+              </div>
+
+              <div class="w-200 my-4 d-flex align-items-center" v-else>
+                <AppDateTimePicker
+                  v-model="orderDetails.completed_date"
+                  label="Completed Date"
+                  :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
+                />
+                <VIcon
+                  size="22"
+                  class="ml-1"
+                  icon="tabler-refresh"
+                  @click="
+                    updateCompletedDate(
+                      orderDetails.id,
+                      orderDetails.completed_date
+                    )
+                  "
+                />
+              </div>
+              <!-- 👉End  Completed Date -->
 
               <!-- 👉 order status -->
               <p class="mb-2" v-if="!isEdit">
