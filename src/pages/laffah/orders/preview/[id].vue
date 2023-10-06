@@ -938,7 +938,7 @@ watch(
               <div class="w-200 mb-1 d-flex align-items-center" v-else>
                 <AppDateTimePicker
                   v-model="orderDetails.order_date"
-                  label="Date Issued"
+                  label="Order Date"
                   :config="{ enableTime: true, dateFormat: 'Y-m-d H:i' }"
                 />
                 <VIcon

@@ -6,7 +6,7 @@ const toast = useToast();
 import { pusher_key } from "@/main";
 import { pusher_authEndpoint } from "@/main";
 
-import soundurl from "../../../public/notification-sound.wav";
+import soundurl from "@/assets/notification-sound.mp3";
 
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
@@ -26,10 +26,15 @@ watchEffect(() => {
 const initAudio = () => {
   // const soundurl =
   //   "http://soundbible.com/mp3/analog-watch-alarm_daniel-simion.mp3";
-  const soundurl = "../../../public/notification-sound.wav";
+  // const soundurl = "../../../public/notification-sound.mp3";
 
-  const audio = new Audio(soundurl);
-  return audio;
+  try {
+    const audio = new Audio(soundurl);
+    return audio;
+  } catch (error) {
+    console.error("Error initializing audio:", error);
+    return null;
+  }
 };
 
 onMounted(() => {
