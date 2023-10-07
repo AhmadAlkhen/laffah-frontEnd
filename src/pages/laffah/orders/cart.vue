@@ -63,7 +63,7 @@ onMounted(() => {
   axios
     .get("/users/isCreator")
     .then((response) => {
-      console.log(response.data.data.isCreator);
+      // console.log(response.data.data.isCreator);
       isCreator.value = response.data.data.isCreator;
     })
     .catch((err) => {
@@ -77,7 +77,7 @@ const checkIsCreator = () => {
   axios
     .get("/users/isCreator")
     .then((response) => {
-      console.log(response.data.data.isCreator);
+      // console.log(response.data.data.isCreator);
       isCreator.value = response.data.data.isCreator;
     })
     .catch((err) => {
@@ -88,163 +88,168 @@ const checkIsCreator = () => {
     });
 };
 
-const saveOrderCart = () => {
-  if (isDisabled()) {
+const saveOrderCart = async () => {
+  // Current date and hour
+  const currentDate = new Date();
+  const currentHour = currentDate.getHours();
+
+  // Format current date and next day
+  const today = moment(currentDate).format("YYYY-MM-DD");
+  const nextDay = moment(currentDate).add(1, "days").format("YYYY-MM-DD");
+
+  // Check order date  HH:mm:ss
+  const orderDateFormatted =
+    orderDate && orderDate.value !== undefined
+      ? moment(orderDate.value).format("YYYY-MM-DD")
+      : moment(new Date()).format("YYYY-MM-DD");
+
+  const orderDateFormattedWithHour =
+    orderDate && orderDate.value !== undefined
+      ? moment(orderDate.value).format("YYYY-MM-DD HH:mm:ss")
+      : moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+  // Check conditions based on current hour
+  if (currentHour >= 0 && currentHour < 21 && orderDateFormatted !== today) {
+    // console.log("orderDateFormatted" + orderDateFormatted);
+
+    // alert("The order date should be equal to the current date");
+    // Swal.fire("Any fool can use a computer");
     Swal.fire({
-      title: "Are you sure?",
-      text: "Do you really want to save the order?!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, confirm!",
-      showDenyButton: isCreator.value,
-      denyButtonColor: "#3a9853",
-      denyButtonText: "Assign to branch",
-    }).then((result) => {
+      icon: "error",
+      title: "Oops...",
+      text: [
+        // "The order date should be equal to the current date",
+        " يجب أن يكون تاريخ الطلب هو تاريخ اليوم الحالي  " + today,
+      ],
+    });
+    return;
+  }
+
+  if (currentHour < 24 && currentHour >= 21 && orderDateFormatted !== nextDay) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: [
+        // "The order date should be equal to the date at the current time + 1 day",
+        " يجب أن يكون تاريخ الطلب هو تاريخ الغد  " + nextDay,
+      ],
+    });
+    return;
+  }
+
+  // Get cart data
+  const myCart = JSON.parse(localStorage.getItem("cart"));
+  const newArraydata = myCart.map((element) => ({
+    product_id: element.id,
+    quantity: element.quantity,
+  }));
+
+  // Prepare form data
+  const formData = new FormData();
+  formData.append("status", "pending");
+  formData.append("productsCount", newArraydata.length);
+  formData.append("products", JSON.stringify(newArraydata));
+
+  if (isInputEnabled) {
+    formData.append("order_date", orderDateFormattedWithHour);
+  } else {
+    formData.append("order_date", orderDateFormattedWithHour);
+  }
+
+  if (isDisabled()) {
+    try {
+      // Show confirmation dialog
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to save the order?!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, confirm!",
+        showDenyButton: isCreator.value,
+        denyButtonColor: "#3a9853",
+        denyButtonText: "Assign to branch",
+      });
+
       if (result.isConfirmed) {
         overlay.value = true;
-        let newArraydata = [];
-        const myCart = JSON.parse(localStorage.getItem("cart"));
-        myCart.forEach((element, index) => {
-          newArraydata.push({
-            product_id: element.id,
-            quantity: element.quantity,
-          });
-        });
 
-        const formData = new FormData();
-        // formData.append("user_id", "1");
-        formData.append("status", "pending");
-        formData.append("productsCount", newArraydata.length);
-        formData.append("products", JSON.stringify(newArraydata));
+        // Make the POST request to save the order
+        const response = await axios.post("/order/store", formData);
 
-        if (isInputEnabled) {
-          if (orderDate && orderDate.value !== undefined) {
-            const orderDateFormatted = moment(orderDate.value).format(
-              "YYYY-MM-DD HH:mm:ss"
-            );
-            formData.append("order_date", orderDateFormatted);
-          } else {
-            const currentDateFormatted = moment(new Date()).format(
-              "YYYY-MM-DD HH:mm:ss"
-            );
-            formData.append("order_date", currentDateFormatted);
-          }
-        } else {
-          const currentDateFormatted = moment(new Date()).format(
-            "YYYY-MM-DD HH:mm:ss"
+        if (response.status === 200) {
+          overlay.value = false;
+          ProductStore.resetCart();
+          Swal.fire(
+            "Added!",
+            "Your order has been added successfully.",
+            "success"
           );
-          formData.append("order_date", currentDateFormatted);
+          router.replace({ name: "laffah-orders-MyOrders" });
         }
-        axios
-          .post("/order/store", formData)
-          .then((response) => {
-            // console.log(response.status);
-            if (response.status == 200 || response.status == true) {
-              overlay.value = false;
-
-              ProductStore.resetCart();
-              Swal.fire(
-                "Added!",
-                "Your order has been added successfully.",
-                "success"
-              );
-            }
-          })
-          .then(() => {
-            router.replace({ name: "laffah-orders-MyOrders" });
-          })
-          .catch((err) => {
-            console.log(err);
-            toast.warning(err.response?.data?.message || err.message, {
-              timeout: 2000,
-            });
-            overlay.value = false;
-          });
-        // ------------------------------ Choose another Branch   --------------------------------------
       } else if (result.isDenied) {
-        Swal.fire({
+        // Select a branch
+        const branchResult = await Swal.fire({
           title: "Select a branch",
           input: "select",
-          inputOptions: {
-            ...branchesOptions,
-          },
+          inputOptions: { ...branchesOptions },
           inputPlaceholder: "Select a branch",
           showCancelButton: true,
-        }).then((result) => {
-          if (result.value) {
-            overlay.value = true;
-            let newArraydata = [];
-            const myCart = JSON.parse(localStorage.getItem("cart"));
-            myCart.forEach((element, index) => {
-              newArraydata.push({
-                product_id: element.id,
-                quantity: element.quantity,
-              });
-            });
-
-            const formData = new FormData();
-            // formData.append("user_id", "1");
-            formData.append("assign_branch_id", result.value);
-            formData.append("status", "pending");
-            formData.append("productsCount", newArraydata.length);
-            formData.append("products", JSON.stringify(newArraydata));
-
-            if (isInputEnabled) {
-              if (orderDate && orderDate.value !== undefined) {
-                const orderDateFormatted = moment(orderDate.value).format(
-                  "YYYY-MM-DD HH:mm:ss"
-                );
-                formData.append("order_date", orderDateFormatted);
-              } else {
-                const currentDateFormatted = moment(new Date()).format(
-                  "YYYY-MM-DD HH:mm:ss"
-                );
-                formData.append("order_date", currentDateFormatted);
-              }
-            } else {
-              const currentDateFormatted = moment(new Date()).format(
-                "YYYY-MM-DD HH:mm:ss"
-              );
-              formData.append("order_date", currentDateFormatted);
-            }
-            axios
-              .post("/order/store", formData)
-              .then((response) => {
-                // console.log(response.status);
-                if (response.status == 200 || response.status == true) {
-                  overlay.value = false;
-
-                  ProductStore.resetCart();
-                  Swal.fire(
-                    "Added!",
-                    "Your order has been added successfully.",
-                    "success"
-                  );
-                }
-              })
-              .then(() => {
-                router.replace({ name: "laffah-orders-MyOrders" });
-              })
-              .catch((err) => {
-                console.log(err);
-                toast.warning(err.response?.data?.message || err.message, {
-                  timeout: 2000,
-                });
-                overlay.value = false;
-              });
-            // ------------------------------ Choose another Branch   --------------------------------------
-
-            // Swal.fire(`You selected: ${result.value}`);
-          }
         });
+
+        if (branchResult.value) {
+          overlay.value = true;
+          formData.append("assign_branch_id", branchResult.value);
+
+          // Make the POST request to save the order with branch assignment
+          const response = await axios.post("/order/store", formData);
+
+          if (response.status === 200) {
+            overlay.value = false;
+            ProductStore.resetCart();
+            Swal.fire(
+              "Added!",
+              "Your order has been added successfully.",
+              "success"
+            );
+            router.replace({ name: "laffah-orders-MyOrders" });
+          }
+        }
       }
-    });
+    } catch (error) {
+      console.log(error);
+      toast.warning(error.response?.data?.message || error.message, {
+        timeout: 2000,
+      });
+      overlay.value = false;
+    }
   } else {
     toast.warning("Please fill in all fields", {
       timeout: 2000,
     });
+  }
+};
+
+const checkOrderDate = () => {
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // Check if the hour is after 24 (which is not possible, so we assume you meant midnight)
+  if (currentHour >= 1 && currentHour <= 6) {
+    console.log("currentHour :" + currentHour);
+    console.log("now:" + now);
+    return now;
+  }
+
+  // Check if the hour is after 21 and before 24
+  if (currentHour >= 21 && currentHour < 24) {
+    // Add one day to the current date
+    now.setDate(now.getDate() + 1);
+
+    console.log("currentHour 2:" + currentHour);
+    console.log("now2:" + now);
+    return now;
   }
 };
 
