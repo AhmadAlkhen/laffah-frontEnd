@@ -32,6 +32,7 @@ const quantityConfirm = ref([]);
 const quantityCount = ref();
 const rating = ref([]);
 const comment = ref("");
+const commentSending = ref(false);
 const listComments = ref([]);
 const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
@@ -636,6 +637,7 @@ const completedOrder = () => {
 };
 
 const addMessage = () => {
+  commentSending.value = true;
   const orderId = orderDetails.value.id;
 
   const formData = new FormData();
@@ -659,6 +661,9 @@ const addMessage = () => {
     })
     .catch((err) => {
       console.log(err);
+    })
+    .finally(() => {
+      commentSending.value = false;
     });
 };
 
@@ -1522,10 +1527,10 @@ watch(
                 block
                 prepend-icon="tabler-send"
                 class="mb-2"
-                :disabled="!comment"
+                :disabled="!comment || commentSending"
                 @click="addMessage()"
               >
-                Send
+                {{ commentSending ? "Sendding..." : "Send" }}
               </VBtn>
             </VCol>
           </VRow>

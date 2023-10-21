@@ -109,7 +109,7 @@ const saveOrderCart = async () => {
       : moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
   // Check conditions based on current hour
-  if (currentHour >= 0 && currentHour < 21 && orderDateFormatted !== today) {
+  if (currentHour >= 0 && currentHour < 20 && orderDateFormatted !== today) {
     // console.log("orderDateFormatted" + orderDateFormatted);
 
     // alert("The order date should be equal to the current date");
@@ -125,7 +125,7 @@ const saveOrderCart = async () => {
     return;
   }
 
-  if (currentHour < 24 && currentHour >= 21 && orderDateFormatted !== nextDay) {
+  if (currentHour < 24 && currentHour >= 20 && orderDateFormatted !== nextDay) {
     Swal.fire({
       icon: "error",
       title: "Oops...",
