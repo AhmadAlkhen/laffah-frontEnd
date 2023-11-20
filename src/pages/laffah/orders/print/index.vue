@@ -31,19 +31,31 @@ const router = useRouter();
 const orderData = ref();
 const html2Pdf = ref(null);
 const isDownloading = ref(false);
+const isDownloadingOrder = ref(false);
 const ordersData = ref([]);
 const currentOrder = ref(null);
 const ordersDate = ref();
 const selectedBranch = ref();
 const branches = ref([]);
 const message = ref(null);
+const messageOrder = ref(null);
+const searchQuery = ref(null);
 
-// const printOrders = () => {
+// const printOrder = () => {
 //   isDownloading.value = true;
+
+//   const order_id = searchQuery.value;
 //   orderListStore
-//     .fetchOrdersToPrint()
+//     .fetchOrderToPrint(order_id)
 //     .then((response) => {
 //       ordersData.value = response.data.data;
+
+//       if (ordersData.value.length < 1) {
+//         toast.success("There are no orders to download it", {
+//           timeout: 2000,
+//         });
+//         return Promise.resolve();
+//       }
 //     })
 //     .then(() => {
 //       html2Pdf.value.generatePdf();
@@ -58,6 +70,43 @@ const message = ref(null);
 //       isDownloading.value = false;
 //     });
 // };
+const printOrder = async () => {
+  isDownloadingOrder.value = true;
+
+  const order_id = searchQuery.value;
+  try {
+    const response = await orderListStore.fetchOrderToPrint(order_id);
+    ordersData.value = response.data.data;
+    if (ordersData.value.length < 1) {
+      toast.success("There are no order to download it", {
+        timeout: 2000,
+      });
+    } else {
+      messageOrder.value =
+        "There are " +
+        ordersData.value.length +
+        " order that will be downloaded";
+
+      for (const order of ordersData.value) {
+        orderData.value = order;
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            html2Pdf.value.generatePdf();
+            resolve();
+          }, 2000); // Delay of 1 second
+        });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    toast.warning(err.response?.data?.message || err.message, {
+      timeout: 2000,
+    });
+  } finally {
+    isDownloadingOrder.value = false;
+    messageOrder.value = null;
+  }
+};
 
 const printOrders = async () => {
   isDownloading.value = true;
@@ -170,6 +219,31 @@ onMounted(() => {
         </VCol>
         <VCol cols="12" md="3" class="d-print-none" v-if="message">
           <p class="message mt-1">{{ message }}</p>
+        </VCol>
+      </VRow>
+      <VRow class="my-1 ml-1">
+        <VCol lg="3" sm="6" cols="12">
+          <VTextField
+            v-model="searchQuery"
+            placeholder="Print by order ID"
+            density="compact"
+          />
+        </VCol>
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-file-download"
+            variant="tonal"
+            color="primary"
+            class="mb-2"
+            @click="printOrder"
+            :disabled="!searchQuery"
+          >
+            {{ isDownloadingOrder ? "PLease Wait..." : "Download PDF" }}
+          </VBtn>
+        </VCol>
+        <VCol cols="12" md="3" class="d-print-none" v-if="messageOrder">
+          <p class="message mt-1">{{ messageOrder }}</p>
         </VCol>
       </VRow>
     </VCard>

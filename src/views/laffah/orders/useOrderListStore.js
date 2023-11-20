@@ -36,5 +36,10 @@ export const useOrderListStore = defineStore('OrderListStore', {
         axios.get('/order/print',{params}).then(response => resolve(response)).catch(error => reject(error))
       })
     },
+    fetchOrderToPrint(id) {
+      return new Promise((resolve, reject) => {
+        axios.get(`/order/print/${id}`,).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
   },
 })
