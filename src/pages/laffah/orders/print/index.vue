@@ -93,7 +93,7 @@ const printOrder = async () => {
           setTimeout(() => {
             html2Pdf.value.generatePdf();
             resolve();
-          }, 2000); // Delay of 1 second
+          }, 1000); // Delay of 1 second
         });
       }
     }
@@ -265,7 +265,7 @@ onMounted(() => {
           orderData.user.branch.name +
           '__' +
           convertCreatedWithoutHour(ordersDate),
-        margin: [5, 1],
+        margin: [8, 1],
       }"
     >
       <!-- :filename="'Order#' + orderData.id + '__' + convertCreated(ordersDate)"  image: { type: 'jpeg', quality: 0.99 }, -->
@@ -393,10 +393,10 @@ onMounted(() => {
                         height="80px"
                       />
                     </td> -->
-                <td class="text-sm text-no-normal">
+                <td class="text-sm text-no-normal text-arabic">
                   {{ item.product.name }}
                 </td>
-                <td class="text-no-wrap">
+                <td class="text-no-wrap text-arabic">
                   {{ item.product.unit }}
                 </td>
                 <td class="text-no-wrap">
@@ -544,8 +544,15 @@ onMounted(() => {
   width: 200px;
   white-space: normal;
 }
+.text-arabic {
+  word-wrap: initial;
+  font-family: "Times New Roman";
+}
 
 .message {
   color: #d24552;
+}
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
 </style>
