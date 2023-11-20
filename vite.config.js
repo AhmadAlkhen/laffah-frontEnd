@@ -96,6 +96,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     exclude: ['vuetify'],
+    include: ['jspdf'],
     entries: [
       './src/**/*.vue',
     ],

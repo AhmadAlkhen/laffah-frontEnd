@@ -40,6 +40,7 @@
         "vue-toastification": "^2.0.0-rc.5",
         "vue2-dropzone-vue3": "^1.1.0",
         "vue3-apexcharts": "^1.4.1",
+        "vue3-html2pdf": "^1.1.2",
         "vue3-perfect-scrollbar": "^1.6.0",
         "vuetify": "3.0.3",
         "vuex": "^4.0.2",

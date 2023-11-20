@@ -10,6 +10,8 @@ export const useOrderListStore = defineStore('OrderListStore', {
     },
 
 
+
+
     fetchCarriers(){
       return axios.get('/users/carriers');
     },
@@ -25,6 +27,13 @@ export const useOrderListStore = defineStore('OrderListStore', {
     fetchOrder(id) {
       return new Promise((resolve, reject) => {
         axios.get(`/order/preview/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+
+
+    fetchOrdersToPrint(params) {
+      return new Promise((resolve, reject) => {
+        axios.get('/order/print',{params}).then(response => resolve(response)).catch(error => reject(error))
       })
     },
   },

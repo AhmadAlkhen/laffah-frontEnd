@@ -84,6 +84,13 @@ export default [
       action: "read",
       subject: "Auth",
     },
+    {
+      title: 'Print Orders ',
+      icon: { icon: 'tabler-files' },
+      to: 'laffah-orders-print',
+      action: "read",
+      subject: "Auth",
+    },
     // {
     //   title: 'Cart',
     //   icon: { icon: 'tabler-file' },
