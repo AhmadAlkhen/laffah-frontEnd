@@ -15,7 +15,6 @@ headers: {'Content-Type': 'application/form-data','Authorization':token}
 })
 // http://localhost:8000/api/
 //7000
-// https://api.safaqatii.com/api/
 // https://api.safacati.com/api/
 // config.headers.Authorization =  token ? `Bearer ${token}` : '';
 // axios.defaults.headers.common['Authorization'] = token ? `Bearer ${token}` : '';

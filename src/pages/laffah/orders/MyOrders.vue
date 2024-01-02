@@ -39,6 +39,7 @@ const totalOrders = ref(0);
 const orders = ref([]);
 const branches = ref([]);
 const isLoading = ref(false);
+const overlay = ref(false);
 const assignedTo = ref();
 
 // 👉 Fetching orders
@@ -313,9 +314,89 @@ onMounted(() => {
 // onMounted(() => {
 //   console.log(route.query.status);
 // });
+
+const saveFiltersToLocalStorage = () => {
+  localStorage.setItem(
+    "filters",
+    JSON.stringify({
+      selectedStatus: selectedStatus.value,
+      selectedBranch: selectedBranch.value,
+      ordersDate: ordersDate.value,
+      searchQuery: searchQuery.value,
+      assignedTo: assignedTo.value,
+    })
+  );
+};
+onMounted(() => {
+  const savedFilters = JSON.parse(localStorage.getItem("filters"));
+  if (savedFilters) {
+    selectedStatus.value = savedFilters.selectedStatus;
+    selectedBranch.value = savedFilters.selectedBranch;
+    ordersDate.value = savedFilters.ordersDate;
+    searchQuery.value = savedFilters.searchQuery;
+    assignedTo.value = savedFilters.assignedTo;
+  }
+});
+watch(
+  [selectedStatus, selectedBranch, ordersDate, searchQuery, assignedTo],
+  () => {
+    saveFiltersToLocalStorage();
+  }
+);
+
+const resetFilters = () => {
+  selectedStatus.value = null;
+  selectedBranch.value = null;
+  ordersDate.value = null;
+  searchQuery.value = "";
+  assignedTo.value = null;
+
+  localStorage.removeItem("filters");
+};
+
+const exportOrders = () => {
+  overlay.value = true;
+  const orders_date = ordersDate.value ? ordersDate.value : "";
+  const q = searchQuery.value ? searchQuery.value : "";
+  const status = selectedStatus.value ? selectedStatus.value : "";
+  const branchId = selectedBranch.value ? selectedBranch.value : "";
+  const assigned_to =
+    assignedTo.value || assignedTo.value == 0 ? assignedTo.value : "";
+
+  axios
+    .get("/order/my-orders/export", {
+      params: { orders_date, q, status, branchId, assigned_to },
+      responseType: "blob",
+    })
+    .then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      const fileName = `Orders.xlsx`;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
+    });
+};
 </script>
 
 <template>
+  <VOverlay v-model="overlay" class="align-center justify-center" persistent>
+    <VProgressCircular
+      color="primary"
+      indeterminate
+      size="64"
+    ></VProgressCircular>
+  </VOverlay>
   <section>
     <VRow>
       <VCol cols="12">
@@ -377,6 +458,24 @@ onMounted(() => {
                   density="compact"
                 />
               </div>
+            </VCol>
+            <VCol class="" cols="12" md="3">
+              <!-- 👉 Search  -->
+              <VBtn prepend-icon="tabler-filter-off" @click="resetFilters()">
+                Reset
+              </VBtn>
+            </VCol>
+            <VCol cols="12" md="2" v-if="userRole == 'admin'">
+              <VBtn
+                block
+                prepend-icon="tabler-transfer-out"
+                variant="tonal"
+                color="info"
+                class="mb-2"
+                @click="exportOrders"
+              >
+                Export
+              </VBtn>
             </VCol>
 
             <!-- <VCol md="3"> </VCol> -->

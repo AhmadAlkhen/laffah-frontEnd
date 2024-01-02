@@ -126,8 +126,8 @@ const exportProducts = () => {
 };
 const exportFullReport = () => {
   overlay.value = true;
-  // const from = startFrom.value ? startFrom.value : "";
-  // const to = startTo.value ? startTo.value : "";
+  const from = startFrom.value ? startFrom.value : "";
+  const to = startTo.value ? startTo.value : "";
   // const q = searchQuery.value ? searchQuery.value : "";
   // const status = selectedStatus.value ? selectedStatus.value : "";
   // const branchId = selectedBranch.value ? selectedBranch.value : "";
@@ -138,7 +138,7 @@ const exportFullReport = () => {
   //   : "";
   axios
     .get("/order/products/export/full", {
-      // params: { from, to, q, status, branchId, shortage },
+      params: { from, to },
       // responseType: "blob",
     })
     .then((response) => {
@@ -449,6 +449,7 @@ const subQty = (q1, q2) => {
                 color="info"
                 class="mb-2"
                 @click="exportFullReport"
+                :disabled="!(startFrom && startTo)"
               >
                 Export Full
               </VBtn>
