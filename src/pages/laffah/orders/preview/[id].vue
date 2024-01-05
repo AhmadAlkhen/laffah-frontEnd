@@ -110,7 +110,12 @@ const fetchOrder = () => {
       });
     });
 };
+
 watch(() => route.params.id, fetchOrder, { immediate: true });
+
+onMounted(() => {
+  console.log(route.params.id);
+});
 
 orderListStore.fetchCarriers().then((res) => {
   carriers.value = res.data.data;

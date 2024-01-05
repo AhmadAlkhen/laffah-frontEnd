@@ -39,8 +39,8 @@ const totalOrders = ref(0);
 const orders = ref([]);
 const branches = ref([]);
 const isLoading = ref(false);
-const overlay = ref(false);
 const assignedTo = ref();
+const overlay = ref(false);
 
 // 👉 Fetching orders
 const fetchOrders = () => {
@@ -311,9 +311,6 @@ onMounted(() => {
       console.error(error);
     });
 });
-// onMounted(() => {
-//   console.log(route.query.status);
-// });
 
 const saveFiltersToLocalStorage = () => {
   localStorage.setItem(
@@ -327,45 +324,25 @@ const saveFiltersToLocalStorage = () => {
     })
   );
 };
-onMounted(() => {
-  const savedFilters = JSON.parse(localStorage.getItem("filters"));
-  if (savedFilters) {
-    selectedStatus.value = savedFilters.selectedStatus;
-    selectedBranch.value = savedFilters.selectedBranch;
-    ordersDate.value = savedFilters.ordersDate;
-    searchQuery.value = savedFilters.searchQuery;
-    assignedTo.value = savedFilters.assignedTo;
-  }
-});
-watch(
-  [selectedStatus, selectedBranch, ordersDate, searchQuery, assignedTo],
-  () => {
-    saveFiltersToLocalStorage();
-  }
-);
-
-const resetFilters = () => {
-  selectedStatus.value = null;
-  selectedBranch.value = null;
-  ordersDate.value = null;
-  searchQuery.value = "";
-  assignedTo.value = null;
-
-  localStorage.removeItem("filters");
-};
 
 const exportOrders = () => {
   overlay.value = true;
-  const orders_date = ordersDate.value ? ordersDate.value : "";
-  const q = searchQuery.value ? searchQuery.value : "";
-  const status = selectedStatus.value ? selectedStatus.value : "";
-  const branchId = selectedBranch.value ? selectedBranch.value : "";
-  const assigned_to =
-    assignedTo.value || assignedTo.value == 0 ? assignedTo.value : "";
+
+  const params = {};
+  if (ordersDate.value && ordersDate.value !== "")
+    params.orders_date = ordersDate.value;
+  if (searchQuery.value && searchQuery.value !== "")
+    params.q = searchQuery.value;
+  if (selectedStatus.value && selectedStatus.value !== "")
+    params.status = selectedStatus.value;
+  if (selectedBranch.value && selectedBranch.value !== "")
+    params.branchId = selectedBranch.value;
+  if (assignedTo.value || assignedTo.value === 0)
+    params.assigned_to = assignedTo.value;
 
   axios
     .get("/order/my-orders/export", {
-      params: { orders_date, q, status, branchId, assigned_to },
+      params: params,
       responseType: "blob",
     })
     .then((response) => {
@@ -387,17 +364,42 @@ const exportOrders = () => {
       overlay.value = false;
     });
 };
+
+onMounted(() => {
+  const savedFilters = JSON.parse(localStorage.getItem("filters"));
+  if (savedFilters) {
+    selectedStatus.value = savedFilters.selectedStatus;
+    selectedBranch.value = savedFilters.selectedBranch;
+    ordersDate.value = savedFilters.ordersDate;
+    searchQuery.value = savedFilters.searchQuery;
+    assignedTo.value = savedFilters.assignedTo;
+  }
+});
+watch(
+  [selectedStatus, selectedBranch, ordersDate, searchQuery, assignedTo],
+  () => {
+    saveFiltersToLocalStorage();
+  }
+);
+const resetFilters = () => {
+  selectedStatus.value = null;
+  selectedBranch.value = null;
+  ordersDate.value = null;
+  searchQuery.value = "";
+  assignedTo.value = null;
+  localStorage.removeItem("filters");
+};
 </script>
 
 <template>
-  <VOverlay v-model="overlay" class="align-center justify-center" persistent>
-    <VProgressCircular
-      color="primary"
-      indeterminate
-      size="64"
-    ></VProgressCircular>
-  </VOverlay>
   <section>
+    <VOverlay v-model="overlay" class="align-center justify-center" persistent>
+      <VProgressCircular
+        color="primary"
+        indeterminate
+        size="64"
+      ></VProgressCircular>
+    </VOverlay>
     <VRow>
       <VCol cols="12">
         <VCard title="Search Filter">
@@ -459,26 +461,26 @@ const exportOrders = () => {
                 />
               </div>
             </VCol>
+
+            <!-- <VCol md="3"> </VCol> -->
             <VCol class="" cols="12" md="3">
-              <!-- 👉 Search  -->
               <VBtn prepend-icon="tabler-filter-off" @click="resetFilters()">
                 Reset
               </VBtn>
             </VCol>
-            <VCol cols="12" md="2" v-if="userRole == 'admin'">
+
+            <VCol cols="12" md="3" v-if="userRole == 'admin'">
               <VBtn
                 block
                 prepend-icon="tabler-transfer-out"
                 variant="tonal"
                 color="info"
                 class="mb-2"
-                @click="exportOrders"
+                @click="exportOrders()"
               >
                 Export
               </VBtn>
             </VCol>
-
-            <!-- <VCol md="3"> </VCol> -->
           </VRow>
           <VDivider />
 
