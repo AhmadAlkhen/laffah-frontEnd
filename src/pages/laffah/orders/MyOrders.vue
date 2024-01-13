@@ -42,6 +42,9 @@ const isLoading = ref(false);
 const assignedTo = ref();
 const overlay = ref(false);
 
+const ordersDateFrom = ref();
+const ordersDateTo = ref();
+
 // 👉 Fetching orders
 const fetchOrders = () => {
   isLoading.value = true;
@@ -64,6 +67,12 @@ const fetchOrders = () => {
   }
   if (assignedTo.value || assignedTo.value == 0) {
     params.assignedTo = assignedTo.value;
+  }
+  if (ordersDateFrom.value) {
+    params.ordersDateFrom = ordersDateFrom.value;
+  }
+  if (ordersDateTo.value) {
+    params.ordersDateTo = ordersDateTo.value;
   }
 
   orderListStore
@@ -321,6 +330,8 @@ const saveFiltersToLocalStorage = () => {
       ordersDate: ordersDate.value,
       searchQuery: searchQuery.value,
       assignedTo: assignedTo.value,
+      ordersDateFrom: ordersDateFrom.value,
+      ordersDateTo: ordersDateTo.value,
     })
   );
 };
@@ -339,6 +350,12 @@ const exportOrders = () => {
     params.branchId = selectedBranch.value;
   if (assignedTo.value || assignedTo.value === 0)
     params.assigned_to = assignedTo.value;
+
+  if (ordersDateFrom.value || ordersDateFrom.value !== "")
+    params.ordersDateFrom = ordersDateFrom.value;
+
+  if (ordersDateTo.value || ordersDateTo.value !== "")
+    params.ordersDateTo = ordersDateTo.value;
 
   axios
     .get("/order/my-orders/export", {
@@ -373,6 +390,8 @@ onMounted(() => {
     ordersDate.value = savedFilters.ordersDate;
     searchQuery.value = savedFilters.searchQuery;
     assignedTo.value = savedFilters.assignedTo;
+    ordersDateFrom.value = savedFilters.ordersDateFrom;
+    ordersDateTo.value = savedFilters.ordersDateTo;
   }
 });
 watch(
@@ -387,6 +406,8 @@ const resetFilters = () => {
   ordersDate.value = null;
   searchQuery.value = "";
   assignedTo.value = null;
+  ordersDateFrom.value = null;
+  ordersDateTo.value = null;
   localStorage.removeItem("filters");
 };
 </script>
@@ -438,7 +459,11 @@ const resetFilters = () => {
               />
             </VCol>
             <VCol lg="3" sm="6" cols="12">
-              <AppDateTimePicker v-model="ordersDate" label="Order date" />
+              <AppDateTimePicker
+                v-model="ordersDate"
+                label="Order date"
+                clearable
+              />
             </VCol>
 
             <VCol lg="3" sm="6" cols="12">
@@ -468,8 +493,23 @@ const resetFilters = () => {
                 Reset
               </VBtn>
             </VCol>
-
-            <VCol cols="12" md="3" v-if="userRole == 'admin'">
+          </VRow>
+          <VRow v-if="userRole == 'admin'" class="py-2 px-2">
+            <VCol cols="12" md="3">
+              <AppDateTimePicker
+                v-model="ordersDateFrom"
+                label="Orders date From"
+                clearable
+              />
+            </VCol>
+            <VCol cols="12" md="3">
+              <AppDateTimePicker
+                v-model="ordersDateTo"
+                label="Orders date To"
+                clearable
+              />
+            </VCol>
+            <VCol cols="12" md="3">
               <VBtn
                 block
                 prepend-icon="tabler-transfer-out"
