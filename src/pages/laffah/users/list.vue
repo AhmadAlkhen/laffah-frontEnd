@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import AddNewUserDrawer from "@/views/laffah/users/AddNewUserDrawer.vue";
 import UpdateUserDrawer from "@/views/laffah/users/UpdateUserDrawer.vue";
 import UpdateUserCategoryDrawer from "@/views/laffah/users/UpdateUserCategoryDrawer.vue";
+import UpdateUserProductDrawer from "@/views/laffah/users/UpdateUserProductDrawer.vue";
 import { useUserListStore } from "@/views/laffah/users/useUserListStore";
 import { avatarText } from "@core/utils/formatters";
 import axios from "axios";
@@ -24,9 +25,11 @@ const branchesAll = ref([]);
 const categories = ref([]);
 const userData = ref({});
 const userCategoryData = ref({});
+const userProductData = ref({});
 const isLoading = ref(false);
 const user_Id = ref();
 const isStore = ref(true);
+const isStoreProducts = ref(true);
 
 // 👉 Fetching users
 const fetchUsers = () => {
@@ -80,6 +83,10 @@ const status = [
 ];
 const roles = [
   {
+    title: "Admin",
+    value: "admin",
+  },
+  {
     title: "Branch",
     value: "branch",
   },
@@ -90,6 +97,10 @@ const roles = [
   {
     title: "Assistant",
     value: "assistant",
+  },
+  {
+    title: "Helper",
+    value: "helper",
   },
   {
     title: "Carrier",
@@ -143,6 +154,7 @@ const convertStatus = (status) => {
 const isAddNewUserDrawerVisible = ref(false);
 const isUpdateUserDrawerVisible = ref(false);
 const isUpdateUserCategoryDrawerVisible = ref(false);
+const isUpdateUserProductDrawerVisible = ref(false);
 
 // 👉 Computing pagination data
 const paginationData = computed(() => {
@@ -188,6 +200,24 @@ const getUserCategory = (userId) => {
     isStore.value = userCategoriesAll.length > 0 ? false : true;
     user_Id.value = userId;
     isUpdateUserCategoryDrawerVisible.value = true;
+  });
+};
+const getUserProducts = (userId) => {
+  let userProducts = [];
+  let userProductsAll = [];
+  let userProductsObj = {};
+  userListStore.getUserProduct(userId).then((res) => {
+    userProductsAll = res.data.data;
+
+    userProductsAll.forEach((el) => {
+      userProducts.push({ tilte: el.product.name, value: el.product.id });
+    });
+
+    userProductsObj.data = userProducts;
+    userProductData.value = userProductsObj;
+    isStoreProducts.value = userProductsAll.length > 0 ? false : true;
+    user_Id.value = userId;
+    isUpdateUserProductDrawerVisible.value = true;
   });
 };
 const updateUser = (userData) => {
@@ -519,7 +549,7 @@ onMounted(() => {
                     <VIcon size="22" icon="tabler-trash" />
                   </VBtn>
                   <VBtn
-                    v-if="user.role == 'branch' || user.role == 'assistant' "
+                    v-if="user.role == 'branch' || user.role == 'assistant'"
                     icon
                     size="x-small"
                     color="default"
@@ -527,6 +557,16 @@ onMounted(() => {
                     @click="getUserCategory(user.id)"
                   >
                     <VIcon size="22" icon="tabler-api-app" />
+                  </VBtn>
+                  <VBtn
+                    v-if="user.role == 'helper'"
+                    icon
+                    size="x-small"
+                    color="success"
+                    variant="text"
+                    @click="getUserProducts(user.id)"
+                  >
+                    <VIcon size="22" icon="tabler-topology-star-ring-3" />
                   </VBtn>
 
                   <!-- <VBtn icon size="x-small" color="default" variant="text">
@@ -587,6 +627,16 @@ onMounted(() => {
       :user="userData"
       :user_Id="user_Id"
       :isStore="isStore"
+    />
+
+    <!-- 👉 Update User Product Drawer -->
+    <UpdateUserProductDrawer
+      v-if="isUpdateUserProductDrawerVisible"
+      v-model:isDrawerOpen="isUpdateUserProductDrawerVisible"
+      :userProduct="userProductData"
+      :user="userData"
+      :user_Id="user_Id"
+      :isStore="isStoreProducts"
     />
   </section>
 </template>

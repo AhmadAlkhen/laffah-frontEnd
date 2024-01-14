@@ -36,9 +36,14 @@ const commentSending = ref(false);
 const listComments = ref([]);
 const selectedCarrier = ref({ name: "", id: "" });
 const carriers = ref([]);
+
 const assistants = ref([]);
 const selectedAssistant = ref({ name: "", id: "" });
 const assistantCategories = ref([]);
+
+const helpers = ref([]);
+const selectedHelper = ref({ name: "", id: "" });
+const helperProducts = ref([]);
 
 const categories = ref([]);
 const category = ref([]);
@@ -113,9 +118,9 @@ const fetchOrder = () => {
 
 watch(() => route.params.id, fetchOrder, { immediate: true });
 
-onMounted(() => {
-  console.log(route.params.id);
-});
+// onMounted(() => {
+//   console.log(route.params.id);
+// });
 
 orderListStore.fetchCarriers().then((res) => {
   carriers.value = res.data.data;
@@ -123,6 +128,10 @@ orderListStore.fetchCarriers().then((res) => {
 
 orderListStore.fetchAssistants().then((res) => {
   assistants.value = res.data.data;
+});
+
+orderListStore.fetchHelpers().then((res) => {
+  helpers.value = res.data.data;
 });
 
 // this for update
@@ -761,6 +770,36 @@ watch(
     filterProductsByAssistant();
   }
 );
+
+// filter by helper
+const filterProductsByHelper = () => {
+  if (selectedHelper.value) {
+    const helperId = selectedHelper.value.id;
+
+    orderDataNew.value = orderData.value;
+    orderListStore.fetchHelperProducts(helperId).then((res) => {
+      const helperProductsData = res.data.data;
+      helperProducts.value = helperProductsData;
+
+      const newOrderData = orderDataNew.value.filter((item) => {
+        const productIds = helperProductsData.map(
+          (product) => product.product_id
+        );
+        return productIds.includes(item.product_id);
+      });
+
+      orderDataNew.value = newOrderData;
+    });
+  } else {
+    orderDataNew.value = orderData.value;
+  }
+};
+watch(
+  () => selectedHelper.value,
+  () => {
+    filterProductsByHelper();
+  }
+);
 </script>
 
 <template>
@@ -871,6 +910,24 @@ watch(
             clearable
           />
         </VCol>
+        <VCol
+          cols="12"
+          md="4"
+          sm="12"
+          class="d-print-none"
+          v-if="userRole == 'admin' || userRole == 'warehouse'"
+        >
+          <VAutocomplete
+            v-model="selectedHelper"
+            :items="helpers"
+            item-title="name"
+            item-value="id"
+            label="Select helper"
+            persistent-hint
+            return-object
+            clearable
+          />
+        </VCol>
       </VRow>
     </VCard>
     <VRow>
@@ -924,7 +981,11 @@ watch(
                 />
               </div>
               <p class="mb-0" v-if="selectedAssistant?.name">
-                picker : <b>{{ selectedAssistant.name }} </b>
+                picker (Categories) : <b>{{ selectedAssistant.name }} </b>
+              </p>
+
+              <p class="mb-0" v-if="selectedHelper?.name">
+                picker(Products) : <b>{{ selectedHelper.name }} </b>
               </p>
             </div>
 

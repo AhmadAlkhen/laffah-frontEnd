@@ -134,9 +134,11 @@ const handleDrawerModelValueUpdate = (val) => {
                   label="Select Role"
                   :rules="[requiredValidator]"
                   :items="[
+                    { title: 'Admin', value: 'admin' },
                     { title: 'Branch', value: 'branch' },
                     { title: 'Warehouse', value: 'warehouse' },
                     { title: 'Assistant', value: 'assistant' },
+                    { title: 'Helper', value: 'helper' },
                     { title: 'Carrier', value: 'carrier' },
                   ]"
                 />

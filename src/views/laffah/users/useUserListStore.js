@@ -70,6 +70,13 @@ export const useUserListStore = defineStore('UserListStore', {
       })
     },
 
+    // 👉 fetch single user products
+    getUserProduct(id) {
+      return new Promise((resolve, reject) => {
+        axios.get(`/users/products/${id}`).then(response => resolve(response)).catch(error => reject(error))
+      })
+    },
+
     // 👉 Update User 
     updateUser(userData) {
       return new Promise((resolve, reject) => {

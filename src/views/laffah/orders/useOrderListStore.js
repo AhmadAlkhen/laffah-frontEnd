@@ -18,9 +18,16 @@ export const useOrderListStore = defineStore('OrderListStore', {
     fetchAssistants(){
       return axios.get('/users/assistants');
     },
+    fetchHelpers(){
+      return axios.get('/users/helpers');
+    },
 
     fetchAssistantCategories(id){
       return axios.get(`/users/assistant/categories/${id}`);
+    },
+
+    fetchHelperProducts(id){
+      return axios.get(`/users/helper/products/${id}`);
     },
 
     // 👉 fetch single user

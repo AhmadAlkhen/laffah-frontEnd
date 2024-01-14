@@ -4,6 +4,7 @@ import { emailValidator, requiredValidator } from "@validators";
 import axios from "axios";
 import { useToast } from "vue-toastification";
 import { useUserListStore } from "@/views/laffah/users/useUserListStore";
+import { computed } from "vue";
 const userListStore = useUserListStore();
 
 const toast = useToast();
@@ -13,7 +14,7 @@ const props = defineProps({
     required: true,
   },
 
-  userCategory: {
+  userProduct: {
     type: Object,
     required: true,
   },
@@ -28,10 +29,6 @@ const props = defineProps({
   user_Id: {
     required: true,
   },
-  // categories: {
-  //   type: Array,
-  //   required: true,
-  // },
 });
 
 const emit = defineEmits(["update:isDrawerOpen"]);
@@ -40,8 +37,13 @@ const isFormValid = ref(false);
 const refForm = ref();
 const password = ref("");
 const categoriesSelected = ref();
-const categoriesAll = ref([]);
+const productsAll = ref([]);
 const userCategoriesAll = ref([]);
+const searchQuery = ref("");
+const loading = ref(false);
+
+const oldProducts = ref();
+
 // 👉 drawer close
 const closeNavigationDrawer = () => {
   emit("update:isDrawerOpen", false);
@@ -55,16 +57,16 @@ const onSubmit = () => {
   refForm.value?.validate().then(({ valid }) => {
     if (valid) {
       if (props.isStore) {
-        let categoriesVar = [];
-        props.userCategory.data.forEach((el) => {
-          categoriesVar.push(el.value ? el.value : el);
+        let productsVar = [];
+        props.userProduct.data.forEach((el) => {
+          productsVar.push(el.value ? el.value : el);
         });
 
-        let category_ids = categoriesVar;
+        let product_ids = productsVar;
         // let user_id = props.user.id;
         let user_id = props.user_Id;
         axios
-          .post("/users/categories/store", { category_ids, user_id })
+          .post("/users/products/store", { product_ids, user_id })
           .then((res) => {
             if (res.status != 200) {
               toast.warning(res.data.message, {
@@ -85,16 +87,16 @@ const onSubmit = () => {
             });
           });
       } else {
-        let categoriesVar = [];
-        props.userCategory.data.forEach((el) => {
-          categoriesVar.push(el.value ? el.value : el);
+        let productsVar = [];
+        props.userProduct.data.forEach((el) => {
+          productsVar.push(el.value ? el.value : el);
         });
 
-        let category_ids = categoriesVar;
+        let product_ids = productsVar;
         // let user_id = props.user.id;
         let user_id = props.user_Id;
         axios
-          .post("/users/categories/update", { category_ids, user_id })
+          .post("/users/products/update", { product_ids, user_id })
           .then((res) => {
             if (res.status != 200) {
               toast.warning(res.data.message, {
@@ -133,29 +135,77 @@ const handleDrawerModelValueUpdate = (val) => {
   emit("update:isDrawerOpen", val);
 };
 
-// fetch all category
-onMounted(() => {
-  let allCategories = [];
-  let categoryItem = [];
-  // categoriesSelected.value = props.userCategory.data;
-  // console.log(props.userCategory.data);
-  axios
-    .get("/category/index")
+const loadProducts = async (page, perPage, q) => {
+  loading.value = true;
+
+  let productItem = {};
+  let params = {
+    page: page,
+    perPage: perPage,
+    q: q,
+  };
+
+  return axios
+    .get("/products", { params: params })
     .then((res) => {
-      allCategories = res.data.data.data;
-      allCategories.forEach((category) => {
-        categoryItem.push({
-          title: category.name,
-          value: category.id,
-        });
+      const products = res.data.data.data;
+      productsAll.value = [];
+      products.forEach((product) => {
+        productItem = {
+          title: product.name,
+          value: product.id,
+        };
+        productsAll.value.push(productItem);
       });
-      categoriesAll.value = categoryItem;
-      return categoryItem;
+      loading.value = false;
     })
     .catch((err) => {
       console.log(err);
+      loading.value = false;
     });
+};
+
+onMounted(() => {
+  oldProducts.value = props.userProduct?.data || [];
 });
+
+onMounted(() => {
+  loadProducts(1, 25, "");
+});
+
+watch(searchQuery, (newVal, oldVal) => {
+  if (newVal && newVal.length && newVal.length >= 3) {
+    // productsAll.value = [];
+    loadProducts(1, 25, newVal);
+  }
+});
+// fetch all category
+// onMounted(() => {
+//   let allProducts = [];
+//   let productItem = [];
+//   // categoriesSelected.value = props.userProduct.data;
+//   // console.log(props.userProduct.data);
+//   let params = {
+//     perPage: 2000,
+//   };
+//   axios
+//     .get("/products", { params: params })
+//     .then((res) => {
+//       allProducts = res.data.data.data;
+//       allProducts.forEach((product) => {
+//         productItem.push({
+//           title: product.name,
+//           value: product.id,
+//         });
+//       });
+//       productsAll.value = productItem;
+//       console.log(productsAll.value);
+//       return productItem;
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// });
 </script>
 
 <template>
@@ -169,7 +219,7 @@ onMounted(() => {
   >
     <!-- 👉 Title -->
     <div class="d-flex align-center pa-6 pb-1">
-      <h6 class="text-h6">Define Categories</h6>
+      <h6 class="text-h6">Assign Products</h6>
 
       <VSpacer />
       <!-- 👉 Close btn -->
@@ -191,20 +241,40 @@ onMounted(() => {
           <!-- 👉 Form -->
           <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
             <VRow>
-              <!-- 👉 Categories   VAutocomplete-->
+              <!-- 👉  VAutocomplete-->
               <VCol cols="10">
+                <VTextField
+                  v-model="searchQuery"
+                  placeholder="Search for products (at least 3 characters)"
+                  class="my-4"
+                />
                 <VAutocomplete
-                  v-model="userCategory.data"
-                  :items="categoriesAll"
-                  placeholder="Select Category"
-                  label="Select Category"
+                  v-model="userProduct.data"
+                  :items="productsAll"
+                  placeholder="Select Product"
+                  label="Select Product"
                   clearable
                   item-value="value"
                   item-text="text"
                   multiple
                 ></VAutocomplete>
               </VCol>
-
+              <VDivider />
+              <div v-if="oldProducts">
+                <p class="mx-1 my-2" v-if="oldProducts.length > 0">
+                  Old assigned products:
+                </p>
+                <VChip
+                  v-for="product in oldProducts"
+                  :key="product.id"
+                  label
+                  color="primary"
+                  size="small"
+                  class="mx-2 my-1"
+                >
+                  {{ product.tilte }}
+                </VChip>
+              </div>
               <!-- item-value="value" item-text="text" return-object -->
 
               <!-- 👉 Submit and Cancel -->
