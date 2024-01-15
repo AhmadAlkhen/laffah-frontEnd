@@ -41,6 +41,7 @@ const productsAll = ref([]);
 const userCategoriesAll = ref([]);
 const searchQuery = ref("");
 const loading = ref(false);
+const search = ref();
 
 const oldProducts = ref();
 
@@ -176,9 +177,16 @@ onMounted(() => {
 watch(searchQuery, (newVal, oldVal) => {
   if (newVal && newVal.length && newVal.length >= 3) {
     // productsAll.value = [];
-    loadProducts(1, 25, newVal);
+    setTimeout(() => {
+      loadProducts(1, 25, newVal);
+    }, 500);
   }
 });
+
+// watch(searchQuery, (query) => {
+//   query;
+//   console.log(query);
+// });
 // fetch all category
 // onMounted(() => {
 //   let allProducts = [];
@@ -243,21 +251,28 @@ watch(searchQuery, (newVal, oldVal) => {
             <VRow>
               <!-- 👉  VAutocomplete-->
               <VCol cols="10">
-                <VTextField
+                <!-- <VTextField
                   v-model="searchQuery"
                   placeholder="Search for products (at least 3 characters)"
                   class="my-4"
-                />
+                /> -->
                 <VAutocomplete
                   v-model="userProduct.data"
+                  v-model:search="searchQuery"
                   :items="productsAll"
-                  placeholder="Select Product"
-                  label="Select Product"
+                  placeholder="Select Product "
+                  label="Select Product (Enter at least 3 characters)"
                   clearable
                   item-value="value"
                   item-text="text"
                   multiple
-                ></VAutocomplete>
+                  :loading="loading"
+                  :menu-props="{ maxHeight: '550px' }"
+                >
+                  <template #selection="{ item }">
+                    <v-chip>{{ item.value }}</v-chip>
+                  </template>
+                </VAutocomplete>
               </VCol>
               <VDivider />
               <div v-if="oldProducts">
