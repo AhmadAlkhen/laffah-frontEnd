@@ -11,6 +11,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  managers: {
+    type: Array,
+    required: true,
+  },
   user: {
     type: Object,
     required: true,
@@ -45,6 +49,7 @@ const onSubmit = () => {
         password: password.value,
         role: props.user.role,
         branch_id: props.user.branch_id,
+        inform_user_id: props.user.inform_user_id,
         status: props.user.status,
       });
       emit("update:isDrawerOpen", false);
@@ -150,6 +155,16 @@ const handleDrawerModelValueUpdate = (val) => {
                   label="Select Branch"
                   :rules="[requiredValidator]"
                   :items="branches"
+                />
+              </VCol>
+
+              <!-- 👉 Inform manage -->
+              <VCol cols="12" v-if="user.role == 'branch'">
+                <VSelect
+                  v-model="user.inform_user_id"
+                  label="Inform Manager"
+                  :items="managers"
+                  clearable
                 />
               </VCol>
 

@@ -548,6 +548,12 @@ const resetFilters = () => {
                 <th scope="col">Order Date</th>
                 <th scope="col">Processing Date</th>
                 <th scope="col">Completed Date</th>
+                <th
+                  scope="col"
+                  v-if="userRole == 'admin' || userRole == 'manager'"
+                >
+                  Is Approved
+                </th>
                 <th scope="col">ACTIONS</th>
               </tr>
             </thead>
@@ -643,6 +649,11 @@ const resetFilters = () => {
                   <span class="text-base">{{
                     convertCreated(order.completed_date)
                   }}</span>
+                </td>
+
+                <!-- 👉 is Approved -->
+                <td v-if="userRole == 'admin' || userRole == 'manager'">
+                  <span class="text-base">{{ order.isApproved }}</span>
                 </td>
 
                 <!-- 👉 Actions -->
