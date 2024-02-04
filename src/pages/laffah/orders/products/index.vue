@@ -415,19 +415,7 @@ const subQty = (q1, q2) => {
             <VCol md="3" cols="12">
               <AppDateTimePicker v-model="startTo" label="Start to" />
             </VCol>
-            <VCol
-              md="2"
-              v-if="userRole == 'admin' || userRole == 'warehouse'"
-              cols="12"
-            >
-              <VSelect
-                v-model="selectedBranch"
-                label="Select branch"
-                :items="branches"
-                clearable
-                clear-icon="tabler-x"
-              />
-            </VCol>
+
             <VCol cols="12" md="2" v-if="userRole == 'admin'">
               <VBtn
                 block
