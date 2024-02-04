@@ -11,6 +11,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  managers: {
+    type: Array,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["update:isDrawerOpen", "userData"]);
@@ -23,6 +27,7 @@ const phone = ref("");
 const password = ref("");
 const role = ref();
 const branch = ref("");
+const inform = ref(null);
 const status = ref(1);
 
 // 👉 drawer close
@@ -45,6 +50,7 @@ const onSubmit = () => {
         password: password.value,
         role: role.value,
         branch: branch.value,
+        inform: inform.value,
         status: status.value,
       });
       emit("update:isDrawerOpen", false);
@@ -143,6 +149,7 @@ const handleDrawerModelValueUpdate = (val) => {
                     { title: 'Assistant', value: 'assistant' },
                     { title: 'Helper', value: 'helper' },
                     { title: 'Carrier', value: 'carrier' },
+                    { title: 'Manager', value: 'manager' },
                   ]"
                 />
               </VCol>
@@ -153,6 +160,16 @@ const handleDrawerModelValueUpdate = (val) => {
                   label="Select Branch"
                   :rules="[requiredValidator]"
                   :items="branches"
+                />
+              </VCol>
+
+              <!-- 👉 Inform manage -->
+              <VCol cols="12" v-if="role == 'branch'">
+                <VSelect
+                  v-model="inform"
+                  label="Inform Manager"
+                  :items="managers"
+                  clearable
                 />
               </VCol>
 

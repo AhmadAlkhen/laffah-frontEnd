@@ -22,6 +22,7 @@ const totalPage = ref(1);
 const totalUsers = ref(0);
 const users = ref([]);
 const branchesAll = ref([]);
+const managersAll = ref([]);
 const categories = ref([]);
 const userData = ref({});
 const userCategoryData = ref({});
@@ -105,6 +106,10 @@ const roles = [
   {
     title: "Carrier",
     value: "carrier",
+  },
+  {
+    title: "Manager",
+    value: "manager",
   },
 ];
 
@@ -295,6 +300,19 @@ onMounted(() => {
       });
       branchesAll.value = branchesItem;
       return branchesItem;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+// get all users managers
+onMounted(() => {
+  axios
+    .get("/users/managers")
+    .then((res) => {
+      managersAll.value = res.data.data;
+      // console.log(managersAll.value);
     })
     .catch((err) => {
       console.log(err);
@@ -610,12 +628,14 @@ onMounted(() => {
     <AddNewUserDrawer
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
       :branches="branchesAll"
+      :managers="managersAll"
       @user-data="addNewUser"
     />
     <!-- 👉 update user -->
     <UpdateUserDrawer
       v-model:isDrawerOpen="isUpdateUserDrawerVisible"
       :branches="branchesAll"
+      :managers="managersAll"
       :user="userData"
       @user-data="updateUser"
     />

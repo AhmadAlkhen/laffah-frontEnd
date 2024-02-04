@@ -2,6 +2,7 @@ import { useAuthStore } from "@/views/laffah/auth/useAuthStore";
 import { computed } from 'vue';
 import admin from "./admin";
 import branch from "./branch";
+import manager from "./manager";
 import warehouse from "./warehouse";
 
 const authStore = useAuthStore();
@@ -20,6 +21,9 @@ const routesArray = computed(() => {
 
   if (userRole === 'warehouse') {
     routes.push(...warehouse);
+  }
+  if (userRole === 'manager') {
+    routes.push(...manager);
   }
 
   return routes;

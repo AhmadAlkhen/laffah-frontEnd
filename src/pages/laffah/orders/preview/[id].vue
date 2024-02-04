@@ -52,7 +52,7 @@ const isCarrierSelected = ref(false);
 const isDialogVisible = ref(false);
 const isAllQtySentFilled = ref(false);
 const statusSelected = ref("");
-
+const isApproved = ref();
 const isEdit = ref(false);
 const status = [
   {
@@ -78,6 +78,17 @@ const status = [
   {
     title: "Canceled",
     value: "Canceled",
+  },
+];
+
+const isApprovedItems = [
+  {
+    title: "Approve",
+    value: "yes",
+  },
+  {
+    title: "Rejected",
+    value: "no",
   },
 ];
 
@@ -681,6 +692,83 @@ const addMessage = () => {
     });
 };
 
+const approvedOrder = () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you really want to approve this order?!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, confirm!",
+  }).then((res) => {
+    if (res.isConfirmed) {
+      const isApproved = "yes";
+      const orderId = orderDetails.value.id;
+
+      axios
+        .post("/order/isApproved", { isApproved, orderId })
+        .then((res) => {
+          if (res.status != 200) {
+            toast.warning(res.data.message, {
+              timeout: 2000,
+            });
+          } else {
+            toast.success(res.data.message, {
+              timeout: 2000,
+            });
+            orderDetails.value.isApproved = isApproved;
+          }
+          // router.replace({ name: "laffah-orders-MyOrders" });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
+        });
+    }
+  });
+};
+const rejectedOrder = () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "Do you really want to reject this order?!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, confirm!",
+  }).then((res) => {
+    if (res.isConfirmed) {
+      const isApproved = "no";
+      const orderId = orderDetails.value.id;
+
+      axios
+        .post("/order/isApproved", { isApproved, orderId })
+        .then((res) => {
+          if (res.status != 200) {
+            toast.warning(res.data.message, {
+              timeout: 2000,
+            });
+          } else {
+            toast.success(res.data.message, {
+              timeout: 2000,
+            });
+            orderDetails.value.isApproved = isApproved;
+          }
+          // router.replace({ name: "laffah-orders-MyOrders" });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.warning(err.response?.data?.message || err.message, {
+            timeout: 2000,
+          });
+        });
+    }
+  });
+};
+
 const userRole = computed(() => {
   let data = localStorage.getItem("userRole");
   return data;
@@ -805,6 +893,36 @@ watch(
 <template>
   <section v-if="orderData && orderDetails">
     <VCard class="my-2 order-preview">
+      <VRow
+        class="my-1 ml-1"
+        v-if="
+          (userRole == 'admin' || userRole == 'manager') &&
+          orderDetails.inform_user_id != NULL
+        "
+      >
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-file-like"
+            class="mb-2"
+            @click="approvedOrder"
+            color="success"
+          >
+            Approved
+          </VBtn>
+        </VCol>
+        <VCol cols="12" md="2" class="d-print-none">
+          <VBtn
+            block
+            prepend-icon="tabler-file-dislike"
+            class="mb-2"
+            @click="rejectedOrder"
+            color="error"
+          >
+            Reject
+          </VBtn>
+        </VCol>
+      </VRow>
       <VRow class="my-1 ml-1">
         <VCol cols="12" md="2" class="d-print-none">
           <VBtn
@@ -1100,6 +1218,17 @@ watch(
                 />
               </div>
               <!-- 👉 end order status -->
+
+              <!-- 👉 isApproved -->
+              <div v-if="orderDetails.isApproved">
+                <p class="mb-2">
+                  <span class="">is Approved: </span>
+                  <span class="font-weight-semibold">{{
+                    orderDetails.isApproved
+                  }}</span>
+                </p>
+              </div>
+              <!-- 👉 end isApproved -->
             </div>
           </VCardText>
           <!-- !SECTION -->

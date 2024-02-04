@@ -48,6 +48,8 @@ export const useUserListStore = defineStore('UserListStore', {
         formData.append('role',userData.role);
         formData.append('branch_id',userData.branch);
         formData.append('status',userData.status);
+        if(userData.inform)
+        formData.append('inform',userData.inform);
         // console.log(userData.status)
         axios.post('/users/store', formData).then(response => resolve(response))
           .catch(error =>{
