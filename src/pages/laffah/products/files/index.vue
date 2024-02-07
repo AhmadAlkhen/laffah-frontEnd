@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       dropzoneOptions: {
-        url: "https://api.safaqatii.com/api/product/import/images",
+        url: "https://api.safacati.com/api/product/import/images",
         thumbnailWidth: 150,
         maxFilesize: 4,
         acceptedFiles: "image/*",
