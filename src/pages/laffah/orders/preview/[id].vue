@@ -173,7 +173,7 @@ const printInvoice = () => {
 const duplicateOrder = () => {
   let myProducts = [];
   orderData.value.forEach((element) => {
-    myProducts.push(element.product);
+    if (element.product.status == 1) myProducts.push(element.product);
   });
   ProductStore.addItems(myProducts);
   // localStorage.setItem("cart", JSON.stringify(myProducts));
