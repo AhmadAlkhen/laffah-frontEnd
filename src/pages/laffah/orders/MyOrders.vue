@@ -31,6 +31,7 @@ const selectedRole = ref();
 const selectedPlan = ref();
 const selectedStatus = ref(route.query.status || null);
 const selectedBranch = ref();
+const selectedIsApproved = ref();
 const ordersDate = ref();
 const rowPerPage = ref(10);
 const currentPage = ref(1);
@@ -58,6 +59,9 @@ const fetchOrders = () => {
   }
   if (selectedBranch.value) {
     params.branchId = selectedBranch.value;
+  }
+  if (selectedIsApproved.value) {
+    params.isApproved = selectedIsApproved.value;
   }
   if (ordersDate.value) {
     params.ordersDate = ordersDate.value;
@@ -466,12 +470,34 @@ const resetFilters = () => {
               />
             </VCol>
 
-            <VCol lg="3" sm="6" cols="12">
+            <VCol
+              lg="3"
+              sm="6"
+              cols="12"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+            >
               <VSelect
-                v-if="userRole == 'admin' || userRole == 'warehouse'"
                 v-model="selectedBranch"
                 label="Select branch"
                 :items="branches"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
+            <VCol
+              lg="3"
+              sm="6"
+              cols="12"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+            >
+              <VSelect
+                v-model="selectedIsApproved"
+                label="is Approved"
+                :items="[
+                  { title: 'Suspended', value: 'suspended' },
+                  { title: 'Yes', value: 'yes' },
+                  { title: 'No', value: 'no' },
+                ]"
                 clearable
                 clear-icon="tabler-x"
               />

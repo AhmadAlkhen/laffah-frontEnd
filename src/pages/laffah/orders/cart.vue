@@ -142,6 +142,7 @@ const saveOrderCart = async () => {
   const newArraydata = myCart.map((element) => ({
     product_id: element.id,
     quantity: element.quantity,
+    sku: element.sku,
   }));
 
   // Prepare form data

@@ -122,7 +122,7 @@ const fetchOrder = () => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -159,7 +159,7 @@ const fetchOrders = () => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -196,7 +196,7 @@ const exportOrder = () => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -211,7 +211,7 @@ const storeQuantityOrder = (item, qtyOrder, index) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         // if (category.value === undefined || category.value.value == 0) {
@@ -219,14 +219,14 @@ const storeQuantityOrder = (item, qtyOrder, index) => {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       }
     })
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -246,14 +246,14 @@ const storeQuantitySent = (item, quaSent, index) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       }
 
@@ -263,7 +263,7 @@ const storeQuantitySent = (item, quaSent, index) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -283,14 +283,14 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       }
       quantityConfirm.value[index] = "";
@@ -298,7 +298,7 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -317,21 +317,21 @@ const storeQuantityReturn = (item, quaReturn, index) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         if (category.value.length <= 0) {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       }
     })
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -351,11 +351,11 @@ const changeRate = (item, rated) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -363,7 +363,7 @@ const changeRate = (item, rated) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -381,18 +381,18 @@ const deleteProduct = (id) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
         fetchOrders();
       }
     })
     .catch((err) => {
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -407,11 +407,11 @@ const updateOrderDate = (orderId, orderDate) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -419,7 +419,7 @@ const updateOrderDate = (orderId, orderDate) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -433,11 +433,11 @@ const updateProcessingDate = (orderId, orderDate) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -445,7 +445,7 @@ const updateProcessingDate = (orderId, orderDate) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -459,11 +459,11 @@ const updateCompletedDate = (orderId, orderDate) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -471,7 +471,7 @@ const updateCompletedDate = (orderId, orderDate) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -485,11 +485,11 @@ const updtateOrderStatus = (orderId, orderStatus) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -497,7 +497,7 @@ const updtateOrderStatus = (orderId, orderStatus) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -512,11 +512,11 @@ const updtateOrderCarrier = (orderId, carrierId) => {
     .then((res) => {
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1000,
+          timeout: 1500,
         });
         // fetchOrders();
       }
@@ -524,7 +524,7 @@ const updtateOrderCarrier = (orderId, carrierId) => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -565,11 +565,11 @@ const isProcessing = () => {
         isDialogVisible.value = false;
         if (res.status != 200) {
           toast.warning(res.data.message, {
-            timeout: 2000,
+            timeout: 1500,
           });
         } else {
           toast.success(res.data.message, {
-            timeout: 2000,
+            timeout: 1500,
           });
         }
         router.replace({ name: "laffah-orders-MyOrders" });
@@ -577,7 +577,7 @@ const isProcessing = () => {
       .catch((err) => {
         console.log(err);
         toast.warning(err.response?.data?.message || err.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       });
   }
@@ -591,11 +591,11 @@ const inProcess = () => {
       isDialogVisible.value = false;
       if (res.status != 200) {
         toast.warning(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 2000,
+          timeout: 1500,
         });
       }
       fetchOrders();
@@ -604,7 +604,7 @@ const inProcess = () => {
     .catch((err) => {
       console.log(err);
       toast.warning(err.response?.data?.message || err.message, {
-        timeout: 2000,
+        timeout: 1500,
       });
     });
 };
@@ -642,11 +642,11 @@ const completedOrder = () => {
         .then((res) => {
           if (res.status != 200) {
             toast.warning(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
           } else {
             toast.success(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
           }
           router.replace({ name: "laffah-orders-MyOrders" });
@@ -654,7 +654,7 @@ const completedOrder = () => {
         .catch((err) => {
           console.log(err);
           toast.warning(err.response?.data?.message || err.message, {
-            timeout: 2000,
+            timeout: 1500,
           });
         });
     }
@@ -673,7 +673,7 @@ const addMessage = () => {
     .post("/order/message/store", formData)
     .then((res) => {
       toast.success("comment added successfully", {
-        timeout: 2000,
+        timeout: 1500,
       });
       // fetchOrders();
       comment.value = "";
@@ -711,11 +711,11 @@ const approvedOrder = () => {
         .then((res) => {
           if (res.status != 200) {
             toast.warning(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
           } else {
             toast.success(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
             orderDetails.value.isApproved = isApproved;
           }
@@ -724,7 +724,7 @@ const approvedOrder = () => {
         .catch((err) => {
           console.log(err);
           toast.warning(err.response?.data?.message || err.message, {
-            timeout: 2000,
+            timeout: 1500,
           });
         });
     }
@@ -749,11 +749,11 @@ const rejectedOrder = () => {
         .then((res) => {
           if (res.status != 200) {
             toast.warning(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
           } else {
             toast.success(res.data.message, {
-              timeout: 2000,
+              timeout: 1500,
             });
             orderDetails.value.isApproved = isApproved;
           }
@@ -762,7 +762,7 @@ const rejectedOrder = () => {
         .catch((err) => {
           console.log(err);
           toast.warning(err.response?.data?.message || err.message, {
-            timeout: 2000,
+            timeout: 1500,
           });
         });
     }
@@ -1440,6 +1440,15 @@ watch(
                 </th>
                 <!-- end for Branch -->
                 <th class="d-print-none" scope="col">Rate</th>
+                <th
+                  class="d-print-none"
+                  scope="col"
+                  v-if="
+                    userRole == 'manager' && orderDetails.status == 'pending'
+                  "
+                >
+                  Action
+                </th>
               </tr>
             </thead>
 
@@ -1593,6 +1602,21 @@ watch(
                         : true
                     "
                   />
+                </td>
+                <td
+                  v-if="
+                    userRole == 'manager' && orderDetails.status == 'pending'
+                  "
+                >
+                  <VBtn
+                    icon
+                    size="x-small"
+                    color="default"
+                    variant="text"
+                    @click="deleteProduct(item.id)"
+                  >
+                    <VIcon size="22" icon="tabler-trash" />
+                  </VBtn>
                 </td>
               </tr>
             </tbody>
