@@ -2,12 +2,11 @@
 import { themeConfig } from "@themeConfig";
 import { VNodeRenderer } from "@layouts/components/VNodeRenderer";
 
-import hr from "@images/system/hr-1.png";
-import OMS from "@images/system/OMS-1.jpg";
-import pms from "@images/system/pms.png";
-import pdo from "@images/system/pdo.jpg";
+import hr from "@images/system/hr-1.webp";
+import OMS from "@images/system/OMS-1.webp";
+import pms from "@images/system/pms.webp";
+import pdo from "@images/system/pdo.webp";
 import cover from "@images/system/cover.png";
-import card1 from "@images/system/11.jpg";
 </script>
 
 <template>

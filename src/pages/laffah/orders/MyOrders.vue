@@ -233,6 +233,13 @@ const resolveUserRoleVariant = (role) => {
   };
 };
 
+const showManagerName = (name) => {
+  Swal.fire({
+    title: "Manager Name",
+    text: name,
+  });
+};
+
 const resolveUserStatusVariant = (stat) => {
   if (stat === "pending") return "warning";
   if (stat === "processing") return "success";
@@ -241,6 +248,13 @@ const resolveUserStatusVariant = (stat) => {
   if (stat === "closed") return "secondary";
 
   return "primary";
+};
+const resolveIsApprovedVariant = (stat) => {
+  if (stat === "suspended") return "secondary";
+  if (stat === "yes") return "success";
+  if (stat === "no") return "error";
+
+  return "secondary";
 };
 
 // 👉 watching current page
@@ -352,6 +366,8 @@ const exportOrders = () => {
     params.status = selectedStatus.value;
   if (selectedBranch.value && selectedBranch.value !== "")
     params.branchId = selectedBranch.value;
+  if (selectedIsApproved.value && selectedIsApproved.value !== "")
+    params.isApproved = selectedIsApproved.value;
   if (assignedTo.value || assignedTo.value === 0)
     params.assigned_to = assignedTo.value;
 
@@ -679,7 +695,15 @@ const resetFilters = () => {
 
                 <!-- 👉 is Approved -->
                 <td v-if="userRole == 'admin' || userRole == 'manager'">
-                  <span class="text-base">{{ order.isApproved }}</span>
+                  <VChip
+                  v-if="order.isApproved"
+                    label
+                    :color="resolveIsApprovedVariant(order.isApproved)"
+                    size="small"
+                    @click="showManagerName(order.manager?.name)"
+                  >
+                    {{ order.isApproved }}
+                  </VChip>
                 </td>
 
                 <!-- 👉 Actions -->
