@@ -190,6 +190,45 @@ const uploading = () => {
       fetchProducts();
     });
 };
+
+const exportProducts = () => {
+  overlay.value = true;
+
+  const params = {};
+  if (searchQuery.value && searchQuery.value !== "")
+    params.q = searchQuery.value;
+
+  if (selectedStatus.value && selectedStatus.value !== "")
+    params.status = selectedStatus.value;
+
+  if (selectedCategory.value && selectedCategory.value !== "")
+    params.category = selectedCategory.value?.value;
+
+  axios
+    .get("/product/export", {
+      params: params,
+      responseType: "blob",
+    })
+    .then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      const fileName = `Products.xlsx`;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+    })
+    .catch((err) => {
+      console.log(err);
+      toast.warning(err.response?.data?.message || err.message, {
+        timeout: 2000,
+      });
+    })
+    .finally(() => {
+      overlay.value = false;
+    });
+};
+
 const uploadingImages = () => {
   productListStore
     .uploadImages(formData.value)
@@ -313,7 +352,15 @@ const userRole = computed(() => {
                   :items="[10, 20, 30, 50]"
                 /></div
             ></VCol>
-            <VCol cols="12" class="" md="2"></VCol>
+            <VCol cols="12" class="" md="2">
+              <VSelect
+                v-model="selectedStatus"
+                label="Select Status"
+                :items="status"
+                clearable
+                clear-icon="tabler-x"
+              />
+            </VCol>
 
             <VCol cols="12" class="" md="4">
               <div>
@@ -323,18 +370,22 @@ const userRole = computed(() => {
                   density="compact"
                 /></div
             ></VCol>
-            <VCol cols="12" class="" md="4" v-if="userRole == 'admin'">
-              <VBtn
-                prepend-icon="tabler-plus"
-                @click="isAddNewProductDrawerVisible = true"
-              >
-                Add New product
-              </VBtn></VCol
-            >
+            <VCol cols="12" class="" md="4">
+              <VAutocomplete
+                v-model="selectedCategory"
+                :items="categoriesAll"
+                item-title="title"
+                item-value="value"
+                label="Select category"
+                persistent-hint
+                return-object
+                clear-icon="tabler-x"
+              />
+            </VCol>
           </VRow>
           <VRow class="mx-1 my-1">
             <!-- import excel file -->
-            <VCol cols="12" class="" md="4" v-if="userRole == 'admin'">
+            <VCol cols="12" class="" md="2" v-if="userRole == 'admin'">
               <VDialog v-model="isDialogVisible" max-width="600">
                 <!-- Dialog Activator -->
                 <template #activator="{ props }">
@@ -384,35 +435,18 @@ const userRole = computed(() => {
             </VCol>
             <!-- end import excel file -->
 
-            <VCol cols="12" class="" md="4">
-              <VSelect
-                v-model="selectedStatus"
-                label="Select Status"
-                :items="status"
-                clearable
-                clear-icon="tabler-x"
-              />
+            <VCol cols="12" class="" md="2" v-if="userRole == 'admin'">
+              <VBtn @click="exportProducts()"> Export </VBtn>
             </VCol>
 
-            <VCol cols="12" class="" md="4">
-              <!-- <VSelect
-                v-model="selectedCategory"
-                label="Select Category"
-                :items="categoriesAll"
-                clearable
-                clear-icon="tabler-x"
-              /> -->
-              <VAutocomplete
-                v-model="selectedCategory"
-                :items="categoriesAll"
-                item-title="title"
-                item-value="value"
-                label="Select category"
-                persistent-hint
-                return-object
-                clear-icon="tabler-x"
-              />
-            </VCol>
+            <VCol cols="12" class="" md="4" v-if="userRole == 'admin'">
+              <VBtn
+                prepend-icon="tabler-plus"
+                @click="isAddNewProductDrawerVisible = true"
+              >
+                Add New product
+              </VBtn></VCol
+            >
           </VRow>
           <VDivider />
 
