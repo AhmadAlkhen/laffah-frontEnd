@@ -25,6 +25,7 @@ const unit = ref("");
 const image = ref("");
 const imageName = ref({ name: "" });
 const status = ref();
+const barcode = ref();
 
 // 👉 drawer close
 const closeNavigationDrawer = () => {
@@ -35,6 +36,7 @@ const closeNavigationDrawer = () => {
     sku.value = null;
     category.value = null;
     unit.value = null;
+    barcode.value = null;
     image.value = null;
     imageName.value = { name: "" };
     // image.value = null;
@@ -66,6 +68,7 @@ const onSubmit = () => {
         category: category.value,
         unit: unit.value,
         status: status.value,
+        barcode: barcode.value,
         image: image.value,
       });
       emit("update:isDrawerOpen", false);
@@ -74,6 +77,7 @@ const onSubmit = () => {
         sku.value = null;
         category.value = null;
         unit.value = null;
+        barcode.value = null;
         image.value = null;
         imageName.value = { name: "" };
         // refForm.value?.reset();
@@ -187,6 +191,11 @@ const units = [
                 />
               </VCol>
 
+              <!-- 👉 barcode -->
+              <VCol cols="12">
+                <VTextField v-model="barcode" label="Barcode" />
+              </VCol>
+
               <!-- 👉 image -->
               <VCol cols="12">
                 <VFileInput
@@ -197,10 +206,6 @@ const units = [
                   @change="onFileChange"
                   density="compact"
                 />
-                <!-- <v-file-input
-                  accept="image/*"
-                  label="File input"
-                ></v-file-input> -->
               </VCol>
 
               <!-- 👉 Submit and Cancel -->

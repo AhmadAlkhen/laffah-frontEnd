@@ -39,6 +39,7 @@ const closeNavigationDrawer = () => {
     sku.value = null;
     category.value = null;
     unit.value = null;
+    barcode.value = null;
     image.value = null;
     imageName.value = { name: "" };
     // image.value = null;
@@ -66,6 +67,7 @@ const onSubmit = () => {
         category: props.product.category_id,
         unit: props.product.unit,
         status: props.product.status,
+        barcode: props.product.barcode,
         image: image.value,
       });
       emit("update:isDrawerOpen", false);
@@ -74,6 +76,7 @@ const onSubmit = () => {
         sku.value = null;
         category.value = null;
         unit.value = null;
+        barcode.value = null;
         image.value = null;
         imageName.value = { name: "" };
         // refForm.value?.reset();
@@ -181,6 +184,10 @@ const units = [
                     { title: 'Inactive', value: 0 },
                   ]"
                 />
+              </VCol>
+              <!-- 👉 barcode -->
+              <VCol cols="12">
+                <VTextField v-model="product.barcode" label="Barcode" />
               </VCol>
 
               <!-- 👉 image -->

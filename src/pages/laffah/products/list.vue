@@ -495,9 +495,13 @@ const userRole = computed(() => {
                           {{ product.name }}
                         </h3>
                       </h6>
-                      <span class="text-sm text-disabled">{{
-                        product.sku
-                      }}</span>
+                      <span class="text-sm text-disabled"
+                        >{{ product.sku }}
+                        <VIcon
+                          size="22"
+                          icon="tabler-barcode"
+                          v-if="product.barcode"
+                      /></span>
                     </div>
                   </div>
                 </td>

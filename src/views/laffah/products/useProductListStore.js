@@ -17,6 +17,8 @@ export const useProductListStore = defineStore('ProductListStore', {
         formData.append('category',productData.category.value);
         formData.append('unit',productData.unit);
         formData.append('status',productData.status);
+        if(productData.barcode && productData.barcode != "")
+        formData.append('barcode',productData.barcode);
         if(productData.image && productData.image != undefined && productData.image != null)
         formData.append('image',productData.image);
         axios.post('/product/store', formData).then(response => resolve(response))
@@ -35,6 +37,9 @@ export const useProductListStore = defineStore('ProductListStore', {
         formData.append('category',productData.category);
         formData.append('unit',productData.unit);
         formData.append('status',productData.status);
+        // if(productData.barcode && productData.barcode != "")
+        formData.append('barcode',productData.barcode);
+
         if(productData.image && productData.image != undefined && productData.image != null){
           formData.append('image',productData.image);
         }
