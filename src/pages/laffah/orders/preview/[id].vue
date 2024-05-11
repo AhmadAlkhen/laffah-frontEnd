@@ -1229,6 +1229,16 @@ watch(
                 </p>
               </div>
               <!-- 👉 end isApproved -->
+              <!-- 👉 managed_date -->
+              <div v-if="orderDetails.managed_date">
+                <p class="mb-2">
+                  <span class="">Managed Date: </span>
+                  <span class="font-weight-semibold">{{
+                    convertCreated(orderDetails.managed_date)
+                  }}</span>
+                </p>
+              </div>
+              <!-- 👉 end managed_date -->
             </div>
           </VCardText>
           <!-- !SECTION -->

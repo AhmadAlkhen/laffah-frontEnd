@@ -536,22 +536,30 @@ const resetFilters = () => {
               </VBtn>
             </VCol>
           </VRow>
-          <VRow v-if="userRole == 'admin'" class="py-2 px-2">
-            <VCol cols="12" md="3">
+          <VRow class="py-2 px-2">
+            <VCol
+              cols="12"
+              md="3"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+            >
               <AppDateTimePicker
                 v-model="ordersDateFrom"
                 label="Orders date From"
                 clearable
               />
             </VCol>
-            <VCol cols="12" md="3">
+            <VCol
+              cols="12"
+              md="3"
+              v-if="userRole == 'admin' || userRole == 'warehouse'"
+            >
               <AppDateTimePicker
                 v-model="ordersDateTo"
                 label="Orders date To"
                 clearable
               />
             </VCol>
-            <VCol cols="12" md="3">
+            <VCol cols="12" md="3" v-if="userRole == 'admin'">
               <VBtn
                 block
                 prepend-icon="tabler-transfer-out"
@@ -696,7 +704,7 @@ const resetFilters = () => {
                 <!-- 👉 is Approved -->
                 <td v-if="userRole == 'admin' || userRole == 'manager'">
                   <VChip
-                  v-if="order.isApproved"
+                    v-if="order.isApproved"
                     label
                     :color="resolveIsApprovedVariant(order.isApproved)"
                     size="small"
