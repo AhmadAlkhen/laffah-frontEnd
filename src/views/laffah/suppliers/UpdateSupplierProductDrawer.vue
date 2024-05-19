@@ -36,7 +36,6 @@ const emit = defineEmits(["update:isDrawerOpen"]);
 const isFormValid = ref(false);
 const refForm = ref();
 const password = ref("");
-const categoriesSelected = ref();
 const productsAll = ref([]);
 const supplierCategoriesAll = ref([]);
 const searchQuery = ref("");
@@ -118,6 +117,16 @@ const onSubmit = () => {
             });
           });
       }
+
+      // emit("supplierData", {
+      //   // id: 0,
+      //   id: props.supplier.id,
+      // });
+      // emit("update:isDrawerOpen", false);
+      // nextTick(() => {
+      //   refForm.value?.reset();
+      //   refForm.value?.resetValidation();
+      // });
     }
   });
 };
@@ -248,6 +257,7 @@ watch(searchQuery, (newVal, oldVal) => {
                   {{ product.tilte }}
                 </VChip>
               </div>
+              <!-- item-value="value" item-text="text" return-object -->
 
               <!-- 👉 Submit and Cancel -->
               <VCol cols="12">
