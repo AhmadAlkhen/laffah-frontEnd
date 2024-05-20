@@ -35,6 +35,15 @@ const generateOrder = () => {
 
   const orders_Date = ordersDate.value;
   const supplier_id = selectedSupplier.value;
+  let selectedSupplierTitle = "";
+
+  // Iterate through the suppliers array to find the matching supplier
+  suppliers.value.forEach((supplier) => {
+    if (supplier.value === supplier_id) {
+      selectedSupplierTitle = supplier.title;
+    }
+  });
+
   axios
     .get("/suppliers/generate/order", {
       params: { orders_Date, supplier_id },
@@ -44,7 +53,7 @@ const generateOrder = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      const fileName = `Order.xlsx`;
+      const fileName = `${selectedSupplierTitle}_${orders_Date}_Order.xlsx`;
       link.setAttribute("download", fileName);
       document.body.appendChild(link);
       link.click();
