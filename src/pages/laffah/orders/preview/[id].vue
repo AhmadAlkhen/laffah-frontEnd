@@ -253,7 +253,7 @@ const storeQuantitySent = (item, quaSent, index) => {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 1500,
+          timeout: 1000,
         });
       }
 
@@ -290,7 +290,7 @@ const storeQuantityConfirm = (item, quaConfirm, index) => {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 1500,
+          timeout: 1000,
         });
       }
       quantityConfirm.value[index] = "";
@@ -324,7 +324,7 @@ const storeQuantityReturn = (item, quaReturn, index) => {
           fetchOrders();
         }
         toast.success(res.data.message, {
-          timeout: 1500,
+          timeout: 1000,
         });
       }
     })
@@ -355,7 +355,7 @@ const changeRate = (item, rated) => {
         });
       } else {
         toast.success(res.data.message, {
-          timeout: 1500,
+          timeout: 1000,
         });
         // fetchOrders();
       }
@@ -1528,6 +1528,14 @@ watch(
                       )
                     "
                   />
+                  <span
+                    v-if="
+                      quantitySent[index] &&
+                      quantitySent[index] != item.quantity
+                    "
+                    class="matched"
+                    >Check the quantity & sent</span
+                  >
                 </td>
                 <td
                   class="text-center d-print-none"
@@ -1578,6 +1586,14 @@ watch(
                       )
                     "
                   />
+                  <span
+                    v-if="
+                      quantityConfirm[index] &&
+                      quantityConfirm[index] != item.quantity_sent
+                    "
+                    class="matched"
+                    >Check the quantity Confirm & Sent</span
+                  >
                 </td>
                 <td
                   class="text-center d-print-none"
@@ -1879,5 +1895,9 @@ watch(
   width: 200px;
   display: flex;
   align-items: center;
+}
+.matched {
+  color: red;
+  /* font-size: 15px; */
 }
 </style>
