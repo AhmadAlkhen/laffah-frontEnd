@@ -46,6 +46,13 @@ export default [
       action: "read",
       subject: "Auth",
     },
-
+    
+    {
+      title: 'Generate',
+      icon: { icon: 'tabler-report-analytics' },
+      to: 'laffah-orders-generate',
+      action: "read",
+      subject: "Auth",
+    },
   ]
   

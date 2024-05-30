@@ -1534,7 +1534,9 @@ watch(
                       quantitySent[index] != item.quantity
                     "
                     class="matched"
-                    >Check the quantity & sent</span
+                  >
+                    <span>الكمية غير مطابقة</span> <br />
+                    Check the quantity & sent</span
                   >
                 </td>
                 <td
@@ -1592,7 +1594,9 @@ watch(
                       quantityConfirm[index] != item.quantity_sent
                     "
                     class="matched"
-                    >Check the quantity Confirm & Sent</span
+                  >
+                    <span>الكمية غير مطابقة</span> <br />
+                    Check the quantity Confirm & Sent</span
                   >
                 </td>
                 <td
